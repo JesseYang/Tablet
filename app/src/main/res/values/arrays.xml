@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="grade">
+        <item>初一</item>
+        <item>初二</item>
+        <item>初三</item>
+        <item>高一</item>
+        <item>高二</item>
+        <item>高三</item>
+    </string-array>
+</resources>

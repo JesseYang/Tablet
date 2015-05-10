@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.efei.student.tablet.admin.ManagementActivity">
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/action_refresh_course_list"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item
+        android:id="@+id/action_exit_login"
+        android:title="@string/action_exit_login"
+        android:orderInCategory="100" app:showAsAction="never" />
+</menu>

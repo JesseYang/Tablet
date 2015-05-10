@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Tablet</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="follow_weixin">请关注我们的微信公众号：易飞教育</string>
+    <string name="account">帐号</string>
+    <string name="login_account_hint">手机号/邮箱</string>
+    <string name="register_account_hint">手机号或者邮箱</string>
+    <string name="password">密码</string>
+    <string name="password_confirm">确认密码</string>
+    <string name="register_password">6-16位区分大小写密码</string>
+    <string name="register_password_confirm">重复输入密码</string>
+    <string name="action_sign_in">登录</string>
+    <string name="action_register">立即注册</string>
+    <string name="action_go_register">没有帐号？立即注册</string>
+    <string name="action_go_login">已有帐号？立即登录</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="title_activity_information">InformationActivity</string>
+
+    <string name="real_name">真实姓名</string>
+    <string name="city">城市</string>
+    <string name="school">学校</string>
+    <string name="grade">年级</string>
+    <string name="action_finish_register">完成注册</string>
+    <string name="title_activity_management">ManagementActivity</string>
+
+    <string name="action_refresh_course_list">更新课程列表</string>
+    <string name="title_activity_list">ListActivity</string>
+
+    <string name="action_exit_login">退出登录</string>
+    <string name="title_activity_course">CourseActivity</string>
+    <string name="title_activity_lesson">LessonActivity</string>
+    <string name="description">Media Controls</string>
+    <string name="title_activity_base">BaseActivity</string>
+</resources>

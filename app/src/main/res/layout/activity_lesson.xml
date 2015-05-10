@@ -1,0 +1,22 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/video_horizontal_margin"
+    android:paddingRight="@dimen/video_horizontal_margin"
+    android:paddingTop="@dimen/video_vertical_margin"
+    android:paddingBottom="@dimen/video_vertical_margin"
+    tools:context="com.efei.student.tablet.student.LessonActivity">
+
+    <FrameLayout
+        android:id="@+id/videoSurfaceContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <SurfaceView
+            android:id="@+id/videoSurface"
+            android:layout_width="1024dp"
+            android:layout_height="576dp"
+            android:layout_gravity="center" />
+    </FrameLayout>
+
+</RelativeLayout>
