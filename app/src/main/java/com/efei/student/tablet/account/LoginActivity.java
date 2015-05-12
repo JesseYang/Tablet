@@ -19,6 +19,7 @@ import com.efei.student.tablet.student.ListActivity;
 import com.efei.student.tablet.utils.NetUtils;
 import com.efei.student.tablet.utils.TextUtils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -151,9 +152,20 @@ public class LoginActivity extends BaseActivity {
                     String course_id_str = retval.getString("course_id_str");
                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", 0);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.clear().commit();
                     editor.putString("auth_key", auth_key);
                     editor.putBoolean("admin", admin);
                     editor.putString("course_id_str", course_id_str);
+                    JSONArray study_ary = retval.getJSONArray("status");
+                    JSONObject course_status;
+                    for (int i = 0; i < study_ary.length(); i++) {
+                        course_status = study_ary.getJSONObject(i);
+                        editor.putString(course_status.getString("course_id"),
+                                course_status.getString("lesson_id") + "," +
+                                course_status.getString("video_id") + "," +
+                                course_status.getString("time"));
+                    }
+                    editor.commit();
                     Toast.makeText(getApplicationContext(), "登录成功，正在跳转，请稍后", Toast.LENGTH_SHORT).show();
                     if (admin) {
                         startActivity(new Intent(LoginActivity.this, ManagementActivity.class));

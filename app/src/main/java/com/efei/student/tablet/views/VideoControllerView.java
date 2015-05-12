@@ -18,9 +18,9 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.efei.student.tablet.R;
+import com.efei.student.tablet.student.LessonActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.Formatter;
@@ -80,8 +80,9 @@ public class VideoControllerView extends FrameLayout {
     private ImageButton         mRewButton;
     private ImageButton         mNextButton;
     private ImageButton         mPrevButton;
-    private ImageButton         mFullscreenButton;
     private Handler             mHandler = new MessageHandler(this);
+
+    private int                 mLastPosition = 0;
 
     public VideoControllerView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -116,7 +117,6 @@ public class VideoControllerView extends FrameLayout {
     public void setMediaPlayer(MediaPlayerControl player) {
         mPlayer = player;
         updatePausePlay();
-        updateFullScreen();
     }
 
     /**
@@ -157,12 +157,6 @@ public class VideoControllerView extends FrameLayout {
         if (mPauseButton != null) {
             mPauseButton.requestFocus();
             mPauseButton.setOnClickListener(mPauseListener);
-        }
-
-        mFullscreenButton = (ImageButton) v.findViewById(R.id.fullscreen);
-        if (mFullscreenButton != null) {
-            mFullscreenButton.requestFocus();
-            mFullscreenButton.setOnClickListener(mFullscreenListener);
         }
 
         mFfwdButton = (ImageButton) v.findViewById(R.id.ffwd);
@@ -267,7 +261,6 @@ public class VideoControllerView extends FrameLayout {
             mShowing = true;
         }
         updatePausePlay();
-        updateFullScreen();
 
         // cause the progress bar to be updated even if mShowing
         // was already true.  This happens, for example, if we're
@@ -324,6 +317,8 @@ public class VideoControllerView extends FrameLayout {
 
     private int checkProgress() {
         int position = mPlayer.getCurrentPosition();
+        ((LessonActivity)mContext).checkTag(mLastPosition, position);
+        mLastPosition = position;
         return position;
     }
 
@@ -422,13 +417,6 @@ public class VideoControllerView extends FrameLayout {
         }
     };
 
-    private View.OnClickListener mFullscreenListener = new View.OnClickListener() {
-        public void onClick(View v) {
-            doToggleFullscreen();
-            show(sDefaultTimeout);
-        }
-    };
-
     public void updatePausePlay() {
         if (mRoot == null || mPauseButton == null || mPlayer == null) {
             return;
@@ -438,19 +426,6 @@ public class VideoControllerView extends FrameLayout {
             mPauseButton.setImageResource(R.drawable.ic_media_pause);
         } else {
             mPauseButton.setImageResource(R.drawable.ic_media_play);
-        }
-    }
-
-    public void updateFullScreen() {
-        if (mRoot == null || mFullscreenButton == null || mPlayer == null) {
-            return;
-        }
-
-        if (mPlayer.isFullScreen()) {
-            mFullscreenButton.setImageResource(R.drawable.ic_media_fullscreen_shrink);
-        }
-        else {
-            mFullscreenButton.setImageResource(R.drawable.ic_media_fullscreen_stretch);
         }
     }
 
@@ -465,14 +440,6 @@ public class VideoControllerView extends FrameLayout {
             mPlayer.start();
         }
         updatePausePlay();
-    }
-
-    private void doToggleFullscreen() {
-        if (mPlayer == null) {
-            return;
-        }
-
-        mPlayer.toggleFullScreen();
     }
 
     // There are two scenarios that can trigger the seekbar listener to trigger:
@@ -625,8 +592,6 @@ public class VideoControllerView extends FrameLayout {
         boolean canPause();
         boolean canSeekBackward();
         boolean canSeekForward();
-        boolean isFullScreen();
-        void    toggleFullScreen();
     }
 
     private static class MessageHandler extends Handler {

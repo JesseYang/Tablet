@@ -12,6 +12,9 @@ import org.json.JSONObject;
 
 public class Tag {
 
+    public static int TYPE_INDEX = 1;
+    public static int TYPE_EPISODE = 2;
+
     public Context mContext;
 
     public Integer type;

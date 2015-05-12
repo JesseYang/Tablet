@@ -26,8 +26,8 @@ import java.net.URL;
 public final class NetUtils {
 
     // public static String BASE_URL = "http://www.efei.org/";
-    public static String BASE_URL = "http://192.168.0.104:3000/";
-    // public static String BASE_URL = "http://192.168.2.101:3000/";
+    // public static String BASE_URL = "http://192.168.0.104:3000/";
+    public static String BASE_URL = "http://192.168.2.101:3000/";
 
     private NetUtils()
     {
@@ -79,8 +79,10 @@ public final class NetUtils {
         }
     }
 
-    public static void put(String urlApi, JSONObject params) {
+    public static String put(String urlApi, JSONObject params) {
         try {
+            StringBuilder response = new StringBuilder();
+
             HttpURLConnection urlConnection;
             Uri builtUri = Uri.parse(BASE_URL + urlApi).buildUpon().build();
             URL url = new URL(builtUri.toString());
@@ -88,7 +90,7 @@ public final class NetUtils {
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("PUT");
             urlConnection.setRequestProperty("Content-Type", "application/json");
-            urlConnection.setRequestProperty("Accept", "application/json");
+            urlConnection.setRequestProperty("Accept","application/json");
             urlConnection.setDoInput(true);
             urlConnection.setDoOutput(true);
 
@@ -103,11 +105,23 @@ public final class NetUtils {
 
             urlConnection.connect();
 
-            InputStream inputStream = urlConnection.getInputStream();
-        } catch (IOException e) {
-            return;
-        } finally {
+            if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 
+                InputStream inputStream = urlConnection.getInputStream();
+                BufferedReader input = new BufferedReader(new InputStreamReader(inputStream));
+
+                String strLine = null;
+                while ((strLine = input.readLine()) != null)
+                {
+                    response.append(strLine);
+                }
+                input.close();
+                return response.toString();
+            }
+            return "";
+        } catch (IOException e) {
+            return "";
+        } finally {
         }
     }
 

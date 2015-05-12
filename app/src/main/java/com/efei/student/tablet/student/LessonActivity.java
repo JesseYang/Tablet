@@ -8,9 +8,11 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.efei.student.tablet.R;
 import com.efei.student.tablet.models.Lesson;
+import com.efei.student.tablet.models.Tag;
 import com.efei.student.tablet.models.Video;
 import com.efei.student.tablet.utils.FileUtils;
 import com.efei.student.tablet.views.VideoControllerView;
@@ -21,6 +23,7 @@ import java.io.IOException;
 public class LessonActivity extends BaseActivity implements SurfaceHolder.Callback, MediaPlayer.OnPreparedListener, VideoControllerView.MediaPlayerControl {
 
     public Lesson mLesson;
+    Video mCurVideo;
     SurfaceView videoSurface;
     MediaPlayer player;
     VideoControllerView controller;
@@ -46,6 +49,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
 
         try {
             player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mCurVideo = mLesson.videos()[0];
             player.setDataSource(FileUtils.get_video_local_uri(mLesson.videos()[0]));
             player.prepareAsync();
             player.setOnPreparedListener(this);
@@ -60,9 +64,21 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         }
     }
 
+    public void checkTag(int last_position, int position) {
+        Tag[] tags = mCurVideo.tags();
+        for (Tag tag : tags) {
+            // if (tag.type != Tag.TYPE_EPISODE) { continue; }
+            int time = tag.time;
+            if (time * 1000 >= last_position && time * 1000 < position) {
+                Toast.makeText(getApplicationContext(), "知识片段：" + tag.name, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
     public void switchVideo(Video video) {
         try {
             player.reset();
+            mCurVideo = video;
             player.setDataSource(FileUtils.get_video_local_uri(video));
             player.prepareAsync();
             player.setOnPreparedListener(this);
@@ -157,13 +173,5 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         player.start();
     }
 
-    @Override
-    public boolean isFullScreen() {
-        return false;
-    }
-
-    @Override
-    public void toggleFullScreen() {
-    }
     // End VideoMediaController.MediaPlayerControl
 }

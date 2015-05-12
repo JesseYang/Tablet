@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/one_course_item_height">
+
+    <LinearLayout
+        android:id="@+id/left_course"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/course_item_left_teacher"
+            android:layout_width="@dimen/course_item_teacher_width"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/course_item_left_avatar"
+            android:layout_width="@dimen/course_item_avatar_width"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:id="@+id/course_item_left_content"
+            android:layout_width="@dimen/course_item_desc_width"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/course_item_left_name"
+                android:layout_width="match_parent"
+                android:layout_height="40dp" />
+
+            <TextView
+                android:id="@+id/course_item_left_desc"
+                android:layout_width="match_parent"
+                android:layout_height="80dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/course_item_left_status"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/course_item_left_action"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/right_course"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/course_item_right_teacher"
+            android:layout_width="@dimen/course_item_teacher_width"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/course_item_right_avatar"
+            android:layout_width="@dimen/course_item_avatar_width"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:id="@+id/course_item_right_content"
+            android:layout_width="@dimen/course_item_desc_width"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/course_item_right_name"
+                android:layout_width="match_parent"
+                android:layout_height="40dp" />
+
+            <TextView
+                android:id="@+id/course_item_right_desc"
+                android:layout_width="match_parent"
+                android:layout_height="80dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/course_item_right_status"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/course_item_right_action"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:gravity="center_vertical"
+        android:id="@+id/tv_stu_course_item_subject"
+        android:enabled="true">
+    </TextView>
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:gravity="center_vertical"
+        android:id="@+id/tv_stu_course_item_teacher"
+        android:enabled="true">
+    </TextView>
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:gravity="center_vertical"
+        android:id="@+id/tv_stu_course_item_name"
+        android:enabled="true">
+    </TextView>
+
+</LinearLayout>

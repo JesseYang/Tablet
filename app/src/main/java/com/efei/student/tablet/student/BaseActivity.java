@@ -1,8 +1,12 @@
 package com.efei.student.tablet.student;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+
+import org.json.JSONObject;
 
 /**
  * Created by jesse on 15-5-9.
@@ -22,7 +26,7 @@ public class BaseActivity extends Activity {
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
                         | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE | 0x00400000|0x00200000|0x01000000|0x00010000);
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE | 0x00400000 | 0x00200000 | 0x01000000 | 0x00010000);
         this.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener
                 (new View.OnSystemUiVisibilityChangeListener() {
                     @Override
@@ -34,7 +38,7 @@ public class BaseActivity extends Activity {
                                             | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                                             | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
                                             | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                                            | View.SYSTEM_UI_FLAG_IMMERSIVE | 0x00400000|0x00200000|0x01000000|0x00010000);
+                                            | View.SYSTEM_UI_FLAG_IMMERSIVE | 0x00400000 | 0x00200000 | 0x01000000 | 0x00010000);
                         }
                     }
                 });
@@ -44,5 +48,29 @@ public class BaseActivity extends Activity {
     protected void onResume() {
         super.onResume();
         hide_navbar();
+    }
+
+    protected void log_out() {
+        // todo: clear shared preferences
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", 0);
+        sharedPreferences.edit().clear().commit();
+
+        // todo: upload course study status and logs
+        UploadStatusAndLogsTask uploadStatusAndLogsTask = new UploadStatusAndLogsTask();
+        uploadStatusAndLogsTask.execute();
+    }
+
+    private class UploadStatusAndLogsTask extends AsyncTask<Void, Void, JSONObject> {
+
+        @Override
+        protected JSONObject doInBackground(Void... params) {
+            return new JSONObject();
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject retval) {
+
+        }
+
     }
 }
