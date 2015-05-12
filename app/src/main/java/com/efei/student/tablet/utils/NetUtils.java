@@ -26,8 +26,8 @@ import java.net.URL;
 public final class NetUtils {
 
     // public static String BASE_URL = "http://www.efei.org/";
-    // public static String BASE_URL = "http://192.168.0.104:3000/";
-    public static String BASE_URL = "http://192.168.2.101:3000/";
+    public static String BASE_URL = "http://192.168.0.104:3000/";
+    // public static String BASE_URL = "http://192.168.2.101:3000/";
 
     private NetUtils()
     {

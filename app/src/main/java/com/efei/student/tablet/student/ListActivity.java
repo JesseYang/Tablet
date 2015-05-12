@@ -6,17 +6,30 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.efei.student.tablet.R;
+import com.efei.student.tablet.adapters.CourseGroupAdapter;
 import com.efei.student.tablet.adapters.StudentCourseAdapter;
 import com.efei.student.tablet.models.Course;
+import com.efei.student.tablet.models.CourseGroup;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ListActivity extends BaseActivity {
 
-    private StudentCourseAdapter mCourseAdapter;
+    private CourseGroupAdapter mCourseGroupAdapter;
+
+    private TextView mMyCourse;
+    private TextView mAllCourse;
+    private boolean mStatusMyCourse = true;
+    private TextView mLastCourse;
+    private TextView mLastLesson;
+
+    private Button mContinue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,29 +40,59 @@ public class ListActivity extends BaseActivity {
 
 
     private void setupViews() {
+        mMyCourse = (TextView) findViewById(R.id.my_course_tab);
+        mAllCourse = (TextView) findViewById(R.id.all_course_tab);
+        mContinue = (Button) findViewById(R.id.status_bar_continue_btn);
+        mLastCourse = (TextView) findViewById(R.id.status_bar_last_course);
+        mLastLesson = (TextView) findViewById(R.id.status_bar_last_lesson);
+
+        mMyCourse.setSelected(true);
+        mAllCourse.setSelected(false);
+        refreshCourses();
+
+        mAllCourse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!mStatusMyCourse) {
+                    return;
+                }
+                mMyCourse.setSelected(false);
+                mAllCourse.setSelected(true);
+                mStatusMyCourse = false;
+                refreshCourses();
+            }
+        });
+
+        mMyCourse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mStatusMyCourse) {
+                    return;
+                }
+                mMyCourse.setSelected(true);
+                mAllCourse.setSelected(false);
+                mStatusMyCourse = true;
+                refreshCourses();
+            }
+        });
+
         refreshCourses();
     }
 
     private void refreshCourses() {
-        ArrayList<Course> courses = Course.list_courses(getApplicationContext());
-        mCourseAdapter =
-                new StudentCourseAdapter(
+
+        ArrayList<CourseGroup> courseGroups = Course.list_course_groups(getApplicationContext());
+
+        mCourseGroupAdapter =
+                new CourseGroupAdapter(
                         ListActivity.this,
-                        R.layout.student_course_item,
-                        courses
+                        R.layout.student_course_group_item,
+                        courseGroups
                 );
 
+
         ListView listView = (ListView) findViewById(R.id.lv_course_list);
-        listView.setAdapter(mCourseAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String course_id = mCourseAdapter.getItem(position).server_id;
-                Intent intent = new Intent(ListActivity.this, CourseActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, course_id);
-                startActivity(intent);
-            }
-        });
+        listView.setAdapter(mCourseGroupAdapter);
     }
 
 

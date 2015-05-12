@@ -4,11 +4,8 @@
 
     <solid android:color="#DCDCDC"></solid>
 
-    <stroke android:width="1dp" android:color="#FFFFFF"></stroke>
-
-    <corners  android:topLeftRadius="3dp"
-        android:topRightRadius="3dp"
+    <corners  android:topLeftRadius="@dimen/title_bar_tab_radius"
+        android:topRightRadius="@dimen/title_bar_tab_radius"
         android:bottomLeftRadius="0dp"
         android:bottomRightRadius="0dp"/>
-
 </shape> 

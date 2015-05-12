@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <solid android:color="@color/status_bar_btn_unpressed" />
+
+    <corners  android:topLeftRadius="@dimen/status_bar_button_radius"
+        android:topRightRadius="@dimen/status_bar_button_radius"
+        android:bottomLeftRadius="@dimen/status_bar_button_radius"
+        android:bottomRightRadius="@dimen/status_bar_button_radius"/>
+</shape>

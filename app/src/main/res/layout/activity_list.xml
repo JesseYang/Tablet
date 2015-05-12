@@ -28,19 +28,23 @@
             <TextView
                 android:id="@+id/my_course_tab"
                 android:layout_width="@dimen/title_bar_tab_width"
-                android:layout_height="40dp"
-                android:layout_marginTop="4dp"
+                android:layout_height="@dimen/title_bar_tab_height"
+                android:layout_marginTop="@dimen/title_bar_tab_margin_top"
                 android:background="@drawable/tab"
                 android:gravity="center"
                 android:textColor="@color/title_bar_background"
+                android:textSize="@dimen/title_bar_tag_text_size"
                 android:text="我的课程" />
 
             <TextView
                 android:id="@+id/all_course_tab"
                 android:layout_width="@dimen/title_bar_tab_width"
-                android:layout_height="40dp"
-                android:layout_gravity="bottom"
+                android:layout_height="@dimen/title_bar_tab_height"
+                android:layout_marginTop="@dimen/title_bar_tab_margin_top"
                 android:background="@drawable/tab"
+                android:gravity="center"
+                android:textColor="@color/title_bar_background"
+                android:textSize="@dimen/title_bar_tag_text_size"
                 android:text="全部课程" />
 
             <View
@@ -56,17 +60,22 @@
                 android:background="@drawable/title_bar_search_background"
                 android:layout_gravity="center">
 
-                <AutoCompleteTextView
+                <EditText
                     android:id="@+id/title_bar_search_text"
-                    android:layout_width="20dp"
+                    android:layout_width="@dimen/title_bar_search_text_width"
                     android:layout_height="match_parent"
                     android:textColor="@color/title_bar_search_text"
-                    android:hint="搜索课程"/>
-<!--
+                    android:background="@color/transparent"
+                    android:paddingLeft="@dimen/title_bar_search_text_padding_left"
+                    android:cursorVisible="false"
+                    android:hint="搜索课程"
+                    android:textColorHint="@color/title_bar_search_hint_text_color" />
+
                 <ImageView
-                    android:layout_width="10dp"
+                    android:layout_width="@dimen/title_bar_icon_width"
                     android:layout_height="match_parent"
-                    android:src="@drawable/title_bar_search_icon"/>-->
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_search"/>
 
 
             </LinearLayout>
@@ -75,19 +84,24 @@
                 android:layout_width="@dimen/title_bar_space_3"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent" />
-<!--
+
             <ImageView
                 android:id="@+id/btn_filter"
-                android:layout_width="@dimen/title_bar_filter_icon_width"
+                android:layout_width="@dimen/title_bar_icon_width"
                 android:layout_height="match_parent"
                 android:src="@drawable/btn_filter"/>
 
+            <View
+                android:layout_width="@dimen/title_bar_space_4"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent" />
+
             <ImageView
                 android:id="@+id/btn_setting"
-                android:layout_width="@dimen/title_bar_setting_icon_width"
+                android:layout_width="@dimen/title_bar_icon_width"
                 android:layout_height="match_parent"
                 android:src="@drawable/btn_setting"/>
--->
+
         </LinearLayout>
 
 
@@ -95,14 +109,67 @@
             android:id="@+id/status_bar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/status_bar_height"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:background="@drawable/status_bar_background">
+
+            <TextView
+                android:id="@+id/status_bar_desc"
+                android:layout_width="@dimen/status_bar_desc_width"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textSize="15dp"
+                android:text="上次学习到" />
+
+            <LinearLayout
+                android:layout_width="@dimen/status_bar_last_time"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp">
+
+                <TextView
+                    android:id="@+id/status_bar_last_course"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center"
+                    android:text="高一物理上学期同步复习" />
+
+                <TextView
+                    android:id="@+id/status_bar_last_lesson"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center"
+                    android:text="第三讲 速度的描述"
+                    android:textColor="@color/status_bar_btn_unpressed"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="@dimen/status_bar_space_1"
+                android:layout_height="match_parent"
+                android:background="@color/transparent" />
+
+            <Button
+                android:id="@+id/status_bar_continue_btn"
+                android:layout_width="@dimen/status_bar_button_width"
+                android:layout_height="@dimen/status_bar_button_height"
+                android:background="@drawable/status_bar_button_background"
+                android:text="继续学习"
+                android:textColor="@color/white"
+                android:layout_gravity="center"/>
 
         </LinearLayout>
 
         <ScrollView
             android:id="@+id/course_list_scroll_view"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/course_list_area_height">
+            android:layout_height="@dimen/course_list_area_height"
+            android:background="@color/white">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -112,13 +179,11 @@
                 <ListView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:id="@+id/lv_course_list" />
 
             </LinearLayout>
         </ScrollView>
-
-
-
 
     </LinearLayout>
 

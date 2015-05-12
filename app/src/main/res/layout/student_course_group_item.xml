@@ -2,44 +2,75 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/one_course_item_height">
+    android:layout_height="@dimen/one_course_item_height"
+    android:layout_marginTop="@dimen/course_item_vertical_margin"
+    android:layout_marginBottom="@dimen/course_item_vertical_margin">
 
     <LinearLayout
         android:id="@+id/left_course"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="match_parent"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:layout_marginLeft="@dimen/course_item_left_margin"
+        android:layout_marginRight="@dimen/course_item_right_margin" >
 
         <TextView
             android:id="@+id/course_item_left_teacher"
-            android:layout_width="@dimen/course_item_teacher_width"
-            android:layout_height="match_parent" />
+            android:layout_width="0dp"
+            android:layout_weight="54"
+            android:layout_height="match_parent"/>
 
         <ImageView
             android:id="@+id/course_item_left_avatar"
-            android:layout_width="@dimen/course_item_avatar_width"
-            android:layout_height="match_parent" />
+            android:layout_width="0dp"
+            android:layout_weight="122"
+            android:layout_height="match_parent"
+            android:background="@color/black_overlay" />
 
         <LinearLayout
             android:id="@+id/course_item_left_content"
-            android:layout_width="@dimen/course_item_desc_width"
+            android:layout_width="0dp"
+            android:layout_weight="288"
             android:orientation="vertical"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@drawable/course_content">
 
             <TextView
                 android:id="@+id/course_item_left_name"
                 android:layout_width="match_parent"
-                android:layout_height="40dp" />
+                android:layout_height="51dp"
+                android:text="高一物理上学期同步复习（人教版）"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="8dp"/>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:src="@drawable/dotted"
+                android:layerType="software"/>
 
             <TextView
                 android:id="@+id/course_item_left_desc"
                 android:layout_width="match_parent"
-                android:layout_height="80dp" />
+                android:layout_height="95dp"
+                android:textSize="14dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginRight="8dp"
+                android:text="课程简介：觉得我是一个打本行大地方达成疯狂就放开手了的开发就疯狂的骄傲的送咖啡阿大夫的山室大辅洛卡打了会计费打算离开房间。"/>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:src="@drawable/dotted"
+                android:layerType="software"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="41dp"
                 android:orientation="horizontal" >
 
                 <TextView
@@ -63,37 +94,56 @@
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="match_parent"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:layout_marginLeft="@dimen/course_item_left_margin"
+        android:layout_marginRight="@dimen/course_item_right_margin">
 
         <TextView
             android:id="@+id/course_item_right_teacher"
-            android:layout_width="@dimen/course_item_teacher_width"
+            android:layout_width="0dp"
+            android:layout_weight="54"
             android:layout_height="match_parent" />
 
         <ImageView
             android:id="@+id/course_item_right_avatar"
-            android:layout_width="@dimen/course_item_avatar_width"
-            android:layout_height="match_parent" />
+            android:layout_width="0dp"
+            android:layout_weight="122"
+            android:layout_height="match_parent"
+            android:background="@color/black_overlay" />
 
         <LinearLayout
             android:id="@+id/course_item_right_content"
-            android:layout_width="@dimen/course_item_desc_width"
+            android:layout_width="0dp"
+            android:layout_weight="288"
             android:orientation="vertical"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@drawable/course_content">
 
             <TextView
                 android:id="@+id/course_item_right_name"
                 android:layout_width="match_parent"
-                android:layout_height="40dp" />
+                android:layout_height="51dp" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:src="@drawable/dotted"
+                android:layerType="software"/>
 
             <TextView
                 android:id="@+id/course_item_right_desc"
                 android:layout_width="match_parent"
-                android:layout_height="80dp" />
+                android:layout_height="95dp" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:src="@drawable/dotted"
+                android:layerType="software"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="41dp"
                 android:orientation="horizontal" >
 
                 <TextView
@@ -111,36 +161,5 @@
         </LinearLayout>
 
     </LinearLayout>
-
-
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:minHeight="?android:attr/listPreferredItemHeight"
-        android:gravity="center_vertical"
-        android:id="@+id/tv_stu_course_item_subject"
-        android:enabled="true">
-    </TextView>
-
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:minHeight="?android:attr/listPreferredItemHeight"
-        android:gravity="center_vertical"
-        android:id="@+id/tv_stu_course_item_teacher"
-        android:enabled="true">
-    </TextView>
-
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:minHeight="?android:attr/listPreferredItemHeight"
-        android:gravity="center_vertical"
-        android:id="@+id/tv_stu_course_item_name"
-        android:enabled="true">
-    </TextView>
 
 </LinearLayout>

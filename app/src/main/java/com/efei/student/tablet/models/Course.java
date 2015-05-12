@@ -76,6 +76,35 @@ public class Course {
         return course;
     }
 
+    public static ArrayList<CourseGroup> list_course_groups(Context context) {
+        ArrayList<Course> courses = Course.list_courses(context);
+
+        int group_index = 0;
+        int index_within_group = 0;
+        ArrayList<CourseGroup> course_ary = new ArrayList<>((int) Math.ceil(courses.size() / 2.0));
+        Course left_course = null, right_course = null;
+        CourseGroup courseGroup = null;
+        for (int i = 0; i < courses.size(); i++) {
+            group_index = i / 2;
+            index_within_group = i % 2;
+
+            if (index_within_group == 0) {
+                left_course = courses.get(i);
+            } else {
+                courseGroup = new CourseGroup(context, left_course, courses.get(i));
+                course_ary.add(courseGroup);
+                left_course = null;
+            }
+        }
+
+        if (left_course != null) {
+            courseGroup = new CourseGroup(context, left_course, null);
+            course_ary.add(courseGroup);
+        }
+
+        return course_ary;
+    }
+
     public static ArrayList<Course> list_courses(Context context) {
         TabletDbHelper dbHelper = new TabletDbHelper(context);
 
