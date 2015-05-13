@@ -8,4 +8,24 @@
         <item>高二</item>
         <item>高三</item>
     </string-array>
+
+    <string-array name="grade_filter">
+        <item>全部</item>
+        <item>初中</item>
+        <item>高中</item>
+    </string-array>
+
+    <string-array name="subject_filter">
+        <item>全部</item>
+        <item>数学</item>
+        <item>物理</item>
+    </string-array>
+
+    <string-array name="status_filter">
+        <item>全部</item>
+        <item>学习中</item>
+        <item>未开始</item>
+        <item>已结束</item>
+    </string-array>
+
 </resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <solid android:color="@color/filter_yellow" />
+
+    <corners  android:topLeftRadius="0dp"
+        android:topRightRadius="0dp"
+        android:bottomLeftRadius="@dimen/title_bar_tab_radius"
+        android:bottomRightRadius="@dimen/title_bar_tab_radius"/>
+</shape>

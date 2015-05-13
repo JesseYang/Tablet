@@ -34,4 +34,7 @@
     <string name="title_activity_lesson">LessonActivity</string>
     <string name="description">Media Controls</string>
     <string name="title_activity_base">BaseActivity</string>
+
+    <string name="subject">学科</string>
+    <string name="status">状态</string>
 </resources>

@@ -6,71 +6,118 @@
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
     android:paddingTop="0dp"
-    android:paddingBottom="0dp">
+    android:paddingBottom="0dp"
+    android:background="@color/transparent">
+
+    <View
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginLeft="120dp"
+        android:layout_marginTop="-28dp"
+        android:background="@drawable/filter_triangle"/>
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/filter_popup_width"
+        android:layout_height="44dp"
+        android:background="@drawable/filter_title"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="18dp"
         android:text="筛选条件"/>
 
-    <TextView
-        android:id="@+id/filter_grade_value"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <ImageView
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="@dimen/filter_popup_width"
         android:layout_height="wrap_content"
-        android:src="@drawable/dotted" />
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:background="@drawable/filter_body_background">
 
-    <ListView
-        android:id="@+id/filter_grade_listview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"></ListView>
+        <TextView
+            android:id="@+id/filter_grade_value"
+            android:layout_width="@dimen/filter_popup_inner_width"
+            android:layout_height="44dp"
+            android:textColor="@color/filter_yellow"
+            android:background="@color/white"
+            android:gravity="center"
+            android:text="年级: 全部"/>
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/dotted" />
+        <ImageView
+            android:layout_width="@dimen/filter_popup_inner_width"
+            android:layout_height="1dp"
+            android:src="@drawable/dotted"
+            android:layerType="software" />
 
-    <TextView
-        android:id="@+id/filter_subject_value"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <ListView
+            android:id="@+id/filter_grade_listview"
+            android:layout_width="@dimen/filter_popup_inner_width"
+            android:layout_height="wrap_content"
+            android:divider="@color/white"></ListView>
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/dotted" />
+        <ImageView
+            android:layout_width="@dimen/filter_popup_inner_width"
+            android:layout_height="1dp"
+            android:src="@drawable/dotted"
+            android:layerType="software" />
 
-    <ListView
-        android:id="@+id/filter_subject_listview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"></ListView>
+        <TextView
+            android:id="@+id/filter_subject_value"
+            android:layout_width="@dimen/filter_popup_inner_width"
+            android:layout_height="44dp"
+            android:textColor="@color/filter_yellow"
+            android:background="@color/white"
+            android:gravity="center"
+            android:text="学科: 全部" />
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/dotted" />
+        <ImageView
+            android:layout_width="@dimen/filter_popup_inner_width"
+            android:layout_height="1dp"
+            android:src="@drawable/dotted"
+            android:layerType="software" />
 
-    <TextView
-        android:id="@+id/filter_status_value"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <ListView
+            android:id="@+id/filter_subject_listview"
+            android:layout_width="@dimen/filter_popup_inner_width"
+            android:layout_height="wrap_content"
+            android:divider="@color/white"></ListView>
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/dotted" />
+        <ImageView
+            android:layout_width="@dimen/filter_popup_inner_width"
+            android:layout_height="1dp"
+            android:src="@drawable/dotted"
+            android:layerType="software" />
 
-    <ListView
-        android:id="@+id/filter_status_listview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"></ListView>
+        <TextView
+            android:id="@+id/filter_status_value"
+            android:layout_width="@dimen/filter_popup_inner_width"
+            android:layout_height="44dp"
+            android:textColor="@color/filter_yellow"
+            android:background="@color/white"
+            android:gravity="center"
+            android:text="状态: 全部" />
+
+        <ImageView
+            android:layout_width="@dimen/filter_popup_width"
+            android:layout_height="1dp"
+            android:src="@drawable/dotted"
+            android:layerType="software" />
+
+        <ListView
+            android:id="@+id/filter_status_listview"
+            android:layout_width="@dimen/filter_popup_inner_width"
+            android:layout_height="wrap_content"
+            android:divider="@color/white"></ListView>
+
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/begin_filter_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_width="@dimen/filter_popup_width"
+        android:layout_height="44dp"
+        android:background="@drawable/begin_filter_button_background"
+        android:text="开始筛选"
+        android:textColor="@color/white"
+        android:layout_gravity="center" />
 
 </LinearLayout>
