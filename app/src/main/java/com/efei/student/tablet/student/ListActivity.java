@@ -1,14 +1,11 @@
 package com.efei.student.tablet.student;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -16,14 +13,11 @@ import android.widget.TextView;
 
 import com.efei.student.tablet.R;
 import com.efei.student.tablet.adapters.CourseGroupAdapter;
-import com.efei.student.tablet.adapters.StudentCourseAdapter;
 import com.efei.student.tablet.models.Course;
 import com.efei.student.tablet.models.CourseGroup;
 import com.efei.student.tablet.views.FilterView;
-import com.efei.student.tablet.views.VideoControllerView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ListActivity extends BaseActivity {
 
@@ -35,17 +29,22 @@ public class ListActivity extends BaseActivity {
     private TextView mLastCourse;
     private TextView mLastLesson;
 
+    private EditText mSearchText;
+    private ImageView mSearch;
     private ImageView mFilter;
     private ImageView mSetting;
 
-
-    FilterView mFilterView;
+    public FilterView mFilterView;
 
     private boolean mShowFilter = false;
 
     private Button mContinue;
 
     private boolean mConditionMy = true;
+    public int mConditionGrade = 0;
+    public int mConditionSubject = 0;
+    public int mConditionStatus = 0;
+    private String mConditionKey = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +61,9 @@ public class ListActivity extends BaseActivity {
         mLastCourse = (TextView) findViewById(R.id.status_bar_last_course);
         mLastLesson = (TextView) findViewById(R.id.status_bar_last_lesson);
 
+        mSearchText = (EditText) findViewById(R.id.title_bar_search_text);
+
+        mSearch = (ImageView) findViewById(R.id.btn_search);
         mFilter = (ImageView) findViewById(R.id.btn_filter);
         mSetting = (ImageView) findViewById(R.id.btn_setting);
 
@@ -71,6 +73,22 @@ public class ListActivity extends BaseActivity {
 
         mFilterView = new FilterView(this);
         mFilterView.setAnchorView((FrameLayout) findViewById(R.id.activity_list_root_view));
+
+        mSearchText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                hideFilterView();
+            }
+        });
+
+        mSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mConditionKey = mSearchText.getText().toString();
+                hideFilterView();
+                refreshCourses();
+            }
+        });
 
         mFilter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,12 +107,13 @@ public class ListActivity extends BaseActivity {
         mAllCourse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!mStatusMyCourse) {
+                if (!mConditionMy) {
                     return;
                 }
                 mMyCourse.setSelected(false);
                 mAllCourse.setSelected(true);
-                mStatusMyCourse = false;
+                mConditionMy = false;
+                hideFilterView();
                 refreshCourses();
             }
         });
@@ -102,12 +121,13 @@ public class ListActivity extends BaseActivity {
         mMyCourse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mStatusMyCourse) {
+                if (mConditionMy) {
                     return;
                 }
                 mMyCourse.setSelected(true);
                 mAllCourse.setSelected(false);
-                mStatusMyCourse = true;
+                mConditionMy = true;
+                hideFilterView();
                 refreshCourses();
             }
         });
@@ -115,7 +135,21 @@ public class ListActivity extends BaseActivity {
         refreshCourses();
     }
 
-    private void refreshCourses() {
+    private void hideFilterView() {
+        if (mShowFilter) {
+            mFilterView.hide();
+            mShowFilter = false;
+        }
+    }
+
+    public void refreshCourses() {
+
+        // todo: the course list should be refreshed based on the conditions:
+        //  mConditionMy
+        //  mConditionGrade
+        //  mConditionSubject
+        //  mConditionStatus
+        //  mConditionKey
 
         ArrayList<CourseGroup> courseGroups = Course.list_course_groups(getApplicationContext());
 

@@ -8,18 +8,17 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.efei.student.tablet.R;
-import com.efei.student.tablet.models.CourseGroup;
 import com.efei.student.tablet.student.ListActivity;
-
-import java.util.ArrayList;
 
 public class FilterAdapter extends ArrayAdapter<String> {
 
     ListActivity activity;
+    String condition;
 
-    public FilterAdapter(Context context, int resource, String[] items) {
+    public FilterAdapter(Context context, int resource, String[] items, String condition) {
         super(context, resource, items);
         this.activity = (ListActivity)context;
+        this.condition = condition;
     }
 
     @Override
@@ -37,7 +36,11 @@ public class FilterAdapter extends ArrayAdapter<String> {
         filter_item.setText(item);
 
         // inflate the icon
-        if (position == 0) {
+        if (condition == "grade" && position == activity.mConditionGrade) {
+            converterView.findViewById(R.id.filter_item_select_icon).setSelected(true);
+        } else if (condition == "subject" && position == activity.mConditionSubject) {
+            converterView.findViewById(R.id.filter_item_select_icon).setSelected(true);
+        } else if (condition == "status" && position == activity.mConditionStatus) {
             converterView.findViewById(R.id.filter_item_select_icon).setSelected(true);
         }
 

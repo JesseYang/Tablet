@@ -74,6 +74,7 @@
                     android:textColorHint="@color/title_bar_search_hint_text_color" />
 
                 <ImageView
+                    android:id="@+id/btn_search"
                     android:layout_width="@dimen/title_bar_icon_width"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
