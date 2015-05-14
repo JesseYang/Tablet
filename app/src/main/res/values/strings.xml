@@ -37,4 +37,7 @@
 
     <string name="subject">学科</string>
     <string name="status">状态</string>
+    <string name="course_item_desc_prefix">课程简介：</string>
+    <string name="course_item_teacher_prefix">主\n讲\n老\n师\n：\n</string>
+    <string name="course_item_begin_action"><u>开始学习</u></string>
 </resources>

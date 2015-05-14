@@ -32,8 +32,8 @@
     <dimen name="status_bar_button_radius">4dp</dimen>
     <dimen name="status_bar_button_height">46dp</dimen>
     <dimen name="course_item_vertical_margin">6dp</dimen>
-    <dimen name="course_item_left_margin">32dp</dimen>
-    <dimen name="course_item_right_margin">16dp</dimen>
+    <dimen name="course_item_outer_margin">32dp</dimen>
+    <dimen name="course_item_inner_margin">16dp</dimen>
     <dimen name="course_item_radius">5dp</dimen>
     <dimen name="filter_popup_width">224dp</dimen>
     <dimen name="filter_popup_inner_width">222dp</dimen>

@@ -2,9 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/one_course_item_height"
-    android:layout_marginTop="@dimen/course_item_vertical_margin"
-    android:layout_marginBottom="@dimen/course_item_vertical_margin">
+    android:layout_height="@dimen/one_course_item_height">
 
     <LinearLayout
         android:id="@+id/left_course"
@@ -12,13 +10,18 @@
         android:layout_weight="1"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:layout_marginLeft="@dimen/course_item_left_margin"
-        android:layout_marginRight="@dimen/course_item_right_margin" >
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="@dimen/course_item_outer_margin"
+        android:layout_marginRight="@dimen/course_item_inner_margin" >
 
         <TextView
             android:id="@+id/course_item_left_teacher"
             android:layout_width="0dp"
             android:layout_weight="54"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textSize="16dp"
+            android:textColor="@color/white"
             android:layout_height="match_parent"/>
 
         <ImageView
@@ -40,7 +43,6 @@
                 android:id="@+id/course_item_left_name"
                 android:layout_width="match_parent"
                 android:layout_height="51dp"
-                android:text="高一物理上学期同步复习（人教版）"
                 android:textSize="15dp"
                 android:textStyle="bold"
                 android:gravity="center_vertical"
@@ -59,8 +61,7 @@
                 android:textSize="14dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="6dp"
-                android:layout_marginRight="8dp"
-                android:text="课程简介：觉得我是一个打本行大地方达成疯狂就放开手了的开发就疯狂的骄傲的送咖啡阿大夫的山室大辅洛卡打了会计费打算离开房间。"/>
+                android:layout_marginRight="8dp"/>
 
             <ImageView
                 android:layout_width="match_parent"
@@ -75,13 +76,21 @@
 
                 <TextView
                     android:id="@+id/course_item_left_status"
-                    android:layout_width="40dp"
-                    android:layout_height="match_parent" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="8dp"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:text="课程未开始，"/>
 
                 <TextView
                     android:id="@+id/course_item_left_action"
-                    android:layout_width="40dp"
-                    android:layout_height="match_parent" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/course_item_begin_action"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/title_bar_background" />
 
             </LinearLayout>
 
@@ -95,14 +104,19 @@
         android:layout_weight="1"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:layout_marginLeft="@dimen/course_item_left_margin"
-        android:layout_marginRight="@dimen/course_item_right_margin">
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="@dimen/course_item_inner_margin"
+        android:layout_marginRight="@dimen/course_item_outer_margin">
 
         <TextView
             android:id="@+id/course_item_right_teacher"
             android:layout_width="0dp"
             android:layout_weight="54"
-            android:layout_height="match_parent" />
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textSize="16dp"
+            android:textColor="@color/white"
+            android:layout_height="match_parent"/>
 
         <ImageView
             android:id="@+id/course_item_right_avatar"
@@ -122,7 +136,11 @@
             <TextView
                 android:id="@+id/course_item_right_name"
                 android:layout_width="match_parent"
-                android:layout_height="51dp" />
+                android:layout_height="51dp"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="8dp"/>
 
             <ImageView
                 android:layout_width="match_parent"
@@ -133,7 +151,11 @@
             <TextView
                 android:id="@+id/course_item_right_desc"
                 android:layout_width="match_parent"
-                android:layout_height="95dp" />
+                android:layout_height="95dp"
+                android:textSize="14dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginRight="8dp"/>
 
             <ImageView
                 android:layout_width="match_parent"
@@ -148,13 +170,21 @@
 
                 <TextView
                     android:id="@+id/course_item_right_status"
-                    android:layout_width="40dp"
-                    android:layout_height="match_parent" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="8dp"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:text="课程未开始，"/>
 
                 <TextView
                     android:id="@+id/course_item_right_action"
-                    android:layout_width="40dp"
-                    android:layout_height="match_parent" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/course_item_begin_action"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/title_bar_background" />
 
             </LinearLayout>
 

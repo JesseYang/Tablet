@@ -14,6 +14,7 @@
     <color name="title_bar_search_hint_text_color">#d4d3d3</color>
 
     <color name="course_phy_teacher">#00BDBF</color>
+    <color name="course_math_teacher">#00D8F1</color>
     <color name="course_content">#EEEEEE</color>
     <color name="filter_yellow">#F7C965</color>
     <color name="filter_yellow_pressed">#e7bc61</color>

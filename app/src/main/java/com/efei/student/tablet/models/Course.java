@@ -332,4 +332,27 @@ public class Course {
                 CourseEntry.COLUMN_SERVER_ID + "=?",
                 new String[]{this.server_id});
     }
+
+    public Teacher teacher() {
+        TabletDbHelper dbHelper = new TabletDbHelper(mContext);
+
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        Cursor cursor = db.query(TabletContract.TeacherEntry.TABLE_NAME, // Table to query
+                null,   // all columns
+                CourseEntry.COLUMN_SERVER_ID + "=?",   // columns for the "where" clause
+                new String[]{this.teacher_id},  // values for the "where" clause
+                null,   // columns to group by
+                null,   // columns to filter by row groups
+                null);  // sort order
+        // select the teacher and return the name
+        int count = cursor.getCount();
+
+        if (count == 0) {
+            return null;
+        } else {
+            cursor.moveToFirst();
+            return new Teacher(mContext, cursor);
+        }
+    }
 }

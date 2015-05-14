@@ -61,4 +61,9 @@ public class FileUtils {
         File storageRoot = Environment.getExternalStorageDirectory();
         return storageRoot + "/" + VIDEO_FOLDER + Video.get_filename_by_url(video.video_url);
     }
+
+    public static String get_avatar_local_uri(Teacher teacher) {
+        File storageRoot = Environment.getExternalStorageDirectory();
+        return storageRoot + "/" + AVATAR_FOLDER + teacher.server_id + ".png";
+    }
 }

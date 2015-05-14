@@ -81,4 +81,8 @@ public final class TextUtils
         Matcher m = p.matcher(email);
         return m.matches();
     }
+
+    public static String insertBR(String str) {
+        return str.replaceAll("(.)", "$1\n");
+    }
 }

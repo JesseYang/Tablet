@@ -4,6 +4,15 @@ package com.efei.student.tablet.utils;
  * Created by jesse on 15-5-5.
  */
 public class Subject {
+
+    public static int CHINESE = 1;
+    public static int MATH = 2;
+    public static int ENGLISH = 4;
+    public static int PHYSICS = 8;
+    public static int CHEMISTRY = 16;
+
+
+
     public static String getSubjectByCode(Integer code) {
         switch (code) {
             case 1:
