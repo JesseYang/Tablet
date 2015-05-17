@@ -128,4 +128,52 @@ public class TabletContract {
         // Episode_id, stored as String
         public static final String COLUMN_EPISODE_ID = "episode_id";
     }
+
+    public final class LearnLog implements BaseColumns {
+        public static final String TABLE_NAME = "learn_log";
+
+        public static final String COLUMN_BEGIN_AT = "begin_at";
+
+        public static final String COLUMN_END_AT = "end_at";
+
+        // can be one of "video", "example", and "exercise"
+        public static final String COLUMN_TYPE = "type";
+
+        public static final String COLUMN_COURSE_ID = "course_id";
+
+        public static final String COLUMN_LESSON_ID = "lesson_id";
+
+        public static final String COLUMN_VIDEO_ID = "video_id";
+
+        // only for thoes whose type is video
+        public static final String COLUMN_VIDEO_TIME = "video_time";
+
+        // only for thoes whose type is video and the video is an episode
+        public static final String COLUMN_ORIGINAL_VIDEO_ID = "original_video_id";
+
+        public static final String COLUMN_STUDENT_ID = "student_id";
+    }
+
+    public final  class ActionLog implements BaseColumns {
+        public static final String TABLE_NAME = "action_log";
+
+        public static final String COLUMN_HAPPEN_AT = "happen_at";
+
+        // can be one of "forward", "backward", "pause", "play", "rest", and "continue"
+        public static final String COLUMN_ACTION = "action";
+
+        public static final String COLUMN_COURSE_ID = "course_id";
+
+        public static final String COLUMN_LESSON_ID = "lesson_id";
+
+        public static final String COLUMN_VIDEO_ID = "video_id";
+
+        // can be one of "video", "example", "exercise"
+        public static final String COLUMN_TYPE = "type";
+
+        // only for those whose type is video
+        public static final String COLUMN_VIDEO_TIME = "video_time";
+
+        public static final String COLUMN_STUDENT_ID = "student_id";
+    }
 }

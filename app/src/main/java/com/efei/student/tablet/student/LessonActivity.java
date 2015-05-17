@@ -20,7 +20,7 @@ import com.efei.student.tablet.views.VideoListView;
 
 import java.io.IOException;
 
-public class LessonActivity extends BaseActivity implements SurfaceHolder.Callback, MediaPlayer.OnPreparedListener, VideoControllerView.MediaPlayerControl {
+public class LessonActivity extends BaseActivity implements SurfaceHolder.Callback, MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, VideoControllerView.MediaPlayerControl {
 
     public Lesson mLesson;
     Video mCurVideo;
@@ -53,6 +53,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             player.setDataSource(FileUtils.get_video_local_uri(mLesson.videos()[0]));
             player.prepareAsync();
             player.setOnPreparedListener(this);
+            player.setOnCompletionListener(this);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         } catch (SecurityException e) {
@@ -82,6 +83,9 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             player.setDataSource(FileUtils.get_video_local_uri(video));
             player.prepareAsync();
             player.setOnPreparedListener(this);
+
+
+            // todo: check and finish last learn log, then create new learn log
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -161,6 +165,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     @Override
     public void pause() {
         player.pause();
+        // todo: new action log
     }
 
     @Override
@@ -171,6 +176,19 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     @Override
     public void start() {
         player.start();
+        // todo: new action log
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        // todo: check current video type, can be one of the followings:
+        //  1. an episode video, and has original video: should switch back to the original video. Otherwise...
+        //  2. next video is an example question video, should pause and show tips, waiting for the student to finish the question
+        //  3. next video is still a knowledge video, should play the next video
+        //  4. no next video, should show tips, asking the student to finish the exercise
+
+        // todo: check and finish last learn log, then create new learn log
+
     }
 
     // End VideoMediaController.MediaPlayerControl

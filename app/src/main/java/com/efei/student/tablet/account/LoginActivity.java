@@ -2,7 +2,6 @@ package com.efei.student.tablet.account;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -13,9 +12,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.efei.student.tablet.student.BaseActivity;
 import com.efei.student.tablet.R;
 import com.efei.student.tablet.admin.ManagementActivity;
+import com.efei.student.tablet.student.BaseActivity;
 import com.efei.student.tablet.student.ListActivity;
 import com.efei.student.tablet.utils.NetUtils;
 import com.efei.student.tablet.utils.TextUtils;
@@ -150,12 +149,14 @@ public class LoginActivity extends BaseActivity {
                     }
                 } else {
                     String auth_key = retval.getString("auth_key");
+                    String student_server_id = retval.getString("student_server_id");
                     Boolean admin = retval.getBoolean("admin") || false;
                     String course_id_str = retval.getString("course_id_str");
                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", 0);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.clear().commit();
                     editor.putString("auth_key", auth_key);
+                    editor.putString("student_server_id", student_server_id);
                     editor.putBoolean("admin", admin);
                     editor.putString("course_id_str", course_id_str);
                     JSONArray study_ary = retval.getJSONArray("status");
@@ -176,7 +177,6 @@ public class LoginActivity extends BaseActivity {
                     }
                 }
             } catch (Exception e) {
-
             }
         }
 

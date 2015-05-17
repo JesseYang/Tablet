@@ -15,7 +15,7 @@ import com.efei.student.tablet.R;
 import com.efei.student.tablet.models.Course;
 import com.efei.student.tablet.models.CourseGroup;
 import com.efei.student.tablet.models.Teacher;
-import com.efei.student.tablet.student.LessonActivity;
+import com.efei.student.tablet.student.CourseActivity;
 import com.efei.student.tablet.student.ListActivity;
 import com.efei.student.tablet.utils.FileUtils;
 import com.efei.student.tablet.utils.Subject;
@@ -79,8 +79,14 @@ public class CourseGroupAdapter extends ArrayAdapter<CourseGroup> {
         left_course.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                /*  test video play
                 Intent intent = new Intent(mContext, LessonActivity.class)
                     .putExtra(Intent.EXTRA_TEXT, leftCourse.lessons()[0].server_id);
+                mContext.startActivity(intent);
+                */
+
+                Intent intent = new Intent(mContext, CourseActivity.class).
+                        putExtra(Intent.EXTRA_TEXT, leftCourse.server_id);
                 mContext.startActivity(intent);
             }
         });

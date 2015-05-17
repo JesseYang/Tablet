@@ -9,13 +9,15 @@ import com.efei.student.tablet.data.TabletContract.LessonEntry;
 import com.efei.student.tablet.data.TabletContract.TagEntry;
 import com.efei.student.tablet.data.TabletContract.TeacherEntry;
 import com.efei.student.tablet.data.TabletContract.VideoEntry;
+import com.efei.student.tablet.data.TabletContract.LearnLog;
+import com.efei.student.tablet.data.TabletContract.ActionLog;
 
 /**
  * Created by jesse on 15-5-4.
  */
 public class TabletDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
 
     private static final String DATABASE_NAME = "tablet.db";
 
@@ -97,11 +99,52 @@ public class TabletDbHelper extends SQLiteOpenHelper {
                 VideoEntry.TABLE_NAME + "(" + VideoEntry._ID + ")" +
                 " );";
 
+        final String SQL_CREATE_LEARN_LOG_TABLE = "CREATE TABLE " + LearnLog.TABLE_NAME + " ( " +
+                LearnLog._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                LearnLog.COLUMN_BEGIN_AT + " INTEGER NOT NULL," +
+                LearnLog.COLUMN_END_AT + " INTEGER NOT NULL," +
+                LearnLog.COLUMN_TYPE + " TEXT NOT NULL," +
+                LearnLog.COLUMN_VIDEO_TIME + " INTEGER," +
+                LearnLog.COLUMN_STUDENT_ID + " TEXT NOT NULL," +
+                LearnLog.COLUMN_COURSE_ID + " TEXT NOT NULL," +
+                LearnLog.COLUMN_LESSON_ID + " TEXT NOT NULL," +
+                LearnLog.COLUMN_VIDEO_ID + " TEXT NOT NULL," +
+                LearnLog.COLUMN_ORIGINAL_VIDEO_ID + " TEXT NOT NULL," +
+                " FOREIGN KEY (" + LearnLog.COLUMN_COURSE_ID + ") REFERENCES " +
+                CourseEntry.TABLE_NAME + "(" + CourseEntry._ID + ")," +
+                " FOREIGN KEY (" + LearnLog.COLUMN_LESSON_ID + ") REFERENCES " +
+                LessonEntry.TABLE_NAME + "(" + LessonEntry._ID + ")," +
+                " FOREIGN KEY (" + LearnLog.COLUMN_VIDEO_ID + ") REFERENCES " +
+                VideoEntry.TABLE_NAME + "(" + VideoEntry._ID + ")," +
+                " FOREIGN KEY (" + LearnLog.COLUMN_ORIGINAL_VIDEO_ID + ") REFERENCES " +
+                VideoEntry.TABLE_NAME + "(" + VideoEntry._ID + ")" +
+                ");";
+
+        final String SQL_CREATE_ACTION_LOG_TABLE = "CREATE TABLE " + ActionLog.TABLE_NAME + " ( " +
+                ActionLog._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                ActionLog.COLUMN_HAPPEN_AT + " INTEGER NOT NULL," +
+                ActionLog.COLUMN_ACTION + " TEXT NOT NULL," +
+                ActionLog.COLUMN_TYPE + " TEXT NOT NULL," +
+                ActionLog.COLUMN_VIDEO_TIME + " INTEGER," +
+                ActionLog.COLUMN_STUDENT_ID + " TEXT NOT NULL," +
+                ActionLog.COLUMN_COURSE_ID + " TEXT NOT NULL," +
+                ActionLog.COLUMN_LESSON_ID + " TEXT NOT NULL," +
+                ActionLog.COLUMN_VIDEO_ID + " TEXT NOT NULL," +
+                " FOREIGN KEY (" + ActionLog.COLUMN_COURSE_ID + ") REFERENCES " +
+                CourseEntry.TABLE_NAME + "(" + CourseEntry._ID + ")," +
+                " FOREIGN KEY (" + ActionLog.COLUMN_LESSON_ID +") REFERENCES " +
+                LessonEntry.TABLE_NAME + "(" + LessonEntry._ID + ")," +
+                " FOREIGN KEY (" + ActionLog.COLUMN_VIDEO_ID +") REFERENCES " +
+                VideoEntry.TABLE_NAME + "(" + VideoEntry._ID + ")" +
+                ");";
+
         sqLiteDatabase.execSQL(SQL_CREATE_TEACHER_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_COURSE_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_LESSON_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_VIDEO_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_TAG_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_LEARN_LOG_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_ACTION_LOG_TABLE);
     }
 
     @Override
