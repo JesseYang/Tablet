@@ -129,14 +129,14 @@ public class TabletContract {
         public static final String COLUMN_EPISODE_ID = "episode_id";
     }
 
-    public final class LearnLog implements BaseColumns {
+    public final class LearnLogEntry implements BaseColumns {
         public static final String TABLE_NAME = "learn_log";
 
         public static final String COLUMN_BEGIN_AT = "begin_at";
 
         public static final String COLUMN_END_AT = "end_at";
 
-        // can be one of "video", "example", and "exercise"
+        // 1 for "video", 2 for "example", 3 for "exercise"
         public static final String COLUMN_TYPE = "type";
 
         public static final String COLUMN_COURSE_ID = "course_id";
@@ -145,7 +145,7 @@ public class TabletContract {
 
         public static final String COLUMN_VIDEO_ID = "video_id";
 
-        // only for thoes whose type is video
+        // only for thoes whose type is 1(video)
         public static final String COLUMN_VIDEO_TIME = "video_time";
 
         // only for thoes whose type is video and the video is an episode
@@ -154,7 +154,7 @@ public class TabletContract {
         public static final String COLUMN_STUDENT_ID = "student_id";
     }
 
-    public final  class ActionLog implements BaseColumns {
+    public final  class ActionLogEntry implements BaseColumns {
         public static final String TABLE_NAME = "action_log";
 
         public static final String COLUMN_HAPPEN_AT = "happen_at";
@@ -168,10 +168,10 @@ public class TabletContract {
 
         public static final String COLUMN_VIDEO_ID = "video_id";
 
-        // can be one of "video", "example", "exercise"
+        // 1 for "video", 2 for "example", 3 for "exercise"
         public static final String COLUMN_TYPE = "type";
 
-        // only for those whose type is video
+        // only for those whose type is 1(video)
         public static final String COLUMN_VIDEO_TIME = "video_time";
 
         public static final String COLUMN_STUDENT_ID = "student_id";
