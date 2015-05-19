@@ -37,7 +37,7 @@ public class RegisterActivity extends BaseActivity {
     {
         mAccountView = (TextView) findViewById(R.id.account);
         mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordConfirmView = (EditText) findViewById(R.id.password_confirm);
+        // mPasswordConfirmView = (EditText) findViewById(R.id.password_confirm);
         mRegisterButton = (Button) findViewById(R.id.register_button);
         mRegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,7 +64,7 @@ public class RegisterActivity extends BaseActivity {
         // Store values at the time of the login attempt.
         String email_mobile = mAccountView.getText().toString();
         String password = mPasswordView.getText().toString();
-        String password_confirm = mPasswordConfirmView.getText().toString();
+        // String password_confirm = mPasswordConfirmView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -85,6 +85,7 @@ public class RegisterActivity extends BaseActivity {
             cancel = true;
         }
 
+        /*
         // check that password is the same as password confirmation
         if (!cancel && password != password_confirm)
         {
@@ -92,6 +93,7 @@ public class RegisterActivity extends BaseActivity {
             focusView = mPasswordView;
             cancel = true;
         }
+        */
 
         if (cancel) {
             // There was an error; don't attempt login and focus the
@@ -104,7 +106,7 @@ public class RegisterActivity extends BaseActivity {
             try {
                 params.put("email_mobile", email_mobile);
                 params.put("password", password);
-                params.put("password_confirm", password_confirm);
+                params.put("password_confirm", password);
                 RegisterTask registerTask = new RegisterTask();
                 registerTask.execute(params);
             } catch (JSONException e) {

@@ -6,8 +6,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.efei.student.tablet.R;
 import com.efei.student.tablet.adapters.LessonAdapter;
@@ -17,6 +17,9 @@ public class CourseActivity extends BaseActivity {
 
     public Course mCourse;
     private LessonAdapter mLessonAdapter;
+
+
+    private ImageView mReturn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,11 +32,23 @@ public class CourseActivity extends BaseActivity {
     }
 
     private void setupViews() {
+
+        mReturn = (ImageView) findViewById(R.id.btn_course_return);
+
+        mReturn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(CourseActivity.this, ListActivity.class));
+            }
+        });
+
+        /*
         TextView tv_name = (TextView) findViewById(R.id.tv_detail_course_name);
         TextView tv_teacher = (TextView) findViewById(R.id.tv_detail_teacher_name);
         tv_name.setText(mCourse.name);
         tv_teacher.setText("主讲教师：" + mCourse.get_teacher_name());
         refreshLessons();
+        */
     }
 
     private void refreshLessons() {

@@ -18,5 +18,10 @@
     <color name="course_content">#EEEEEE</color>
     <color name="filter_yellow">#F7C965</color>
     <color name="filter_yellow_pressed">#e7bc61</color>
+    <color name="logo_color">#019A9C</color>
+
+    <color name="account_button_pressed">#007B7D</color>
+    <color name="account_button_unpressed">#019A9C</color>
+    <color name="account_background">#EFEEEC</color>
 
 </resources>

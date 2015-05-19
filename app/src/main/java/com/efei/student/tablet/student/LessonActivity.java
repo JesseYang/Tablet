@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -17,6 +18,7 @@ import com.efei.student.tablet.models.Video;
 import com.efei.student.tablet.utils.FileUtils;
 import com.efei.student.tablet.views.VideoControllerView;
 import com.efei.student.tablet.views.VideoListView;
+import com.efei.student.tablet.utils.GestureListener;
 
 import java.io.IOException;
 
@@ -28,11 +30,15 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     MediaPlayer player;
     VideoControllerView controller;
     VideoListView list;
+    private GestureDetector mGestureDetector;
 
+    private AudioManager audiomanage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        audiomanage = (AudioManager)getSystemService(AUDIO_SERVICE);
+
         setContentView(R.layout.activity_lesson);
         Intent intent = getIntent();
         String server_id = intent.getStringExtra(intent.EXTRA_TEXT);
@@ -63,6 +69,9 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        // Bind the gestureDetector to GestureListener
+        mGestureDetector = new GestureDetector(this, new GestureListener());
     }
 
     public void checkTag(int last_position, int position) {
@@ -92,10 +101,42 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        controller.show();
-        list.show();
-        return false;
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        //method onTouchEvent of GestureDetector class Analyzes the given motion event
+        //and if applicable triggers the appropriate callbacks on the GestureDetector.OnGestureListener supplied.
+        //Returns true if the GestureDetector.OnGestureListener consumed the event, else false.
+
+        boolean eventConsumed = mGestureDetector.onTouchEvent(event);
+        if (eventConsumed)
+        {
+            if (GestureListener.gesture.equals("DOWN")) {
+                controller.show();
+                list.show();
+            }
+
+            if (GestureListener.gesture.equals("SCROLL")) {
+                // should adjust the volume
+                if (Math.abs(GestureListener.distanceY) > Math.abs(GestureListener.distanceX) * 3 && Math.abs(GestureListener.distanceY) > 5) {
+                    if (GestureListener.distanceY > 0) {
+                        audiomanage.adjustVolume(AudioManager.ADJUST_RAISE, 0);
+                    } else {
+                        audiomanage.adjustVolume(AudioManager.ADJUST_LOWER, 0);
+                    }
+                }
+
+                if (Math.abs(GestureListener.distanceX) > Math.abs(GestureListener.distanceY) * 3 && Math.abs(GestureListener.distanceX) > 5) {
+                    if (GestureListener.distanceX > 0) {
+                        controller.goBackward();
+                    } else {
+                        controller.goForward();
+                    }
+                }
+            }
+            return true;
+        }
+        else
+            return false;
     }
 
     // Implement SurfaceHolder.Callback

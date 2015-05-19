@@ -522,6 +522,26 @@ public class VideoControllerView extends FrameLayout {
         super.setEnabled(enabled);
     }
 
+    public void goBackward() {
+        if (mPlayer == null) {
+            return;
+        }
+        int pos = mPlayer.getCurrentPosition();
+        pos -= 1000;
+        mPlayer.seekTo(pos);
+        setProgress();
+    }
+
+    public void goForward() {
+        if (mPlayer == null) {
+            return;
+        }
+        int pos = mPlayer.getCurrentPosition();
+        pos += 1000;
+        mPlayer.seekTo(pos);
+        setProgress();
+    }
+
     private View.OnClickListener mRewListener = new View.OnClickListener() {
         public void onClick(View v) {
             if (mPlayer == null) {

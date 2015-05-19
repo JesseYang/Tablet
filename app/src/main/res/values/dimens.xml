@@ -37,4 +37,6 @@
     <dimen name="course_item_radius">5dp</dimen>
     <dimen name="filter_popup_width">224dp</dimen>
     <dimen name="filter_popup_inner_width">222dp</dimen>
+    <dimen name="input_icon_width">32dp</dimen>
+    <dimen name="title_bar_ret_icon_width">32dp</dimen>
 </resources>

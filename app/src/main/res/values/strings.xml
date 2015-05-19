@@ -3,7 +3,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="follow_weixin">请关注我们的微信公众号：易飞教育</string>
+    <string name="follow_weixin">请关注我们的微信公众号</string>
     <string name="account">帐号</string>
     <string name="login_account_hint">手机号/邮箱</string>
     <string name="register_account_hint">手机号或者邮箱</string>
@@ -11,8 +11,8 @@
     <string name="password_confirm">确认密码</string>
     <string name="register_password">6-16位区分大小写密码</string>
     <string name="register_password_confirm">重复输入密码</string>
-    <string name="action_sign_in">登录</string>
-    <string name="action_register">立即注册</string>
+    <string name="action_sign_in">登&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;录</string>
+    <string name="action_register">立&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;即&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;注&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;册</string>
     <string name="action_go_register">没有帐号？立即注册</string>
     <string name="action_go_login">已有帐号？立即登录</string>
     <string name="title_activity_login">LoginActivity</string>
@@ -23,7 +23,7 @@
     <string name="city">城市</string>
     <string name="school">学校</string>
     <string name="grade">年级</string>
-    <string name="action_finish_register">完成注册</string>
+    <string name="action_finish_register">完&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;成&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;注&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;册</string>
     <string name="title_activity_management">ManagementActivity</string>
 
     <string name="action_refresh_course_list">更新课程列表</string>
@@ -40,4 +40,17 @@
     <string name="course_item_desc_prefix">课程简介：</string>
     <string name="course_item_teacher_prefix">主\n讲\n老\n师\n：\n</string>
     <string name="course_item_begin_action"><u>开始学习</u></string>
+    <string name="login_password_hint">6-16位区分大小写密码</string>
+    <string name="info_realname_hint">真实姓名</string>
+    <string name="info_city_hint">城市</string>
+    <string name="info_xiaoyuan_hint">学校</string>
+    <string name="course_test_string">高一物理上学期同步复习（人教版）</string>
+    <string name="last_time_learn">上次学习到</string>
+    <string name="temp1">第三讲：图形的相似</string>
+    <string name="continue_study">继续学习</string>
+    <string name="course_page_video_status">课程学习</string>
+    <string name="course_page_exercise_status">课后练习</string>
+    <string name="course_desc">课程简介</string>
+    <string name="temp2">这门课非常有意思，非常非常地有意思，简直太棒了。超棒，极好，赶紧开始吧，再不开始就晚了，考不上大学了。简介还不够长，怎么办呢，怎么办呢，赶紧想办法啊，快快想办法，加油加油！！再多些几个字，再来一首，啦啦啦，啦啦啦，我是卖报的小画家。</string>
+    <string name="temp3">主讲教师：张老三</string>
 </resources>
