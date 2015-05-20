@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.efei.student.tablet.R;
 import com.efei.student.tablet.adapters.LessonAdapter;
@@ -20,6 +21,7 @@ public class CourseActivity extends BaseActivity {
 
 
     private ImageView mReturn;
+    private TextView mContinue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,13 +44,24 @@ public class CourseActivity extends BaseActivity {
             }
         });
 
+        mContinue = (TextView) findViewById(R.id.course_page_continue_study);
+
+        mContinue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String lesson_id = mCourse.lessons()[0].server_id;
+                Intent intent = new Intent(CourseActivity.this, LessonActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, lesson_id);
+                startActivity(intent);
+            }
+        });
+
         /*
         TextView tv_name = (TextView) findViewById(R.id.tv_detail_course_name);
         TextView tv_teacher = (TextView) findViewById(R.id.tv_detail_teacher_name);
         tv_name.setText(mCourse.name);
-        tv_teacher.setText("主讲教师：" + mCourse.get_teacher_name());
+        tv_teacher.setText("主讲教师：" + mCourse.get_teacher_name());*/
         refreshLessons();
-        */
     }
 
     private void refreshLessons() {
@@ -59,7 +72,7 @@ public class CourseActivity extends BaseActivity {
                         mCourse.lessons()
                 );
 
-        ListView listView = (ListView) findViewById(R.id.lv_lesson_list);
+        ListView listView = (ListView) findViewById(R.id.course_page_lesson_list);
         listView.setAdapter(mLessonAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

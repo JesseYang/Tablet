@@ -33,6 +33,9 @@ public class LessonAdapter extends ArrayAdapter<Lesson> {
         TextView lesson_name = (TextView) converterView.findViewById(R.id.tv_course_lesson);
         lesson_name.setText(lesson.name);
 
+        TextView study_status = (TextView) converterView.findViewById(R.id.tv_course_lesson_study_status);
+        TextView exercise_status = (TextView) converterView.findViewById(R.id.tv_course_lesson_exercise_status);
+
 
         return converterView;
     }
