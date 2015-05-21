@@ -1,5 +1,6 @@
 package com.efei.student.tablet.student;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,10 +13,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.efei.student.tablet.R;
+import com.efei.student.tablet.account.LoginActivity;
 import com.efei.student.tablet.adapters.CourseGroupAdapter;
 import com.efei.student.tablet.models.Course;
 import com.efei.student.tablet.models.CourseGroup;
 import com.efei.student.tablet.views.FilterView;
+import com.efei.student.tablet.views.SettingView;
 
 import java.util.ArrayList;
 
@@ -35,8 +38,10 @@ public class ListActivity extends BaseActivity {
     private ImageView mSetting;
 
     public FilterView mFilterView;
+    public SettingView mSettingView;
 
     private boolean mShowFilter = false;
+    private boolean mShowSetting = false;
 
     private Button mContinue;
 
@@ -74,10 +79,14 @@ public class ListActivity extends BaseActivity {
         mFilterView = new FilterView(this);
         mFilterView.setAnchorView((FrameLayout) findViewById(R.id.activity_list_root_view));
 
+        mSettingView = new SettingView(this, "ListActivity");
+        mSettingView.setAnchorView((FrameLayout) findViewById(R.id.activity_list_root_view));
+
         mSearchText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 hideFilterView();
+                hideSettingView();
             }
         });
 
@@ -86,6 +95,7 @@ public class ListActivity extends BaseActivity {
             public void onClick(View view) {
                 mConditionKey = mSearchText.getText().toString();
                 hideFilterView();
+                hideSettingView();
                 refreshCourses();
             }
         });
@@ -96,10 +106,25 @@ public class ListActivity extends BaseActivity {
 
                 if (!mShowFilter) {
                     mFilterView.show();
+                    hideSettingView();
                     mShowFilter = true;
                 } else {
                     mFilterView.hide();
                     mShowFilter = false;
+                }
+            }
+        });
+
+        mSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!mShowSetting) {
+                    mSettingView.show();
+                    hideFilterView();
+                    mShowSetting = true;
+                } else {
+                    mSettingView.hide();
+                    mShowSetting = false;
                 }
             }
         });
@@ -114,6 +139,7 @@ public class ListActivity extends BaseActivity {
                 mAllCourse.setSelected(true);
                 mConditionMy = false;
                 hideFilterView();
+                hideSettingView();
                 refreshCourses();
             }
         });
@@ -128,6 +154,7 @@ public class ListActivity extends BaseActivity {
                 mAllCourse.setSelected(false);
                 mConditionMy = true;
                 hideFilterView();
+                hideSettingView();
                 refreshCourses();
             }
         });
@@ -135,10 +162,21 @@ public class ListActivity extends BaseActivity {
         refreshCourses();
     }
 
+    public void exit() {
+        startActivity(new Intent(ListActivity.this, LoginActivity.class));
+    }
+
     private void hideFilterView() {
         if (mShowFilter) {
             mFilterView.hide();
             mShowFilter = false;
+        }
+    }
+
+    private void hideSettingView() {
+        if (mShowSetting) {
+            mSettingView.hide();
+            mShowSetting = false;
         }
     }
 

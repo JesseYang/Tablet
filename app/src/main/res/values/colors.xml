@@ -23,5 +23,8 @@
     <color name="account_button_pressed">#007B7D</color>
     <color name="account_button_unpressed">#019A9C</color>
     <color name="account_background">#EFEEEC</color>
+    <color name="lesson_item_status_yellow">#FF9900</color>
+    <color name="lesson_item_status_gray">#CCCCCC</color>
+    <color name="lesson_item_status_blue">#83C1EB</color>
 
 </resources>

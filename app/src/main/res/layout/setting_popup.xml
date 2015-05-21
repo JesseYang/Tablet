@@ -1,0 +1,28 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/filter_popup_width"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="0dp"
+    android:paddingBottom="0dp"
+    android:background="@color/transparent">
+
+    <View
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginLeft="190dp"
+        android:layout_marginTop="-28dp"
+        android:background="@drawable/filter_triangle"/>
+
+    <Button
+        android:id="@+id/setting_exit_btn"
+        android:layout_width="@dimen/filter_popup_width"
+        android:layout_height="44dp"
+        android:background="@drawable/setting_exit_button_background"
+        android:text="退出登录"
+        android:textColor="@color/white"
+        android:layout_gravity="center" />
+
+</LinearLayout>

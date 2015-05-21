@@ -6,13 +6,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.efei.student.tablet.R;
+import com.efei.student.tablet.account.LoginActivity;
 import com.efei.student.tablet.adapters.LessonAdapter;
 import com.efei.student.tablet.models.Course;
+import com.efei.student.tablet.views.SettingView;
 
 public class CourseActivity extends BaseActivity {
 
@@ -22,6 +25,11 @@ public class CourseActivity extends BaseActivity {
 
     private ImageView mReturn;
     private TextView mContinue;
+
+
+    private ImageView mSetting;
+    public SettingView mSettingView;
+    private boolean mShowSetting = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +64,36 @@ public class CourseActivity extends BaseActivity {
             }
         });
 
-        /*
-        TextView tv_name = (TextView) findViewById(R.id.tv_detail_course_name);
-        TextView tv_teacher = (TextView) findViewById(R.id.tv_detail_teacher_name);
-        tv_name.setText(mCourse.name);
-        tv_teacher.setText("主讲教师：" + mCourse.get_teacher_name());*/
+
+        mSetting = (ImageView) findViewById(R.id.btn_setting);
+        mSettingView = new SettingView(this, "CourseActivity");
+        mSettingView.setAnchorView((FrameLayout) findViewById(R.id.activity_course_root_view));
+
+        mSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!mShowSetting) {
+                    mSettingView.show();
+                    mShowSetting = true;
+                } else {
+                    mSettingView.hide();
+                    mShowSetting = false;
+                }
+            }
+        });
+
         refreshLessons();
+    }
+
+    private void hideSettingView() {
+        if (mShowSetting) {
+            mSettingView.hide();
+            mShowSetting = false;
+        }
+    }
+
+    public void exit() {
+        startActivity(new Intent(CourseActivity.this, LoginActivity.class));
     }
 
     private void refreshLessons() {

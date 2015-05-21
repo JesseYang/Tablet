@@ -1,9 +1,11 @@
 package com.efei.student.tablet.student;
 
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -16,9 +18,10 @@ import com.efei.student.tablet.models.Lesson;
 import com.efei.student.tablet.models.Tag;
 import com.efei.student.tablet.models.Video;
 import com.efei.student.tablet.utils.FileUtils;
+import com.efei.student.tablet.utils.GestureListener;
 import com.efei.student.tablet.views.VideoControllerView;
 import com.efei.student.tablet.views.VideoListView;
-import com.efei.student.tablet.utils.GestureListener;
+import com.efei.student.tablet.views.VideoTopView;
 
 import java.io.IOException;
 
@@ -30,7 +33,9 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     MediaPlayer player;
     VideoControllerView controller;
     VideoListView list;
+    VideoTopView topView;
     private GestureDetector mGestureDetector;
+    PowerManager.WakeLock mWakeLock;
 
     private AudioManager audiomanage;
 
@@ -53,6 +58,9 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         list = new VideoListView(this);
         list.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
 
+        topView = new VideoTopView(this);
+        topView.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
+
         try {
             player.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mCurVideo = mLesson.videos()[0];
@@ -72,6 +80,16 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
 
         // Bind the gestureDetector to GestureListener
         mGestureDetector = new GestureDetector(this, new GestureListener());
+
+        PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        mWakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "GLGame");
+        mWakeLock.acquire();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mWakeLock.release();
     }
 
     public void checkTag(int last_position, int position) {
@@ -111,8 +129,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         if (eventConsumed)
         {
             if (GestureListener.gesture.equals("DOWN")) {
-                controller.show();
-                list.show();
+                showOperations();
             }
 
             if (GestureListener.gesture.equals("SCROLL")) {
@@ -137,6 +154,12 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         }
         else
             return false;
+    }
+
+    public void showOperations() {
+        controller.show();
+        list.show();
+        topView.show();
     }
 
     // Implement SurfaceHolder.Callback

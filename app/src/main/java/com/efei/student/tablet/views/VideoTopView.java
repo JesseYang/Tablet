@@ -1,57 +1,46 @@
 package com.efei.student.tablet.views;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ListView;
 
 import com.efei.student.tablet.R;
-import com.efei.student.tablet.adapters.VideoAdapter;
 import com.efei.student.tablet.models.Lesson;
-import com.efei.student.tablet.models.Video;
+import com.efei.student.tablet.student.CourseActivity;
 import com.efei.student.tablet.student.LessonActivity;
 
 import java.lang.ref.WeakReference;
 
-public class VideoListView extends FrameLayout {
+public class VideoTopView extends FrameLayout {
 
     private Lesson mLesson;
     private ViewGroup mAnchor;
     private Context mContext;
-    private String[] mVideoItems;
-    private Video[] mVideos;
     private View mRoot;
     private boolean mShowing;
-    private VideoAdapter mVideoAdapter;
     private static final int    sDefaultTimeout = 3000;
     private static final int    FADE_OUT = 1;
     private Handler             mHandler = new MessageHandler(this);
 
-    private ImageView show_hide_list;
-    private boolean mShowList;
-    private ListView mVideoListView;
+    private ImageView mReturn;
 
-    public VideoListView(Context context) {
+    public VideoTopView(Context context) {
         super(context);
         mContext = context;
         mLesson = ((LessonActivity)context).mLesson;
-        mVideoItems = mLesson.get_video_items();
-        mVideos = mLesson.videos();
-        mVideoAdapter = new VideoAdapter(context, R.layout.video_item, mVideoItems);
     }
 
     public void setAnchorView(ViewGroup view) {
         mAnchor = view;
 
-        FrameLayout.LayoutParams frameParams = new FrameLayout.LayoutParams(
+        LayoutParams frameParams = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
         );
@@ -60,44 +49,22 @@ public class VideoListView extends FrameLayout {
         View v = makeControllerView();
         addView(v, frameParams);
 
+        mReturn = (ImageView) findViewById(R.id.btn_course_return);
 
-        mShowList = false;
-        show_hide_list = (ImageView) v.findViewById(R.id.video_list_show_hide_image);
-        mVideoListView = (ListView) v.findViewById(R.id.lv_video_list);
-
-
-        show_hide_list.setOnClickListener(new OnClickListener() {
+        mReturn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                if (mShowList) {
-                    mVideoListView.setVisibility(GONE);
-                    show_hide_list.setImageResource(R.drawable.show_video_list);
-                    mShowList = false;
-                } else {
-                    mVideoListView.setVisibility(VISIBLE);
-                    show_hide_list.setImageResource(R.drawable.hide_video_list);
-                    mShowList = true;
-                }
-                ((LessonActivity)mContext).showOperations();
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, CourseActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, mLesson.course_id);
+                mContext.startActivity(intent);
             }
         });
 
-
-
-
-                ListView listView = (ListView) mRoot.findViewById(R.id.lv_video_list);
-        listView.setAdapter(mVideoAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ((LessonActivity)mContext).switchVideo(mVideos[position]);
-            }
-        });
     }
 
     protected View makeControllerView() {
         LayoutInflater inflate = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mRoot = inflate.inflate(R.layout.video_list, null);
+        mRoot = inflate.inflate(R.layout.video_top, null);
         initControllerView();
         return mRoot;
     }
@@ -114,7 +81,6 @@ public class VideoListView extends FrameLayout {
         try {
             mAnchor.removeView(this);
         } catch (IllegalArgumentException ex) {
-            Log.w("MediaController", "already removed");
         }
         mShowing = false;
     }
@@ -126,10 +92,10 @@ public class VideoListView extends FrameLayout {
     public void show(int timeout) {
         if (!mShowing && mAnchor != null) {
 
-            FrameLayout.LayoutParams tlp = new FrameLayout.LayoutParams(
+            LayoutParams tlp = new LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT,
-                    Gravity.RIGHT
+                    Gravity.TOP
             );
 
 
@@ -145,14 +111,14 @@ public class VideoListView extends FrameLayout {
     }
 
     private static class MessageHandler extends Handler {
-        private final WeakReference<VideoListView> mView;
+        private final WeakReference<VideoTopView> mView;
 
-        MessageHandler(VideoListView view) {
+        MessageHandler(VideoTopView view) {
             mView = new WeakReference<>(view);
         }
         @Override
         public void handleMessage(Message msg) {
-            VideoListView view = mView.get();
+            VideoTopView view = mView.get();
             if (view == null) {
                 return;
             }

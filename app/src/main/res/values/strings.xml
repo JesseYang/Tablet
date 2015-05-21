@@ -48,11 +48,12 @@
     <string name="last_time_learn">上次学习到</string>
     <string name="temp1">第三讲：图形的相似</string>
     <string name="continue_study">继续学习</string>
-    <string name="course_page_video_status">课程学习</string>
-    <string name="course_page_exercise_status">课后练习</string>
     <string name="course_desc">课程简介</string>
     <string name="temp2">这门课非常有意思，非常非常地有意思，简直太棒了。超棒，极好，赶紧开始吧，再不开始就晚了，考不上大学了。简介还不够长，怎么办呢，怎么办呢，赶紧想办法啊，快快想办法，加油加油！！再多些几个字，再来一首，啦啦啦，啦啦啦，我是卖报的小画家。</string>
     <string name="temp3">主讲教师：张老三</string>
     <string name="temp4">正在进行</string>
     <string name="temp5">还未完成</string>
+
+    <string name="lesson_number">第#讲：</string>
+
 </resources>
