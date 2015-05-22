@@ -171,7 +171,6 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         player.setDisplay(holder);
-        // player.prepareAsync();
     }
 
     @Override

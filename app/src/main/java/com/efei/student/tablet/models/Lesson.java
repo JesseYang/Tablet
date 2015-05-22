@@ -13,6 +13,7 @@ import com.efei.student.tablet.utils.NetUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Lesson {
@@ -178,5 +179,26 @@ public class Lesson {
             i++;
         }
         return video_items;
+    }
+
+    public Video[] get_extended_video_items() {
+        Video[] videos = this.videos();
+        ArrayList<Video> videoList = new ArrayList<>();
+        videoList.add(new Video("title"));
+        boolean knowledge = false, example = false, episode = false;
+        for (Video v : videos) {
+            if (v.type == 1 && knowledge == false) {
+                videoList.add(new Video("knowledge"));
+                knowledge = true;
+            } else if (v.type == 2 && example == false) {
+                videoList.add(new Video("example"));
+                example = true;
+            } else if (v.type == 3 && episode == false) {
+                videoList.add(new Video("episode"));
+                episode = true;
+            }
+            videoList.add(v);
+        }
+        return (Video[])videoList.toArray();
     }
 }

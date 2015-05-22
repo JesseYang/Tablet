@@ -6,6 +6,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -78,7 +79,7 @@ public class VideoListView extends FrameLayout {
                     show_hide_list.setImageResource(R.drawable.hide_video_list);
                     mShowList = true;
                 }
-                ((LessonActivity)mContext).showOperations();
+                ((LessonActivity) mContext).showOperations();
             }
         });
 
@@ -90,7 +91,14 @@ public class VideoListView extends FrameLayout {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ((LessonActivity)mContext).switchVideo(mVideos[position]);
+                ((LessonActivity) mContext).switchVideo(mVideos[position]);
+            }
+        });
+        listView.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                ((LessonActivity)mContext).showOperations();
+                return false;
             }
         });
     }

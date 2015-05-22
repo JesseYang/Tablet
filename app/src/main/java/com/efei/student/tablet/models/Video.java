@@ -27,6 +27,12 @@ public class Video {
     public String update_at;
     public String lesson_id;
 
+    public String ele_type;
+
+    public Video(String ele_type) {
+        this.ele_type = ele_type;
+    }
+
     public Video(Context context, Cursor cursor) {
         this.mContext = context;
 
@@ -39,6 +45,8 @@ public class Video {
         this.video_url = cursor.getString(cursor.getColumnIndex(TabletContract.VideoEntry.COLUMN_VIDEO_URL));
         this.update_at = cursor.getString(cursor.getColumnIndex(TabletContract.VideoEntry.COLUMN_UPDATE_AT));
         this.lesson_id = cursor.getString(cursor.getColumnIndex(TabletContract.VideoEntry.COLUMN_LESSON_ID));
+
+        this.ele_type = "video";
     }
 
     public Tag[] tags() {
