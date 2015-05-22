@@ -55,5 +55,9 @@
     <string name="temp5">还未完成</string>
 
     <string name="lesson_number">第#讲：</string>
+    <string name="video_list_knowledge">知识点讲解</string>
+    <string name="video_list_example">例题讲解</string>
+    <string name="video_list_episode">知识片段</string>
+    <string name="video_list_title">本讲索引列表</string>
 
 </resources>

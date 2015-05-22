@@ -184,21 +184,27 @@ public class Lesson {
     public Video[] get_extended_video_items() {
         Video[] videos = this.videos();
         ArrayList<Video> videoList = new ArrayList<>();
-        videoList.add(new Video("title"));
+        videoList.add(new Video(mContext, "title"));
         boolean knowledge = false, example = false, episode = false;
         for (Video v : videos) {
             if (v.type == 1 && knowledge == false) {
-                videoList.add(new Video("knowledge"));
+                videoList.add(new Video(mContext, "knowledge"));
                 knowledge = true;
             } else if (v.type == 2 && example == false) {
-                videoList.add(new Video("example"));
+                videoList.add(new Video(mContext, "example"));
                 example = true;
             } else if (v.type == 3 && episode == false) {
-                videoList.add(new Video("episode"));
+                videoList.add(new Video(mContext, "episode"));
                 episode = true;
             }
             videoList.add(v);
         }
-        return (Video[])videoList.toArray();
+        Video[] ret = new Video[videoList.size()];
+        int i = 0;
+        for (Video v : videoList) {
+            ret[i] = v;
+            i++;
+        }
+        return ret;
     }
 }

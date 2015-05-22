@@ -27,7 +27,7 @@ public class VideoListView extends FrameLayout {
     private Lesson mLesson;
     private ViewGroup mAnchor;
     private Context mContext;
-    private String[] mVideoItems;
+    private Video[] mVideoItems;
     private Video[] mVideos;
     private View mRoot;
     private boolean mShowing;
@@ -44,7 +44,7 @@ public class VideoListView extends FrameLayout {
         super(context);
         mContext = context;
         mLesson = ((LessonActivity)context).mLesson;
-        mVideoItems = mLesson.get_video_items();
+        mVideoItems = mLesson.get_extended_video_items();
         mVideos = mLesson.videos();
         mVideoAdapter = new VideoAdapter(context, R.layout.video_item, mVideoItems);
     }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.efei.student.tablet.R;
 import com.efei.student.tablet.data.TabletContract;
 import com.efei.student.tablet.data.TabletDbHelper;
 import com.efei.student.tablet.utils.FileUtils;
@@ -29,8 +30,18 @@ public class Video {
 
     public String ele_type;
 
-    public Video(String ele_type) {
+    public Video(Context context, String ele_type) {
+        this.mContext = context;
         this.ele_type = ele_type;
+        if (ele_type.equals("knowledge")) {
+            this.name = mContext.getResources().getString(R.string.video_list_knowledge);
+        } else if (ele_type.equals("example")) {
+            this.name = mContext.getResources().getString(R.string.video_list_example);
+        } else if (ele_type.equals("episode")) {
+            this.name = mContext.getResources().getString(R.string.video_list_episode);
+        } else if (ele_type.equals("title")) {
+            this.name = mContext.getResources().getString(R.string.video_list_title);
+        }
     }
 
     public Video(Context context, Cursor cursor) {
