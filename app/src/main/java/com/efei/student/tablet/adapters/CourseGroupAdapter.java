@@ -79,12 +79,6 @@ public class CourseGroupAdapter extends ArrayAdapter<CourseGroup> {
         left_course.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*  test video play
-                Intent intent = new Intent(mContext, LessonActivity.class)
-                    .putExtra(Intent.EXTRA_TEXT, leftCourse.lessons()[0].server_id);
-                mContext.startActivity(intent);
-                */
-
                 Intent intent = new Intent(mContext, CourseActivity.class).
                         putExtra(Intent.EXTRA_TEXT, leftCourse.server_id);
                 mContext.startActivity(intent);
@@ -93,7 +87,7 @@ public class CourseGroupAdapter extends ArrayAdapter<CourseGroup> {
 
 
         // inflate the right view
-        Course rightCourse = courseGroup.right_course;
+        final Course rightCourse = courseGroup.right_course;
 
         if (rightCourse == null) {
             converterView.findViewById(R.id.right_course).setVisibility(View.INVISIBLE);
@@ -122,6 +116,15 @@ public class CourseGroupAdapter extends ArrayAdapter<CourseGroup> {
         right_course_desc.setText(Html.fromHtml("<b>" + mContext.getResources().getString(R.string.course_item_desc_prefix) + "</b>" + rightCourse.desc));
 
 
+        final View right_course = converterView.findViewById(R.id.right_course);
+        right_course.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, CourseActivity.class).
+                        putExtra(Intent.EXTRA_TEXT, rightCourse.server_id);
+                mContext.startActivity(intent);
+            }
+        });
 
         return converterView;
     }

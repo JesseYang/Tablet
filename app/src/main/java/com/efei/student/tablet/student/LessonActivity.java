@@ -233,6 +233,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
                 if (Math.abs(GestureListener.distanceX) > Math.abs(GestureListener.distanceY) * 3 && Math.abs(GestureListener.distanceX) > 5) {
                     player.pause();
                     mFwdPause = true;
+                    exampleQuestionDialogView.hide();
                     if (GestureListener.distanceX > 0) {
                         controller.goBackward();
                     } else {

@@ -234,6 +234,8 @@ public class Course {
                 null);
     }
 
+
+
     public String get_teacher_name() {
 
         TabletDbHelper dbHelper = new TabletDbHelper(mContext);

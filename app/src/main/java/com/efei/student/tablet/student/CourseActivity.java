@@ -1,6 +1,7 @@
 package com.efei.student.tablet.student;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,21 +16,31 @@ import com.efei.student.tablet.R;
 import com.efei.student.tablet.account.LoginActivity;
 import com.efei.student.tablet.adapters.LessonAdapter;
 import com.efei.student.tablet.models.Course;
+import com.efei.student.tablet.models.Teacher;
+import com.efei.student.tablet.utils.FileUtils;
 import com.efei.student.tablet.views.SettingView;
 
 public class CourseActivity extends BaseActivity {
 
     public Course mCourse;
+    private Teacher mTeacher;
     private LessonAdapter mLessonAdapter;
 
 
     private ImageView mReturn;
     private TextView mContinue;
 
+    private TextView mCourseDesc;
+    private TextView mTeacherDesc;
+    private TextView mTeacherName;
+
 
     private ImageView mSetting;
     public SettingView mSettingView;
     private boolean mShowSetting = false;
+
+    private ImageView mTextbook;
+    private ImageView mTeacherAvatar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +49,7 @@ public class CourseActivity extends BaseActivity {
         Intent intent = getIntent();
         String server_id = intent.getStringExtra(intent.EXTRA_TEXT);
         mCourse = Course.get_course_by_id(server_id, getApplicationContext());
+        mTeacher = mCourse.teacher();
         setupViews();
     }
 
@@ -53,7 +65,6 @@ public class CourseActivity extends BaseActivity {
         });
 
         mContinue = (TextView) findViewById(R.id.course_page_continue_study);
-
         mContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,6 +74,25 @@ public class CourseActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
+
+        mCourseDesc = (TextView) findViewById(R.id.course_page_course_desc);
+        mCourseDesc.setText(mCourse.desc);
+
+        mTeacherDesc = (TextView) findViewById(R.id.course_page_teacher_desc);
+        mTeacherDesc.setText(mTeacher.desc);
+
+        mTeacherName = (TextView) findViewById(R.id.course_page_teacher_name);
+        mTeacherName.setText("主讲老师：" + mTeacher.name);
+
+        mTeacherAvatar = (ImageView) findViewById(R.id.teacher_avatar);
+        Uri imgUri = Uri.parse(FileUtils.get_avatar_local_uri(mTeacher));
+        mTeacherAvatar.setImageURI(imgUri);
+        mTeacherAvatar.setScaleType(ImageView.ScaleType.FIT_XY);
+
+        mTextbook = (ImageView) findViewById(R.id.textbook_img);
+        imgUri = Uri.parse(FileUtils.get_textbook_local_uri(mCourse));
+        mTextbook.setImageURI(imgUri);
+        mTextbook.setScaleType(ImageView.ScaleType.FIT_XY);
 
 
         mSetting = (ImageView) findViewById(R.id.btn_setting);

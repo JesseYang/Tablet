@@ -18,6 +18,7 @@ import com.efei.student.tablet.student.BaseActivity;
 import com.efei.student.tablet.student.ListActivity;
 import com.efei.student.tablet.utils.NetUtils;
 import com.efei.student.tablet.utils.TextUtils;
+import com.efei.student.tablet.utils.ToastUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,6 +29,7 @@ public class LoginActivity extends BaseActivity {
     private TextView mAccountView;
     private EditText mPasswordView;
     private Button mLoginButton;
+    private Toast mToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +75,8 @@ public class LoginActivity extends BaseActivity {
         // Check for a valid email address.
         if (!isAccountValid(email_mobile))
         {
-            mAccountView.setError("请填写合法的手机号或邮箱号！");
+            ToastUtils.showToast(this, "请填写合法的手机号或邮箱号！");
+            // mAccountView.setError("请填写合法的手机号或邮箱号！");
             focusView = mAccountView;
             cancel = true;
         }
@@ -81,7 +84,8 @@ public class LoginActivity extends BaseActivity {
         // Check for a valid password, if the user entered one.
         if (!cancel && !isPasswordValid(password))
         {
-            mPasswordView.setError("请填写长度为6~16的密码！");
+            ToastUtils.showToast(this, "请填写长度为6~16的密码！");
+            // mPasswordView.setError("请填写长度为6~16的密码！");
             focusView = mPasswordView;
             cancel = true;
         }
@@ -92,12 +96,13 @@ public class LoginActivity extends BaseActivity {
             focusView.requestFocus();
         }
         else {
+            ToastUtils.showToast(this, "正在登录，请稍后");
             // execute Login task
             JSONObject params = new JSONObject();
             try {
                 params.put("email_mobile", email_mobile);
                 params.put("password", password);
-                LoginTask loginTask = new LoginTask();
+                LoginTask loginTask = new LoginTask(this);
                 loginTask.execute(params);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -115,6 +120,12 @@ public class LoginActivity extends BaseActivity {
     }
 
     private class LoginTask extends AsyncTask<JSONObject, Void, JSONObject> {
+
+        LoginActivity mActivity;
+
+        public LoginTask(LoginActivity activity) {
+            mActivity = activity;
+        }
 
         @Override
         protected JSONObject doInBackground(JSONObject... params) {
@@ -139,10 +150,10 @@ public class LoginActivity extends BaseActivity {
                     // show the error message
                     switch (retval.getInt("code")) {
                         case -1:
-                            Toast.makeText(getApplicationContext(), "帐号不存在", Toast.LENGTH_SHORT).show();
+                            ToastUtils.showToast(mActivity, "帐号不存在");
                             break;
                         case -2:
-                            Toast.makeText(getApplicationContext(), "密码错误", Toast.LENGTH_SHORT).show();
+                            ToastUtils.showToast(mActivity, "密码错误");
                             break;
                         default:
                             break;
@@ -170,7 +181,7 @@ public class LoginActivity extends BaseActivity {
                                 course_status.getString("time"));
                     }
                     editor.commit();
-                    Toast.makeText(getApplicationContext(), "登录成功，正在跳转，请稍后", Toast.LENGTH_SHORT).show();
+                    ToastUtils.showToast(mActivity, "登录成功，正在跳转");
                     if (admin) {
                         startActivity(new Intent(LoginActivity.this, ManagementActivity.class));
                     } else {

@@ -109,6 +109,9 @@ public class VideoListView extends FrameLayout {
                 ((LessonActivity) mContext).removeParentVideo();
                 ((LessonActivity) mContext).clearViews();
                 ((LessonActivity) mContext).switchVideo(mVideos[position]);
+                mVideoListWrapper.setVisibility(GONE);
+                mShowListButton.setVisibility(VISIBLE);
+                mShowList = false;
             }
         });
         listView.setOnTouchListener(new OnTouchListener() {

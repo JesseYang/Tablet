@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.efei.student.tablet.R;
 import com.efei.student.tablet.student.LessonActivity;

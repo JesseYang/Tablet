@@ -1,18 +1,11 @@
 package com.efei.student.tablet.student;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.Window;
-
-import com.efei.student.tablet.R;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -20,6 +13,8 @@ import org.json.JSONObject;
  * Created by jesse on 15-5-9.
  */
 public class BaseActivity extends Activity {
+
+    public Toast mToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

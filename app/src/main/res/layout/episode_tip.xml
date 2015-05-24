@@ -34,5 +34,21 @@
             android:layout_height="wrap_content"
             android:textColor="@color/text_grey"
             android:text="@string/check"/>
+
+        <Button
+            android:id="@+id/skip_episode_video_button"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/next_example_video_background"
+            android:text="@string/here"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_grey"
+            android:text="@string/skip"/>
     </LinearLayout>
 </LinearLayout>

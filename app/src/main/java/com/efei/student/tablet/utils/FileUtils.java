@@ -66,4 +66,9 @@ public class FileUtils {
         File storageRoot = Environment.getExternalStorageDirectory();
         return storageRoot + "/" + AVATAR_FOLDER + teacher.server_id + ".png";
     }
+
+    public static String get_textbook_local_uri(Course course) {
+        File storageRoot = Environment.getExternalStorageDirectory();
+        return storageRoot + "/" + TEXTBOOK_FOLDER + course.server_id + ".png";
+    }
 }

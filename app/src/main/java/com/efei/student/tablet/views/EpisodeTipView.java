@@ -33,6 +33,7 @@ public class EpisodeTipView extends FrameLayout {
 
     private TextView mTitle;
     private Button mButton;
+    private Button mCloseButton;
     private Tag mTag;
 
     public EpisodeTipView(Context context) {
@@ -103,6 +104,14 @@ public class EpisodeTipView extends FrameLayout {
                 public void onClick(View view) {
                     hide();
                     ((LessonActivity)mContext).goEpisode(mEpisode, mTag);
+                }
+            });
+
+            mCloseButton = (Button) mRoot.findViewById(R.id.skip_episode_video_button);
+            mCloseButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    hide();
                 }
             });
 

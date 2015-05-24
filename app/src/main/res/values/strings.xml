@@ -66,7 +66,8 @@
     <string name="example_question_dialog_text_2">查看例题讲解</string>
     <string name="here">这&#160;里</string>
     <string name="click">点击</string>
-    <string name="check">查看《v1》</string>
+    <string name="check">查看《v1》。或者点击</string>
     <string name="index_list">本讲索引列表</string>
+    <string name="skip">忽略</string>
 
 </resources>

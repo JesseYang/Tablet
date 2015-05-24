@@ -90,6 +90,7 @@
                     android:gravity="center"/>
 
                 <TextView
+                    android:id="@+id/course_page_course_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/temp2"
@@ -119,6 +120,7 @@
                     android:id="@+id/course_page_teacher_name"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
+                    android:textSize="16dp"
                     android:gravity="center"
                     android:text="@string/temp3"/>
                 <TextView
