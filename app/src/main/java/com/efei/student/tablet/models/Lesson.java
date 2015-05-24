@@ -223,7 +223,6 @@ public class Lesson {
     public Video[] get_extended_video_items() {
         Video[] videos = this.videos();
         ArrayList<Video> videoList = new ArrayList<>();
-        videoList.add(new Video(mContext, "title"));
         boolean knowledge = false, example = false, episode = false;
         for (Video v : videos) {
             if (v.type == 1 && knowledge == false) {

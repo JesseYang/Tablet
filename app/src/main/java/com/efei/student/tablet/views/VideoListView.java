@@ -36,9 +36,11 @@ public class VideoListView extends FrameLayout {
     private static final int    FADE_OUT = 1;
     private Handler             mHandler = new MessageHandler(this);
 
-    private ImageView show_hide_list;
+    private ImageView mShowListButton;
+    private ImageView mHideListButton;
     private boolean mShowList;
     private ListView mVideoListView;
+    private View mVideoListWrapper;
 
     public VideoListView(Context context) {
         super(context);
@@ -64,25 +66,36 @@ public class VideoListView extends FrameLayout {
 
 
         mShowList = false;
-        show_hide_list = (ImageView) v.findViewById(R.id.video_list_show_hide_image);
+        mShowListButton = (ImageView) v.findViewById(R.id.show_video_list);
+        mHideListButton = (ImageView) v.findViewById(R.id.hide_video_list);
         mVideoListView = (ListView) v.findViewById(R.id.lv_video_list);
+        mVideoListWrapper = v.findViewById(R.id.video_list_wrapper);
 
 
-        show_hide_list.setOnClickListener(new OnClickListener() {
+        mShowListButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mShowList) {
-                    mVideoListView.setVisibility(GONE);
-                    show_hide_list.setImageResource(R.drawable.show_video_list);
-                    mShowList = false;
-                } else {
-                    mVideoListView.setVisibility(VISIBLE);
-                    show_hide_list.setImageResource(R.drawable.hide_video_list);
+                if (!mShowList) {
+                    mVideoListWrapper.setVisibility(VISIBLE);
+                    mShowListButton.setVisibility(GONE);
                     mShowList = true;
                 }
                 ((LessonActivity) mContext).showOperations();
             }
         });
+
+        mHideListButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mShowList) {
+                    mVideoListWrapper.setVisibility(GONE);
+                    mShowListButton.setVisibility(VISIBLE);
+                    mShowList = false;
+                }
+                ((LessonActivity) mContext).showOperations();
+            }
+        });
+
 
 
 

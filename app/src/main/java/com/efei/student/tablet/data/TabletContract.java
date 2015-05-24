@@ -98,8 +98,14 @@ public class TabletContract {
         // Video_order, stored as Integer
         public static final String COLUMN_ORDER = "video_order";
 
-        // Time, stored as Integer
+        // Time, stored as Integer, only for example video, the recommended time
         public static final String COLUMN_TIME = "time";
+
+        // Page, stored as Integer, only for example video, the page of the example
+        public static final String COLUMN_PAGE = "page";
+
+        // Question Name, stored as String, only for example video, the question name
+        public static final String COLUMN_QUESTION_NAME = "question_name";
 
         // Content, stored as String
         public static final String COLUMN_CONTENT = "content";

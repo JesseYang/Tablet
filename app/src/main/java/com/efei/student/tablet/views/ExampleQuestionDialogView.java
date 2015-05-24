@@ -92,8 +92,8 @@ public class ExampleQuestionDialogView extends FrameLayout {
             });
 
             String example_tip = mContext.getResources().getString(R.string.example_tip);
-            // example_tip = example_tip.replace("v1", String.valueOf(mExampleVideo.page));
-            // example_tip = example_tip.replace("v2", String.valueOf(mExampleVideo.question_name));
+            example_tip = example_tip.replace("v1", String.valueOf(mExampleVideo.page));
+            example_tip = example_tip.replace("v2", String.valueOf(mExampleVideo.question_name));
             example_tip = example_tip.replace("v3", String.valueOf(mExampleVideo.time));
             mExampleTip.setText(example_tip);
 

@@ -17,7 +17,7 @@ import com.efei.student.tablet.data.TabletContract.VideoEntry;
  */
 public class TabletDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 12;
 
     private static final String DATABASE_NAME = "tablet.db";
 
@@ -77,7 +77,9 @@ public class TabletDbHelper extends SQLiteOpenHelper {
                 VideoEntry.COLUMN_TYPE + " INTEGER NOT NULL," +
                 VideoEntry.COLUMN_NAME + " TEXT NOT NULL," +
                 VideoEntry.COLUMN_ORDER + " TEXT NOT NULL," +
-                VideoEntry.COLUMN_TIME + " INTEGER NOT NULL," +
+                VideoEntry.COLUMN_TIME + " INTEGER," +
+                VideoEntry.COLUMN_PAGE + " INTEGER," +
+                VideoEntry.COLUMN_QUESTION_NAME + " TEXT," +
                 VideoEntry.COLUMN_CONTENT + " TEXT NOT NULL," +
                 VideoEntry.COLUMN_VIDEO_URL + " TEXT NOT NULL," +
                 VideoEntry.COLUMN_UPDATE_AT + " TEXT NOT NULL," +

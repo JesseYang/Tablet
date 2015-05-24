@@ -27,6 +27,8 @@ public class Video {
     public String name;
     public Integer order;
     public Integer time;
+    public Integer page;
+    public String question_name;
     public String content;
     public String video_url;
     public String update_at;
@@ -56,6 +58,8 @@ public class Video {
         this.name = cursor.getString(cursor.getColumnIndex(TabletContract.VideoEntry.COLUMN_NAME));
         this.order = cursor.getInt(cursor.getColumnIndex(TabletContract.VideoEntry.COLUMN_ORDER));
         this.time = cursor.getInt(cursor.getColumnIndex(TabletContract.VideoEntry.COLUMN_TIME));
+        this.page = cursor.getInt(cursor.getColumnIndex(TabletContract.VideoEntry.COLUMN_PAGE));
+        this.question_name = cursor.getString(cursor.getColumnIndex(TabletContract.VideoEntry.COLUMN_QUESTION_NAME));
         this.content = cursor.getString(cursor.getColumnIndex(TabletContract.VideoEntry.COLUMN_CONTENT));
         this.video_url = cursor.getString(cursor.getColumnIndex(TabletContract.VideoEntry.COLUMN_VIDEO_URL));
         this.update_at = cursor.getString(cursor.getColumnIndex(TabletContract.VideoEntry.COLUMN_UPDATE_AT));
@@ -153,6 +157,8 @@ public class Video {
             contentValues.put(TabletContract.VideoEntry.COLUMN_NAME, ele.getString(TabletContract.VideoEntry.COLUMN_NAME));
             contentValues.put(TabletContract.VideoEntry.COLUMN_ORDER, ele.getInt(TabletContract.VideoEntry.COLUMN_ORDER));
             contentValues.put(TabletContract.VideoEntry.COLUMN_TIME, ele.getInt(TabletContract.VideoEntry.COLUMN_TIME));
+            contentValues.put(TabletContract.VideoEntry.COLUMN_PAGE, ele.getInt(TabletContract.VideoEntry.COLUMN_PAGE));
+            contentValues.put(TabletContract.VideoEntry.COLUMN_QUESTION_NAME, ele.getString(TabletContract.VideoEntry.COLUMN_QUESTION_NAME));
             contentValues.put(TabletContract.VideoEntry.COLUMN_CONTENT, ele.getString(TabletContract.VideoEntry.COLUMN_CONTENT));
             contentValues.put(TabletContract.VideoEntry.COLUMN_VIDEO_URL, ele.getString(TabletContract.VideoEntry.COLUMN_VIDEO_URL));
             contentValues.put(TabletContract.VideoEntry.COLUMN_UPDATE_AT, ele.getString(TabletContract.VideoEntry.COLUMN_UPDATE_AT));
