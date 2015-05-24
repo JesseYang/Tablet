@@ -31,12 +31,14 @@ public class LoginActivity extends BaseActivity {
     private Button mLoginButton;
     private Toast mToast;
 
+    private boolean no_network;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         setupViews();
-
+        no_network = true;
     }
 
     private void setupViews()
@@ -129,6 +131,9 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         protected JSONObject doInBackground(JSONObject... params) {
+            if (mActivity.no_network) {
+                return null;
+            }
             if (params.length == 0) {
                 return null;
             }
@@ -146,7 +151,7 @@ public class LoginActivity extends BaseActivity {
         protected void onPostExecute(JSONObject retval) {
             try {
                 // redirect to the course list page
-                if (!(Boolean)retval.get("success")) {
+                if (!no_network && !(Boolean)retval.get("success")) {
                     // show the error message
                     switch (retval.getInt("code")) {
                         case -1:
@@ -158,8 +163,10 @@ public class LoginActivity extends BaseActivity {
                         default:
                             break;
                     }
+                } else if (no_network) {
+                    ToastUtils.showToast(mActivity, "登录成功，正在跳转");
+                    startActivity(new Intent(LoginActivity.this, ListActivity.class));
                 } else {
-
                     String auth_key = retval.getString("auth_key");
                     String student_server_id = retval.getString("student_server_id");
                     Boolean admin = retval.getBoolean("admin") || false;

@@ -20,6 +20,7 @@ import com.efei.student.tablet.utils.FileUtils;
 import com.efei.student.tablet.utils.GestureListener;
 import com.efei.student.tablet.views.EpisodeTipView;
 import com.efei.student.tablet.views.ExampleQuestionDialogView;
+import com.efei.student.tablet.views.ExerciseDialogView;
 import com.efei.student.tablet.views.VideoControllerView;
 import com.efei.student.tablet.views.VideoListView;
 import com.efei.student.tablet.views.VideoTopView;
@@ -38,6 +39,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     VideoTopView topView;
     VideoTtitleView titleView;
     ExampleQuestionDialogView exampleQuestionDialogView;
+    ExerciseDialogView exerciseDialogView;
     EpisodeTipView episodeTipView;
 
     public boolean mInterrupt;
@@ -82,6 +84,9 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
 
         exampleQuestionDialogView = new ExampleQuestionDialogView(this);
         exampleQuestionDialogView.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
+
+        exerciseDialogView = new ExerciseDialogView(this);
+        exerciseDialogView.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
 
         episodeTipView = new EpisodeTipView(this);
         episodeTipView.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
@@ -161,6 +166,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     public void clearViews() {
         episodeTipView.hide();
         exampleQuestionDialogView.hide();
+        exerciseDialogView.hide();
     }
 
     public void switchVideo(Video video) {
@@ -234,6 +240,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
                     player.pause();
                     mFwdPause = true;
                     exampleQuestionDialogView.hide();
+                    exerciseDialogView.hide();
                     if (GestureListener.distanceX > 0) {
                         controller.goBackward();
                     } else {
@@ -291,6 +298,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             mParentTime = 0;
         }
         mInterrupt = false;
+        showOperations();
         controller.updatePausePlay();
         controller.sendCheckProgressMsg();
     }
@@ -352,10 +360,12 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     @Override
     public void onCompletion(MediaPlayer mp) {
 
+        // abnormal completion
         if (mInterrupt) {
             return;
         }
 
+        // return to the parent video
         if (mParentVideo != null) {
             goBackParentVideo();
             return;
@@ -374,14 +384,18 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
 
 
         if (nextVideo == null) {
-
+            if (mCurVideo.type == 3) {
+                // current video is an episode, just stop here
+                showOperations();
+                return;
+            }
             // todo: show tips to ask users to do exercise
+            exerciseDialogView.show();
             return;
         }
 
         if (nextVideo.type == Video.KNOWLEDGE) {
             switchVideo(nextVideo);
-
         } else if (nextVideo.type == Video.EXAMPLE) {
             // todo: show dialog which notifies the user to do the example question in the textbook
             exampleQuestionDialogView.show(nextVideo);

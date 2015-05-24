@@ -140,7 +140,13 @@ public class VideoListView extends FrameLayout {
         }
 
         try {
+            if (mShowList) {
+                mVideoListWrapper.setVisibility(GONE);
+                mShowListButton.setVisibility(VISIBLE);
+                mShowList = false;
+            }
             mAnchor.removeView(this);
+
         } catch (IllegalArgumentException ex) {
             Log.w("MediaController", "already removed");
         }

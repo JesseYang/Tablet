@@ -125,7 +125,6 @@ public class CourseGroupAdapter extends ArrayAdapter<CourseGroup> {
                 mContext.startActivity(intent);
             }
         });
-
         return converterView;
     }
 }

@@ -16,8 +16,10 @@
             android:id="@+id/show_video_list"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:background="@drawable/show_video_list"/>
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="100dp"
+            android:background="#33000000"
+            android:src="@drawable/show_video_list"/>
 
         <LinearLayout
             android:id="@+id/video_list_wrapper"
@@ -33,20 +35,24 @@
                     android:layout_width="200dp"
                     android:layout_height="match_parent"
                     android:background="@color/filter_yellow"
+                    android:paddingLeft="40dp"
                     android:text="@string/index_list"
+                    android:textSize="16dp"
                     android:textColor="@color/white"
                     android:gravity="center"/>
                 <ImageView
                     android:id="@+id/hide_video_list"
                     android:layout_width="50dp"
                     android:layout_height="match_parent"
-                    android:background="#FF0000"/>
+                    android:background="@drawable/filter_yellow_background"
+                    android:src="@drawable/hide_video_list"/>
             </LinearLayout>
 
             <ListView
                 android:layout_width="250dp"
                 android:layout_height="526dp"
                 android:id="@+id/lv_video_list"
+                android:scrollbars="none"
                 android:background="@color/transparent"
                 android:divider="@color/transparent"/>
         </LinearLayout>

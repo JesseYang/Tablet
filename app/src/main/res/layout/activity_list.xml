@@ -90,9 +90,9 @@
 
             <ImageView
                 android:id="@+id/btn_filter"
-                android:layout_width="@dimen/title_bar_icon_width"
-                android:layout_height="match_parent"
-                android:src="@drawable/btn_filter"/>
+                android:layout_width="@dimen/title_bar_height"
+                android:layout_height="@dimen/title_bar_height"
+                android:src="@drawable/ic_filter"/>
 
             <View
                 android:layout_width="@dimen/title_bar_space_4"
@@ -101,9 +101,9 @@
 
             <ImageView
                 android:id="@+id/btn_setting"
-                android:layout_width="@dimen/title_bar_icon_width"
-                android:layout_height="match_parent"
-                android:src="@drawable/btn_setting"/>
+                android:layout_width="@dimen/title_bar_height"
+                android:layout_height="@dimen/title_bar_height"
+                android:src="@drawable/ic_setting"/>
 
         </LinearLayout>
 

@@ -9,12 +9,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.efei.student.tablet.R;
 import com.efei.student.tablet.student.BaseActivity;
 import com.efei.student.tablet.utils.NetUtils;
 import com.efei.student.tablet.utils.TextUtils;
+import com.efei.student.tablet.utils.ToastUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,7 +72,8 @@ public class RegisterActivity extends BaseActivity {
         // Check for a valid email address.
         if (!isAccountValid(email_mobile))
         {
-            mAccountView.setError("请填写合法的手机号或邮箱号！");
+            ToastUtils.showToast(this, "请填写合法的手机号或邮箱号！");
+            // mAccountView.setError("请填写合法的手机号或邮箱号！");
             focusView = mAccountView;
             cancel = true;
         }
@@ -80,7 +81,8 @@ public class RegisterActivity extends BaseActivity {
         // Check for a valid password, if the user entered one.
         if (!cancel && !isPasswordValid(password))
         {
-            mPasswordView.setError("请填写长度为6~16的密码！");
+            ToastUtils.showToast(this, "请填写长度为6~16的密码！");
+            // mPasswordView.setError("请填写长度为6~16的密码！");
             focusView = mPasswordView;
             cancel = true;
         }
@@ -107,7 +109,7 @@ public class RegisterActivity extends BaseActivity {
                 params.put("email_mobile", email_mobile);
                 params.put("password", password);
                 params.put("password_confirm", password);
-                RegisterTask registerTask = new RegisterTask();
+                RegisterTask registerTask = new RegisterTask(this);
                 registerTask.execute(params);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -125,6 +127,12 @@ public class RegisterActivity extends BaseActivity {
     }
 
     private class RegisterTask extends AsyncTask<JSONObject, Void, JSONObject> {
+
+        RegisterActivity mActivity;
+
+        public RegisterTask(RegisterActivity activity) {
+            mActivity = activity;
+        }
 
         @Override
         protected JSONObject doInBackground(JSONObject... params) {
@@ -149,14 +157,14 @@ public class RegisterActivity extends BaseActivity {
                     // show the error message
                     switch (retval.getInt("code")) {
                         case -3:
-                            Toast.makeText(getApplicationContext(), "帐号已存在", Toast.LENGTH_SHORT).show();
+                            ToastUtils.showToast(mActivity, "帐号已存在");
                             break;
                         default:
                             break;
                     }
                 } else {
                     String auth_key = (String)retval.get("auth_key");
-                    Toast.makeText(getApplicationContext(), "注册成功，正在跳转，请稍后", Toast.LENGTH_SHORT).show();
+                    ToastUtils.showToast(mActivity, "注册成功，正在跳转，请稍后");
                     finish();
                     Intent intent = new Intent(RegisterActivity.this, InformationActivity.class)
                             .putExtra(Intent.EXTRA_TEXT, auth_key);

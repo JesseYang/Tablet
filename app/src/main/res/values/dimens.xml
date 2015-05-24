@@ -13,7 +13,7 @@
     <dimen name="title_bar_space_2">67dp</dimen>
     <dimen name="title_bar_search_width">184dp</dimen>
     <dimen name="title_bar_search_height">32dp</dimen>
-    <dimen name="title_bar_space_3">33dp</dimen>
+    <dimen name="title_bar_space_3">23dp</dimen>
     <dimen name="title_bar_icon_width">24dp</dimen>
     <dimen name="status_bar_height">71dp</dimen>
     <dimen name="course_list_area_height">653dp</dimen>
@@ -23,7 +23,7 @@
     <dimen name="title_bar_tag_text_size">20dp</dimen>
     <dimen name="title_bar_search_text_width">150dp</dimen>
     <dimen name="title_bar_search_text_padding_left">10dp</dimen>
-    <dimen name="title_bar_space_4">25dp</dimen>
+    <dimen name="title_bar_space_4">5dp</dimen>
     <dimen name="title_bar_tab_radius">4dp</dimen>
     <dimen name="status_bar_desc_width">130dp</dimen>
     <dimen name="status_bar_last_time">200dp</dimen>

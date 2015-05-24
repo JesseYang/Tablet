@@ -15,11 +15,9 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.efei.student.tablet.R;
 import com.efei.student.tablet.student.LessonActivity;
@@ -63,7 +61,6 @@ public class VideoControllerView extends FrameLayout {
     private Context             mContext;
     private ViewGroup           mAnchor;
     private View                mRoot;
-    private ProgressBar         mProgress;
     private TextView            mEndTime, mCurrentTime;
     private boolean             mShowing;
     private boolean             mDragging;
@@ -71,17 +68,9 @@ public class VideoControllerView extends FrameLayout {
     private static final int    FADE_OUT = 1;
     private static final int    SHOW_PROGRESS = 2;
     private static final int    CHECK_PROGRESS = 4;
-    private boolean             mUseFastForward;
-    private boolean             mFromXml;
-    private boolean             mListenersSet;
-    private View.OnClickListener mNextListener, mPrevListener;
     StringBuilder               mFormatBuilder;
     Formatter                   mFormatter;
     private ImageButton         mPauseButton;
-    private ImageButton         mFfwdButton;
-    private ImageButton         mRewButton;
-    private ImageButton         mNextButton;
-    private ImageButton         mPrevButton;
     private Handler             mHandler;
 
     private SeekBar             mVolumeBar;
@@ -95,8 +84,6 @@ public class VideoControllerView extends FrameLayout {
         super(context, attrs);
         mRoot = null;
         mContext = context;
-        mUseFastForward = true;
-        mFromXml = true;
 
         Log.i(TAG, TAG);
     }
@@ -104,7 +91,6 @@ public class VideoControllerView extends FrameLayout {
     public VideoControllerView(Context context, boolean useFastForward) {
         super(context);
         mContext = context;
-        mUseFastForward = useFastForward;
         mHandler = new MessageHandler(this, context);
 
         Log.i(TAG, TAG);
@@ -208,49 +194,11 @@ public class VideoControllerView extends FrameLayout {
             }
         });
 
-        /*
-        mFfwdButton = (ImageButton) v.findViewById(R.id.ffwd);
-        if (mFfwdButton != null) {
-            mFfwdButton.setOnClickListener(mFfwdListener);
-            if (!mFromXml) {
-                mFfwdButton.setVisibility(mUseFastForward ? View.VISIBLE : View.GONE);
-            }
-        }
-
-        mRewButton = (ImageButton) v.findViewById(R.id.rew);
-        if (mRewButton != null) {
-            mRewButton.setOnClickListener(mRewListener);
-            if (!mFromXml) {
-                mRewButton.setVisibility(mUseFastForward ? View.VISIBLE : View.GONE);
-            }
-        }
-
-        // By default these are hidden. They will be enabled when setPrevNextListeners() is called
-        mNextButton = (ImageButton) v.findViewById(R.id.next);
-        if (mNextButton != null && !mFromXml && !mListenersSet) {
-            mNextButton.setVisibility(View.GONE);
-        }
-        mPrevButton = (ImageButton) v.findViewById(R.id.prev);
-        if (mPrevButton != null && !mFromXml && !mListenersSet) {
-            mPrevButton.setVisibility(View.GONE);
-        }
-        */
-
-        mProgress = (ProgressBar) v.findViewById(R.id.mediacontroller_progress);
-        if (mProgress != null) {
-            if (mProgress instanceof SeekBar) {
-                SeekBar seeker = (SeekBar) mProgress;
-                seeker.setOnSeekBarChangeListener(mSeekListener);
-            }
-            mProgress.setMax(1000);
-        }
-
         mEndTime = (TextView) v.findViewById(R.id.time);
         mCurrentTime = (TextView) v.findViewById(R.id.time_current);
         mFormatBuilder = new StringBuilder();
         mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
 
-        installPrevNextListeners();
     }
 
     /**
@@ -273,12 +221,6 @@ public class VideoControllerView extends FrameLayout {
         try {
             if (mPauseButton != null && !mPlayer.canPause()) {
                 mPauseButton.setEnabled(false);
-            }
-            if (mRewButton != null && !mPlayer.canSeekBackward()) {
-                mRewButton.setEnabled(false);
-            }
-            if (mFfwdButton != null && !mPlayer.canSeekForward()) {
-                mFfwdButton.setEnabled(false);
             }
         } catch (IncompatibleClassChangeError ex) {
             // We were given an old version of the interface, that doesn't have
@@ -380,15 +322,6 @@ public class VideoControllerView extends FrameLayout {
 
         int position = mPlayer.getCurrentPosition();
         int duration = mPlayer.getDuration();
-        if (mProgress != null) {
-            if (duration > 0) {
-                // use long to avoid overflow
-                long pos = 1000L * position / duration;
-                mProgress.setProgress( (int) pos);
-            }
-            int percent = mPlayer.getBufferPercentage();
-            mProgress.setSecondaryProgress(percent * 10);
-        }
 
         if (mEndTime != null)
             mEndTime.setText(stringForTime(duration));
@@ -554,21 +487,6 @@ public class VideoControllerView extends FrameLayout {
         if (mPauseButton != null) {
             mPauseButton.setEnabled(enabled);
         }
-        if (mFfwdButton != null) {
-            mFfwdButton.setEnabled(enabled);
-        }
-        if (mRewButton != null) {
-            mRewButton.setEnabled(enabled);
-        }
-        if (mNextButton != null) {
-            mNextButton.setEnabled(enabled && mNextListener != null);
-        }
-        if (mPrevButton != null) {
-            mPrevButton.setEnabled(enabled && mPrevListener != null);
-        }
-        if (mProgress != null) {
-            mProgress.setEnabled(enabled);
-        }
         disableUnsupportedButtons();
         super.setEnabled(enabled);
     }
@@ -622,35 +540,6 @@ public class VideoControllerView extends FrameLayout {
             show(sDefaultTimeout);
         }
     };
-
-    private void installPrevNextListeners() {
-        if (mNextButton != null) {
-            mNextButton.setOnClickListener(mNextListener);
-            mNextButton.setEnabled(mNextListener != null);
-        }
-
-        if (mPrevButton != null) {
-            mPrevButton.setOnClickListener(mPrevListener);
-            mPrevButton.setEnabled(mPrevListener != null);
-        }
-    }
-
-    public void setPrevNextListeners(View.OnClickListener next, View.OnClickListener prev) {
-        mNextListener = next;
-        mPrevListener = prev;
-        mListenersSet = true;
-
-        if (mRoot != null) {
-            installPrevNextListeners();
-
-            if (mNextButton != null && !mFromXml) {
-                mNextButton.setVisibility(View.VISIBLE);
-            }
-            if (mPrevButton != null && !mFromXml) {
-                mPrevButton.setVisibility(View.VISIBLE);
-            }
-        }
-    }
 
     public interface MediaPlayerControl {
         void    start();

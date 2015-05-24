@@ -69,5 +69,6 @@
     <string name="check">查看《v1》。或者点击</string>
     <string name="index_list">本讲索引列表</string>
     <string name="skip">忽略</string>
+    <string name="exercise_tip">你已看完最后一道例题讲解，请前往讲义v1页完成本讲练习。</string>
 
 </resources>
