@@ -290,6 +290,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             mParentTime = 0;
         }
         mInterrupt = false;
+        controller.updatePausePlay();
         controller.sendCheckProgressMsg();
     }
     // End MediaPlayer.OnPreparedListener

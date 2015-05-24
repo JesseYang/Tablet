@@ -310,7 +310,7 @@ public class VideoControllerView extends FrameLayout {
             mAnchor.addView(this, tlp);
             mShowing = true;
         }
-        updatePausePlay();
+        // updatePausePlay();
 
         // cause the progress bar to be updated even if mShowing
         // was already true.  This happens, for example, if we're
