@@ -56,6 +56,7 @@ public class Lesson {
         cursor.moveToFirst();
         Lesson lesson = new Lesson(context, cursor);
         cursor.close();
+        db.close();
         return lesson;
     }
 
@@ -96,11 +97,34 @@ public class Lesson {
                 }
             }
             cursor.close();
+            db.close();
             return server_id;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public Video[] non_episode_videos() {
+        TabletDbHelper dbHelper = new TabletDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.query(TabletContract.VideoEntry.TABLE_NAME, // Table to query
+                null,   // all columns
+                TabletContract.VideoEntry.COLUMN_LESSON_ID + "=?" +" AND " + TabletContract.VideoEntry.COLUMN_TYPE +"!=?",   // columns for the "where" clause
+                new String[]{this.server_id, "3"},  // values for the "where" clause
+                null,   // columns to group by
+                null,   // columns to filter by row groups
+                null);  // sort order
+        int count = cursor.getCount();
+        Video[] videos = new Video[count];
+        int i = 0;
+        while (cursor.moveToNext()) {
+            videos[i] = new Video(mContext, cursor);
+            i++;
+        }
+        cursor.close();
+        db.close();
+        return videos;
     }
 
     public Video[] videos() {
@@ -121,6 +145,7 @@ public class Lesson {
             i++;
         }
         cursor.close();
+        db.close();
         return videos;
     }
 
@@ -179,6 +204,20 @@ public class Lesson {
             i++;
         }
         return video_items;
+    }
+
+    public Video find_next_video(Video curVideo) {
+        String curVideoId= curVideo.server_id;
+        boolean next = false;
+        for (Video v : this.non_episode_videos()) {
+            if (next) {
+                return v;
+            }
+            if (v.server_id.equals(curVideoId)) {
+                next = true;
+            }
+        }
+        return null;
     }
 
     public Video[] get_extended_video_items() {

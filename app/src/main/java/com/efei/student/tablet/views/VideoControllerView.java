@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -65,7 +66,7 @@ public class VideoControllerView extends FrameLayout {
     private TextView            mEndTime, mCurrentTime;
     private boolean             mShowing;
     private boolean             mDragging;
-    private static final int    sDefaultTimeout = 3000;
+    private static final int    sDefaultTimeout = 6000;
     private static final int    FADE_OUT = 1;
     private static final int    SHOW_PROGRESS = 2;
     private static final int    CHECK_PROGRESS = 4;
@@ -80,9 +81,14 @@ public class VideoControllerView extends FrameLayout {
     private ImageButton         mRewButton;
     private ImageButton         mNextButton;
     private ImageButton         mPrevButton;
-    private Handler             mHandler = new MessageHandler(this);
+    private Handler             mHandler;
 
-    private int                 mLastPosition = 0;
+    private SeekBar             mVolumeBar;
+
+    private ImageView           mVolumeUp;
+    private ImageView           mVolumeDown;
+
+    public int                 mLastPosition = 0;
 
     public VideoControllerView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -98,6 +104,7 @@ public class VideoControllerView extends FrameLayout {
         super(context);
         mContext = context;
         mUseFastForward = useFastForward;
+        mHandler = new MessageHandler(this, context);
 
         Log.i(TAG, TAG);
     }
@@ -117,6 +124,10 @@ public class VideoControllerView extends FrameLayout {
     public void setMediaPlayer(MediaPlayerControl player) {
         mPlayer = player;
         updatePausePlay();
+    }
+
+    public void setVolume(int volume_level) {
+        mVolumeBar.setProgress(volume_level);
     }
 
     /**
@@ -159,6 +170,44 @@ public class VideoControllerView extends FrameLayout {
             mPauseButton.setOnClickListener(mPauseListener);
         }
 
+        mVolumeBar = (SeekBar) v.findViewById(R.id.volume_bar);
+        mVolumeBar.setMax(15);
+
+        mVolumeBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                ((LessonActivity) mContext).setVolume(i);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        mVolumeUp = (ImageView) v.findViewById(R.id.volume_up);
+        mVolumeDown = (ImageView) v.findViewById(R.id.volume_down);
+
+        mVolumeUp.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((LessonActivity)mContext).volumeUp();
+            }
+        });
+
+        mVolumeDown.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((LessonActivity)mContext).volumeDown();
+            }
+        });
+
+        /*
         mFfwdButton = (ImageButton) v.findViewById(R.id.ffwd);
         if (mFfwdButton != null) {
             mFfwdButton.setOnClickListener(mFfwdListener);
@@ -184,6 +233,7 @@ public class VideoControllerView extends FrameLayout {
         if (mPrevButton != null && !mFromXml && !mListenersSet) {
             mPrevButton.setVisibility(View.GONE);
         }
+        */
 
         mProgress = (ProgressBar) v.findViewById(R.id.mediacontroller_progress);
         if (mProgress != null) {
@@ -487,7 +537,7 @@ public class VideoControllerView extends FrameLayout {
 
         public void onStopTrackingTouch(SeekBar bar) {
             mDragging = false;
-            setProgress();
+            // setProgress();
             updatePausePlay();
             show(sDefaultTimeout);
 
@@ -529,7 +579,7 @@ public class VideoControllerView extends FrameLayout {
         int pos = mPlayer.getCurrentPosition();
         pos -= 1000;
         mPlayer.seekTo(pos);
-        setProgress();
+        // setProgress();
     }
 
     public void goForward() {
@@ -539,7 +589,7 @@ public class VideoControllerView extends FrameLayout {
         int pos = mPlayer.getCurrentPosition();
         pos += 1000;
         mPlayer.seekTo(pos);
-        setProgress();
+        // setProgress();
     }
 
     private View.OnClickListener mRewListener = new View.OnClickListener() {
@@ -551,7 +601,7 @@ public class VideoControllerView extends FrameLayout {
             int pos = mPlayer.getCurrentPosition();
             pos -= 5000; // milliseconds
             mPlayer.seekTo(pos);
-            setProgress();
+            // setProgress();
 
             show(sDefaultTimeout);
         }
@@ -566,7 +616,7 @@ public class VideoControllerView extends FrameLayout {
             int pos = mPlayer.getCurrentPosition();
             pos += 15000; // milliseconds
             mPlayer.seekTo(pos);
-            setProgress();
+            // setProgress();
 
             show(sDefaultTimeout);
         }
@@ -616,9 +666,11 @@ public class VideoControllerView extends FrameLayout {
 
     private static class MessageHandler extends Handler {
         private final WeakReference<VideoControllerView> mView;
+        private final Context mContext;
 
-        MessageHandler(VideoControllerView view) {
+        MessageHandler(VideoControllerView view, Context context) {
             mView = new WeakReference<VideoControllerView>(view);
+            mContext = context;
         }
         @Override
         public void handleMessage(Message msg) {

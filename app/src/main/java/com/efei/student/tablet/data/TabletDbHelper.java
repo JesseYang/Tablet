@@ -4,20 +4,20 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.efei.student.tablet.data.TabletContract.ActionLogEntry;
 import com.efei.student.tablet.data.TabletContract.CourseEntry;
+import com.efei.student.tablet.data.TabletContract.LearnLogEntry;
 import com.efei.student.tablet.data.TabletContract.LessonEntry;
 import com.efei.student.tablet.data.TabletContract.TagEntry;
 import com.efei.student.tablet.data.TabletContract.TeacherEntry;
 import com.efei.student.tablet.data.TabletContract.VideoEntry;
-import com.efei.student.tablet.data.TabletContract.LearnLogEntry;
-import com.efei.student.tablet.data.TabletContract.ActionLogEntry;
 
 /**
  * Created by jesse on 15-5-4.
  */
 public class TabletDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 10;
 
     private static final String DATABASE_NAME = "tablet.db";
 
@@ -89,12 +89,15 @@ public class TabletDbHelper extends SQLiteOpenHelper {
 
         final String SQL_CREATE_TAG_TABLE = "CREATE TABLE " + TagEntry.TABLE_NAME + " ( " +
                 TagEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                TagEntry.COLUMN_EPISODE_ID + " TEXT NOT NULL," +
+                TagEntry.COLUMN_VIDEO_ID + " TEXT NOT NULL," +
+                TagEntry.COLUMN_EPISODE_ID + " TEXT," +
                 TagEntry.COLUMN_TYPE + " INTEGER NOT NULL," +
                 TagEntry.COLUMN_TIME + " INTEGER NOT NULL," +
                 TagEntry.COLUMN_NAME + " TEXT NOT NULL," +
 
                 // Set up the teacher id column as a foreign key to teacher table.
+                " FOREIGN KEY (" + TagEntry.COLUMN_VIDEO_ID + ") REFERENCES " +
+                VideoEntry.TABLE_NAME + "(" + VideoEntry._ID + ")," +
                 " FOREIGN KEY (" + TagEntry.COLUMN_EPISODE_ID + ") REFERENCES " +
                 VideoEntry.TABLE_NAME + "(" + VideoEntry._ID + ")" +
                 " );";
@@ -154,6 +157,8 @@ public class TabletDbHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + LessonEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + VideoEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TagEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + LearnLogEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + ActionLogEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
 }

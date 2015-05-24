@@ -1,7 +1,6 @@
 package com.efei.student.tablet.account;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -16,10 +15,8 @@ import com.efei.student.tablet.R;
 import com.efei.student.tablet.admin.ManagementActivity;
 import com.efei.student.tablet.student.BaseActivity;
 import com.efei.student.tablet.student.ListActivity;
-import com.efei.student.tablet.utils.NetUtils;
 import com.efei.student.tablet.utils.TextUtils;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -121,6 +118,7 @@ public class LoginActivity extends BaseActivity {
             if (params.length == 0) {
                 return null;
             }
+            /*
             // Send the login request to the servers
             String response = NetUtils.post("/account/sessions/tablet_login", params[0]);
             try {
@@ -129,14 +127,19 @@ public class LoginActivity extends BaseActivity {
             } catch (Exception e) {
                 return null;
             }
+            */
+            return null;
         }
 
         @Override
         protected void onPostExecute(JSONObject retval) {
             try {
                 // redirect to the course list page
-                if (!(Boolean)retval.get("success")) {
+                boolean success = true;
+                // if (!(Boolean)retval.get("success")) {
+                if (!success) {
                     // show the error message
+                    /*
                     switch (retval.getInt("code")) {
                         case -1:
                             Toast.makeText(getApplicationContext(), "帐号不存在", Toast.LENGTH_SHORT).show();
@@ -147,7 +150,9 @@ public class LoginActivity extends BaseActivity {
                         default:
                             break;
                     }
+                    */
                 } else {
+                    /*
                     String auth_key = retval.getString("auth_key");
                     String student_server_id = retval.getString("student_server_id");
                     Boolean admin = retval.getBoolean("admin") || false;
@@ -169,6 +174,8 @@ public class LoginActivity extends BaseActivity {
                                 course_status.getString("time"));
                     }
                     editor.commit();
+                    */
+                    boolean admin = false;
                     Toast.makeText(getApplicationContext(), "登录成功，正在跳转，请稍后", Toast.LENGTH_SHORT).show();
                     if (admin) {
                         startActivity(new Intent(LoginActivity.this, ManagementActivity.class));

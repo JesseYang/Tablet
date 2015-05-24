@@ -33,6 +33,7 @@ public class GestureListener extends GestureDetector.SimpleOnGestureListener
         currentGestureDetected = "SCROLL \n" + e1.toString() + "  " + e2.toString();
         return true;
     }
+
     @Override
     public boolean onDown(MotionEvent ev) {
         gesture = "DOWN";

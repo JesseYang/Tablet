@@ -16,6 +16,10 @@ import org.json.JSONObject;
 
 public class Video {
 
+    public static int KNOWLEDGE = 1;
+    public static int EXAMPLE = 2;
+    public static int EPISODE = 3;
+
     public Context mContext;
 
     public String server_id;
@@ -60,13 +64,40 @@ public class Video {
         this.ele_type = "video";
     }
 
+
+    public static Video get_video_by_id(String server_id, Context context) {
+        TabletDbHelper dbHelper = new TabletDbHelper(context);
+
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        Cursor cursor = db.query(TabletContract.VideoEntry.TABLE_NAME, // Table to query
+                null,   // all columns
+                TabletContract.VideoEntry.COLUMN_SERVER_ID + "=?",   // columns for the "where" clause
+                new String[]{server_id},  // values for the "where" clause
+                null,   // columns to group by
+                null,   // columns to filter by row groups
+                null);  // sort order
+
+        if (cursor.getCount() == 0) {
+            return null;
+        }
+
+        cursor.moveToFirst();
+        Video video = new Video(context, cursor);
+        cursor.close();
+        db.close();
+        return video;
+    }
+
     public Tag[] tags() {
         TabletDbHelper dbHelper = new TabletDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
+
+
         Cursor cursor = db.query(TabletContract.TagEntry.TABLE_NAME, // Table to query
                 null,   // all columns
-                TabletContract.TagEntry.COLUMN_EPISODE_ID + "=?",   // columns for the "where" clause
+                TabletContract.TagEntry.COLUMN_VIDEO_ID + "=?",   // columns for the "where" clause
                 new String[]{this.server_id},  // values for the "where" clause
                 null,   // columns to group by
                 null,   // columns to filter by row groups
@@ -79,6 +110,7 @@ public class Video {
             i++;
         }
         cursor.close();
+        db.close();
         return tags;
     }
 
@@ -107,6 +139,7 @@ public class Video {
             FileUtils.remove_video_file(Video.get_filename_by_url(this.video_url));
         }
         cursor.close();
+        db.close();
     }
 
     public static String create(JSONObject ele, Context context) {

@@ -59,5 +59,13 @@
     <string name="video_list_example">例题讲解</string>
     <string name="video_list_episode">知识片段</string>
     <string name="video_list_title">本讲索引列表</string>
+    <string name="begin_play">开始播放：</string>
+    <string name="example_tip">请完成讲义上第v1页的v2，建议v3分钟内完成</string>
+    <string name="video_title">正在播放：v1</string>
+    <string name="example_question_dialog_text_1">完成后请点击</string>
+    <string name="example_question_dialog_text_2">查看例题讲解</string>
+    <string name="here">这&#160;里</string>
+    <string name="click">点击</string>
+    <string name="check">查看《v1》</string>
 
 </resources>

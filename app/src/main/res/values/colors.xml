@@ -29,4 +29,6 @@
     <color name="black">#000000</color>
     <color name="video_list_item_pressed_color">#CCCCCC</color>
 
+    <color name="text_grey">#333333</color>
+
 </resources>

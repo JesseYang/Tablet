@@ -127,6 +127,9 @@ public class TabletContract {
 
         // Episode_id, stored as String
         public static final String COLUMN_EPISODE_ID = "episode_id";
+
+        // Video_id, stored as String
+        public static final String COLUMN_VIDEO_ID = "video_id";
     }
 
     public final class LearnLogEntry implements BaseColumns {

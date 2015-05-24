@@ -32,7 +32,7 @@ public class VideoListView extends FrameLayout {
     private View mRoot;
     private boolean mShowing;
     private VideoAdapter mVideoAdapter;
-    private static final int    sDefaultTimeout = 3000;
+    private static final int    sDefaultTimeout = 6000;
     private static final int    FADE_OUT = 1;
     private Handler             mHandler = new MessageHandler(this);
 
@@ -45,7 +45,8 @@ public class VideoListView extends FrameLayout {
         mContext = context;
         mLesson = ((LessonActivity)context).mLesson;
         mVideoItems = mLesson.get_extended_video_items();
-        mVideos = mLesson.videos();
+        // mVideos = mLesson.videos();
+        mVideos = mLesson.get_extended_video_items();
         mVideoAdapter = new VideoAdapter(context, R.layout.video_item, mVideoItems);
     }
 
@@ -86,11 +87,14 @@ public class VideoListView extends FrameLayout {
 
 
 
-                ListView listView = (ListView) mRoot.findViewById(R.id.lv_video_list);
+        ListView listView = (ListView) mRoot.findViewById(R.id.lv_video_list);
         listView.setAdapter(mVideoAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ((LessonActivity) mContext).mInterrupt = true;
+                ((LessonActivity) mContext).removeParentVideo();
+                ((LessonActivity) mContext).clearViews();
                 ((LessonActivity) mContext).switchVideo(mVideos[position]);
             }
         });

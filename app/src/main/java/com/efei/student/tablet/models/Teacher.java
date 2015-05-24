@@ -56,6 +56,7 @@ public class Teacher {
             index++;
         }
         cursor.close();
+        db.close();
         return teacher_ary;
     }
 
@@ -138,7 +139,7 @@ public class Teacher {
                 }
             }
             cursor.close();
-
+            db.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

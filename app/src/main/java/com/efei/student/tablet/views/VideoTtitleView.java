@@ -1,7 +1,6 @@
 package com.efei.student.tablet.views;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.view.Gravity;
@@ -9,18 +8,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.efei.student.tablet.R;
 import com.efei.student.tablet.models.Lesson;
-import com.efei.student.tablet.student.CourseActivity;
+import com.efei.student.tablet.models.Video;
 import com.efei.student.tablet.student.LessonActivity;
 
 import java.lang.ref.WeakReference;
 
-public class VideoTopView extends FrameLayout {
+public class VideoTtitleView extends FrameLayout {
 
     private Lesson mLesson;
+    private Video mVideo;
     private ViewGroup mAnchor;
     private Context mContext;
     private View mRoot;
@@ -29,9 +29,9 @@ public class VideoTopView extends FrameLayout {
     private static final int    FADE_OUT = 1;
     private Handler             mHandler = new MessageHandler(this);
 
-    private ImageView mReturn;
+    private TextView mTitle;
 
-    public VideoTopView(Context context) {
+    public VideoTtitleView(Context context) {
         super(context);
         mContext = context;
         mLesson = ((LessonActivity)context).mLesson;
@@ -49,27 +49,13 @@ public class VideoTopView extends FrameLayout {
         View v = makeControllerView();
         addView(v, frameParams);
 
-        mReturn = (ImageView) findViewById(R.id.btn_course_return);
-
-        mReturn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (((LessonActivity)mContext).mParentVideo != null) {
-                    ((LessonActivity)mContext).goBackParentVideo();
-                } else {
-                    ((LessonActivity) mContext).mInterrupt = true;
-                    Intent intent = new Intent(mContext, CourseActivity.class)
-                            .putExtra(Intent.EXTRA_TEXT, mLesson.course_id);
-                    mContext.startActivity(intent);
-                }
-            }
-        });
+        mTitle = (TextView) findViewById(R.id.video_title);
 
     }
 
     protected View makeControllerView() {
         LayoutInflater inflate = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mRoot = inflate.inflate(R.layout.video_top, null);
+        mRoot = inflate.inflate(R.layout.video_title, null);
         initControllerView();
         return mRoot;
     }
@@ -94,13 +80,18 @@ public class VideoTopView extends FrameLayout {
         show(sDefaultTimeout);
     }
 
+    public void setVideio(Video v) {
+        mVideo = v;
+        setTitle();
+    }
+
     public void show(int timeout) {
         if (!mShowing && mAnchor != null) {
 
             LayoutParams tlp = new LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT,
-                    Gravity.TOP
+                    Gravity.CENTER_HORIZONTAL
             );
 
 
@@ -115,15 +106,19 @@ public class VideoTopView extends FrameLayout {
         }
     }
 
-    private static class MessageHandler extends Handler {
-        private final WeakReference<VideoTopView> mView;
+    public void setTitle() {
+        mTitle.setText(mContext.getResources().getString(R.string.video_title).replace("v1", mVideo.name));
+    }
 
-        MessageHandler(VideoTopView view) {
+    private static class MessageHandler extends Handler {
+        private final WeakReference<VideoTtitleView> mView;
+
+        MessageHandler(VideoTtitleView view) {
             mView = new WeakReference<>(view);
         }
         @Override
         public void handleMessage(Message msg) {
-            VideoTopView view = mView.get();
+            VideoTtitleView view = mView.get();
             if (view == null) {
                 return;
             }

@@ -73,6 +73,7 @@ public class Course {
         cursor.moveToFirst();
         Course course = new Course(context, cursor);
         cursor.close();
+        db.close();
         return course;
     }
 
@@ -125,6 +126,7 @@ public class Course {
             index++;
         }
         cursor.close();
+        db.close();
         return course_ary;
     }
 
@@ -194,6 +196,7 @@ public class Course {
                 }
             }
             cursor.close();
+            db.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -254,6 +257,7 @@ public class Course {
             retval = cursor.getString(cursor.getColumnIndex(TabletContract.TeacherEntry.COLUMN_NAME));
         }
         cursor.close();
+        db.close();
         return retval;
     }
 
@@ -292,6 +296,7 @@ public class Course {
             i++;
         }
         cursor.close();
+        db.close();
         return lessons;
     }
 
@@ -349,10 +354,16 @@ public class Course {
         int count = cursor.getCount();
 
         if (count == 0) {
+            cursor.close();
+            db.close();
             return null;
         } else {
             cursor.moveToFirst();
-            return new Teacher(mContext, cursor);
+            Teacher t = new Teacher(mContext, cursor);
+            cursor.close();
+            db.close();
+            return t;
         }
+
     }
 }
