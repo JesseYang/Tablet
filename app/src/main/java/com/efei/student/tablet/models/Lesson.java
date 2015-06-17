@@ -2,6 +2,7 @@ package com.efei.student.tablet.models;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -103,6 +104,12 @@ public class Lesson {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public boolean is_completed() {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences("MyPref", 0);
+        String lesson_id_str = sharedPreferences.getString("lesson_id_str", "");
+        return lesson_id_str.indexOf(this.server_id) != -1;
     }
 
     public Video[] non_episode_videos() {

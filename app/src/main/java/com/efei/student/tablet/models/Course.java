@@ -2,15 +2,19 @@ package com.efei.student.tablet.models;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.efei.student.tablet.R;
 import com.efei.student.tablet.adapters.ManagementCourseAdapter;
 import com.efei.student.tablet.data.TabletContract;
 import com.efei.student.tablet.data.TabletContract.CourseEntry;
 import com.efei.student.tablet.data.TabletDbHelper;
+import com.efei.student.tablet.student.ListActivity;
 import com.efei.student.tablet.utils.FileUtils;
 import com.efei.student.tablet.utils.NetUtils;
+import com.efei.student.tablet.views.FilterView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -34,6 +38,11 @@ public class Course {
     public String textbook_url;
     public String update_at;
     public Boolean has_content;
+
+    public static int CHINESE = 1;
+    public static int MATH = 2;
+    public static int ENGLISH = 4;
+    public static int PHYSICS = 8;
 
 
     public Course(Context context, Cursor cursor) {
@@ -77,22 +86,76 @@ public class Course {
         return course;
     }
 
+    public boolean is_junior() {
+        return Arrays.asList(mContext.getApplicationContext().getResources().getStringArray(R.array.junior_grade)).contains(this.grade);
+    }
+
+    public boolean is_senior() {
+        return Arrays.asList(mContext.getApplicationContext().getResources().getStringArray(R.array.senior_grade)).contains(this.grade);
+    }
+
+
     public static ArrayList<CourseGroup> list_course_groups(Context context) {
         ArrayList<Course> courses = Course.list_courses(context);
 
+        ArrayList<Course> selected_courses = new ArrayList<>();
+
+
+        SharedPreferences sharedPreferences = context.getSharedPreferences("MyPref", 0);
+        String course_id_str = sharedPreferences.getString("course_id_str", "");
+
+
+        for (Course course : courses) {
+            // My course condition
+            if (((ListActivity)context).mConditionMy && course_id_str.indexOf(course.server_id) == -1) {
+                continue;
+            }
+
+            // Grade condition
+            if (((ListActivity)context).mConditionGrade == FilterView.JUNIOR && !course.is_junior()) {
+                continue;
+            }
+            if (((ListActivity)context).mConditionGrade == FilterView.SENIOR && !course.is_senior()) {
+                continue;
+            }
+
+            // Subject condition
+            if (((ListActivity)context).mConditionSubject == FilterView.MATH && course.subject != Course.MATH) {
+                continue;
+            }
+            if (((ListActivity)context).mConditionSubject == FilterView.PHYSICS && course.subject != Course.PHYSICS) {
+                continue;
+            }
+
+            // Status condition
+            if (((ListActivity)context).mConditionStatus == FilterView.UNSTARTED && course.start_at < System.currentTimeMillis() / 1000L) {
+                continue;
+            }
+            if (((ListActivity)context).mConditionStatus == FilterView.FINISHED && course.end_at > System.currentTimeMillis() / 1000L) {
+                continue;
+            }
+            if (((ListActivity)context).mConditionStatus == FilterView.ONGOING && course.start_at > System.currentTimeMillis() / 1000L) {
+                continue;
+            }
+            if (((ListActivity)context).mConditionStatus == FilterView.ONGOING && course.end_at < System.currentTimeMillis() / 1000L) {
+                continue;
+            }
+            selected_courses.add(course);
+        }
+
         int group_index = 0;
         int index_within_group = 0;
-        ArrayList<CourseGroup> course_ary = new ArrayList<>((int) Math.ceil(courses.size() / 2.0));
+        ArrayList<CourseGroup> course_ary = new ArrayList<>((int) Math.ceil(selected_courses.size() / 2.0));
         Course left_course = null, right_course = null;
         CourseGroup courseGroup = null;
-        for (int i = 0; i < courses.size(); i++) {
+        for (int i = 0; i < selected_courses.size(); i++) {
             group_index = i / 2;
             index_within_group = i % 2;
 
             if (index_within_group == 0) {
-                left_course = courses.get(i);
+                left_course = selected_courses.get(i);
             } else {
-                courseGroup = new CourseGroup(context, left_course, courses.get(i));
+                courseGroup = new CourseGroup(context, left_course, selected_courses.get(i));
                 course_ary.add(courseGroup);
                 left_course = null;
             }

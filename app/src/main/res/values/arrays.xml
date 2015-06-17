@@ -9,6 +9,20 @@
         <item>高三</item>
     </string-array>
 
+    <string-array name="junior_grade">
+        <item>初一</item>
+        <item>初二</item>
+        <item>初三</item>
+        <item>初中</item>
+    </string-array>
+
+    <string-array name="senior_grade">
+        <item>高一</item>
+        <item>高二</item>
+        <item>高三</item>
+        <item>高中</item>
+    </string-array>
+
     <string-array name="grade_filter">
         <item>全部</item>
         <item>初中</item>

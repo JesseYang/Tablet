@@ -97,9 +97,6 @@ public class VideoListView extends FrameLayout {
         });
 
 
-
-
-
         ListView listView = (ListView) mRoot.findViewById(R.id.lv_video_list);
         listView.setAdapter(mVideoAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

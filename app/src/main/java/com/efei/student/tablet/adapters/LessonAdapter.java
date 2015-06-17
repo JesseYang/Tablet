@@ -39,7 +39,16 @@ public class LessonAdapter extends ArrayAdapter<Lesson> {
         lesson_number.setText(activity.getResources().getString(R.string.lesson_number).replace("#", activity.getResources().getStringArray(R.array.numbers)[position+1]));
 
         TextView study_status = (TextView) converterView.findViewById(R.id.tv_course_lesson_study_status);
-        TextView exercise_status = (TextView) converterView.findViewById(R.id.tv_course_lesson_exercise_status);
+
+        if (lesson.is_completed()) {
+            study_status.setText(activity.getResources().getString(R.string.completed));
+            study_status.setBackground(activity.getResources().getDrawable(R.drawable.exercise_finished_background));
+        } else {
+            study_status.setText(activity.getResources().getString(R.string.not_completed));
+            study_status.setBackground(activity.getResources().getDrawable(R.drawable.exercise_ongoing_background));
+        }
+
+        // TextView exercise_status = (TextView) converterView.findViewById(R.id.tv_course_lesson_exercise_status);
 
         View lesson_item_layout = converterView.findViewById(R.id.lesson_item_layout);
 

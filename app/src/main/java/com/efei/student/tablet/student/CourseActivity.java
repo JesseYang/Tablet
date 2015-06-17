@@ -26,7 +26,6 @@ public class CourseActivity extends BaseActivity {
     private Teacher mTeacher;
     private LessonAdapter mLessonAdapter;
 
-
     private ImageView mReturn;
     private TextView mContinue;
 

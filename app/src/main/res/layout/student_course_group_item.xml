@@ -14,15 +14,37 @@
         android:layout_marginLeft="@dimen/course_item_outer_margin"
         android:layout_marginRight="@dimen/course_item_inner_margin" >
 
-        <TextView
-            android:id="@+id/course_item_left_teacher"
+        <LinearLayout
+            android:id="@+id/left_subject_and_teacher"
             android:layout_width="0dp"
             android:layout_weight="54"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:textSize="16dp"
-            android:textColor="@color/white"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/course_item_left_subject"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:paddingTop="10dp"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:textSize="16dp"
+                android:textColor="@color/white"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:id="@+id/course_item_left_teacher"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:paddingTop="10dp"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:textSize="16dp"
+                android:textColor="@color/white"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
+
+
 
         <ImageView
             android:id="@+id/course_item_left_avatar"
@@ -108,15 +130,35 @@
         android:layout_marginLeft="@dimen/course_item_inner_margin"
         android:layout_marginRight="@dimen/course_item_outer_margin">
 
-        <TextView
-            android:id="@+id/course_item_right_teacher"
+        <LinearLayout
+            android:id="@+id/right_subject_and_teacher"
             android:layout_width="0dp"
             android:layout_weight="54"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:textSize="16dp"
-            android:textColor="@color/white"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/course_item_right_subject"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:paddingTop="10dp"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:textSize="16dp"
+                android:textColor="@color/white"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:id="@+id/course_item_right_teacher"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:paddingTop="10dp"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:textSize="16dp"
+                android:textColor="@color/white"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/course_item_right_avatar"

@@ -56,6 +56,7 @@
 
             <LinearLayout
                 android:id="@+id/title_bar_search"
+                android:visibility="invisible"
                 android:layout_width="@dimen/title_bar_search_width"
                 android:layout_height="@dimen/title_bar_search_height"
                 android:orientation="horizontal"
@@ -168,11 +169,24 @@
 
         </LinearLayout>
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/course_list_area_height"
             android:orientation="vertical"
             android:background="@color/white">
+
+
+            <TextView
+                android:id="@+id/no_course_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textSize="20dp"
+                android:layout_marginTop="50dp"
+                android:background="@color/white"
+                android:text="@string/no_course_result"/>
 
             <ListView
                 android:layout_width="match_parent"

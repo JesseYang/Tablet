@@ -193,6 +193,7 @@ public final class NetUtils {
             file.createNewFile();
 
             FileOutputStream fileOutputStream = new FileOutputStream(file);
+            
             InputStream inputStream = urlConnection.getInputStream();
             int totalSize = urlConnection.getContentLength();
             int downloadedSize = 0;

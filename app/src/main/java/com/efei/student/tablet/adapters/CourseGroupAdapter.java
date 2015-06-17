@@ -50,15 +50,18 @@ public class CourseGroupAdapter extends ArrayAdapter<CourseGroup> {
         LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         converterView = inflater.inflate(R.layout.student_course_group_item, null);
 
-
         // inflate the left view
         final Course leftCourse = courseGroup.left_course;
 
         TextView left_teacher = (TextView) converterView.findViewById(R.id.course_item_left_teacher);
+        TextView left_subject = (TextView) converterView.findViewById(R.id.course_item_left_subject);
+        View left_subject_and_teacher = converterView.findViewById(R.id.left_subject_and_teacher);
         if (leftCourse.subject == Subject.MATH) {
-            left_teacher.setBackgroundResource(R.drawable.course_math_teacher);
+            left_subject_and_teacher.setBackgroundResource(R.drawable.course_math_teacher);
+            left_subject.setText(mContext.getResources().getString(R.string.course_item_subject_prefix) + TextUtils.insertBR(mContext.getResources().getString(R.string.math)));
         } else {
-            left_teacher.setBackgroundResource(R.drawable.course_phy_teacher);
+            left_subject_and_teacher.setBackgroundResource(R.drawable.course_phy_teacher);
+            left_subject.setText(mContext.getResources().getString(R.string.course_item_subject_prefix) + TextUtils.insertBR(mContext.getResources().getString(R.string.pyhsics)));
         }
         Teacher leftTeacher = leftCourse.teacher();
         left_teacher.setText(mContext.getResources().getString(R.string.course_item_teacher_prefix) + TextUtils.insertBR(leftCourse.get_teacher_name()));
@@ -79,6 +82,7 @@ public class CourseGroupAdapter extends ArrayAdapter<CourseGroup> {
         left_course.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                activity.saveConditions();
                 Intent intent = new Intent(mContext, CourseActivity.class).
                         putExtra(Intent.EXTRA_TEXT, leftCourse.server_id);
                 mContext.startActivity(intent);
@@ -95,11 +99,18 @@ public class CourseGroupAdapter extends ArrayAdapter<CourseGroup> {
         }
         converterView.findViewById(R.id.right_course).setVisibility(View.VISIBLE);
 
+
         TextView right_teacher = (TextView) converterView.findViewById(R.id.course_item_right_teacher);
+        TextView right_subject = (TextView) converterView.findViewById(R.id.course_item_right_subject);
+        View right_subject_and_teacher = converterView.findViewById(R.id.right_subject_and_teacher);
+
         if (rightCourse.subject == Subject.MATH) {
-            right_teacher.setBackgroundResource(R.drawable.course_math_teacher);
+            right_subject_and_teacher.setBackgroundResource(R.drawable.course_math_teacher);
+            right_subject.setText(mContext.getResources().getString(R.string.course_item_subject_prefix) + TextUtils.insertBR(mContext.getResources().getString(R.string.math)));
         } else {
-            right_teacher.setBackgroundResource(R.drawable.course_phy_teacher);
+            right_subject_and_teacher.setBackgroundResource(R.drawable.course_phy_teacher);
+            right_subject.setText(mContext.getResources().getString(R.string.course_item_subject_prefix) + TextUtils.insertBR(mContext.getResources().getString(R.string.pyhsics)));
+
         }
         Teacher rightTeacher = rightCourse.teacher();
         right_teacher.setText(mContext.getResources().getString(R.string.course_item_teacher_prefix) + TextUtils.insertBR(rightCourse.get_teacher_name()));
@@ -120,6 +131,7 @@ public class CourseGroupAdapter extends ArrayAdapter<CourseGroup> {
         right_course.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                activity.saveConditions();
                 Intent intent = new Intent(mContext, CourseActivity.class).
                         putExtra(Intent.EXTRA_TEXT, rightCourse.server_id);
                 mContext.startActivity(intent);

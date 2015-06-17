@@ -33,6 +33,16 @@ public class FilterView extends FrameLayout {
 
     private Button mFilterButton;
 
+    public static int JUNIOR = 1;
+    public static int SENIOR = 2;
+
+    public static int MATH = 1;
+    public static int PHYSICS = 2;
+
+    public static int ONGOING = 1;
+    public static int UNSTARTED = 2;
+    public static int FINISHED = 3;
+
     public FilterView(Context context) {
         super(context);
         mContext = context;
@@ -70,6 +80,7 @@ public class FilterView extends FrameLayout {
                 ((ListActivity)mContext).mConditionSubject = ((ListActivity)mContext).mFilterView.mConditionSubject;
                 ((ListActivity)mContext).mConditionStatus = ((ListActivity)mContext).mFilterView.mConditionStatus;
                 ((ListActivity)mContext).mFilterView.hide();
+                ((ListActivity)mContext).mShowFilter = false;
                 ((ListActivity)mContext).refreshCourses();
             }
         });

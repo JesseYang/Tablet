@@ -1,6 +1,7 @@
 package com.efei.student.tablet.student;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,15 +38,18 @@ public class ListActivity extends BaseActivity {
     private ImageView mFilter;
     private ImageView mSetting;
 
+    private ListView mListView;
+    private TextView mNoResult;
+
     public FilterView mFilterView;
     public SettingView mSettingView;
 
-    private boolean mShowFilter = false;
+    public boolean mShowFilter = false;
     private boolean mShowSetting = false;
 
     private Button mContinue;
 
-    private boolean mConditionMy = true;
+    public boolean mConditionMy = true;
     public int mConditionGrade = 0;
     public int mConditionSubject = 0;
     public int mConditionStatus = 0;
@@ -58,13 +62,15 @@ public class ListActivity extends BaseActivity {
         setupViews();
     }
 
-
     private void setupViews() {
         mMyCourse = (TextView) findViewById(R.id.my_course_tab);
         mAllCourse = (TextView) findViewById(R.id.all_course_tab);
         mContinue = (Button) findViewById(R.id.status_bar_continue_btn);
         mLastCourse = (TextView) findViewById(R.id.status_bar_last_course);
         mLastLesson = (TextView) findViewById(R.id.status_bar_last_lesson);
+
+        mListView = (ListView) findViewById(R.id.lv_course_list);
+        mNoResult = (TextView) findViewById(R.id.no_course_result);
 
         mSearchText = (EditText) findViewById(R.id.title_bar_search_text);
 
@@ -159,7 +165,26 @@ public class ListActivity extends BaseActivity {
             }
         });
 
+        /*
+        // fetch conditions from pref
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPref", 0);
+        mConditionMy = sharedPreferences.getBoolean("condition_my", true);
+        mConditionGrade = sharedPreferences.getInt("condition_grade", 0);
+        mConditionSubject = sharedPreferences.getInt("condition_subject", 0);
+        mConditionStatus = sharedPreferences.getInt("condition_status", 0);
+        */
+
         refreshCourses();
+    }
+
+    public void saveConditions() {
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", 0);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("condition_my", mConditionMy);
+        editor.putInt("condition_grade", mConditionGrade);
+        editor.putInt("condition_subject", mConditionSubject);
+        editor.putInt("condition_status", mConditionStatus);
+        editor.commit();
     }
 
     public void exit() {
@@ -189,18 +214,23 @@ public class ListActivity extends BaseActivity {
         //  mConditionStatus
         //  mConditionKey
 
-        ArrayList<CourseGroup> courseGroups = Course.list_course_groups(getApplicationContext());
+        // ArrayList<CourseGroup> courseGroups = Course.list_course_groups(getApplicationContext());
+        ArrayList<CourseGroup> courseGroups = Course.list_course_groups(this);
 
-        mCourseGroupAdapter =
-                new CourseGroupAdapter(
-                        ListActivity.this,
-                        R.layout.student_course_group_item,
-                        courseGroups
-                );
-
-
-        ListView listView = (ListView) findViewById(R.id.lv_course_list);
-        listView.setAdapter(mCourseGroupAdapter);
+        if (courseGroups.size() == 0) {
+            mNoResult.setVisibility(View.VISIBLE);
+            mListView.setVisibility(View.GONE);
+        } else {
+            mNoResult.setVisibility(View.GONE);
+            mListView.setVisibility(View.VISIBLE);
+            mCourseGroupAdapter =
+                    new CourseGroupAdapter(
+                            ListActivity.this,
+                            R.layout.student_course_group_item,
+                            courseGroups
+                    );
+            mListView.setAdapter(mCourseGroupAdapter);
+        }
     }
 
 

@@ -38,7 +38,7 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         setupViews();
-        no_network = true;
+        no_network = false;
     }
 
     private void setupViews()
@@ -171,6 +171,7 @@ public class LoginActivity extends BaseActivity {
                     String student_server_id = retval.getString("student_server_id");
                     Boolean admin = retval.getBoolean("admin") || false;
                     String course_id_str = retval.getString("course_id_str");
+                    String lesson_id_str = retval.getString("lesson_id_str");
                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", 0);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.clear().commit();
@@ -178,6 +179,7 @@ public class LoginActivity extends BaseActivity {
                     editor.putString("student_server_id", student_server_id);
                     editor.putBoolean("admin", admin);
                     editor.putString("course_id_str", course_id_str);
+                    editor.putString("lesson_id_str", lesson_id_str);
                     JSONArray study_ary = retval.getJSONArray("status");
                     JSONObject course_status;
                     for (int i = 0; i < study_ary.length(); i++) {
