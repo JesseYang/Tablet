@@ -16,8 +16,10 @@ import com.efei.student.tablet.R;
 import com.efei.student.tablet.account.LoginActivity;
 import com.efei.student.tablet.adapters.LessonAdapter;
 import com.efei.student.tablet.models.Course;
+import com.efei.student.tablet.models.Lesson;
 import com.efei.student.tablet.models.Teacher;
 import com.efei.student.tablet.utils.FileUtils;
+import com.efei.student.tablet.utils.ToastUtils;
 import com.efei.student.tablet.views.SettingView;
 
 public class CourseActivity extends BaseActivity {
@@ -41,6 +43,8 @@ public class CourseActivity extends BaseActivity {
     private ImageView mTextbook;
     private ImageView mTeacherAvatar;
 
+    private boolean mIsPurchased;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +53,7 @@ public class CourseActivity extends BaseActivity {
         String server_id = intent.getStringExtra(intent.EXTRA_TEXT);
         mCourse = Course.get_course_by_id(server_id, getApplicationContext());
         mTeacher = mCourse.teacher();
+        mIsPurchased = mCourse.is_purchased(this);
         setupViews();
     }
 
@@ -135,13 +140,22 @@ public class CourseActivity extends BaseActivity {
 
         ListView listView = (ListView) findViewById(R.id.course_page_lesson_list);
         listView.setAdapter(mLessonAdapter);
+        final BaseActivity activity = this;
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String lesson_id = mLessonAdapter.getItem(position).server_id;
-                Intent intent = new Intent(CourseActivity.this, LessonActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, lesson_id);
-                startActivity(intent);
+                if (mIsPurchased) {
+                    String lesson_id = mLessonAdapter.getItem(position).server_id;
+                    if (Lesson.get_lesson_by_id(lesson_id, activity).videos().length == 0) {
+                        ToastUtils.showToast(activity, "课程视频未下载");
+                        return;
+                    }
+                    Intent intent = new Intent(CourseActivity.this, LessonActivity.class)
+                            .putExtra(Intent.EXTRA_TEXT, lesson_id);
+                    startActivity(intent);
+                } else {
+                    ToastUtils.showToast(activity, "未购买此课程");
+                }
             }
         });
     }

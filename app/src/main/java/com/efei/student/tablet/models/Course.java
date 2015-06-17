@@ -86,6 +86,12 @@ public class Course {
         return course;
     }
 
+    public boolean is_purchased(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("MyPref", 0);
+        String course_id_str = sharedPreferences.getString("course_id_str", "");
+        return course_id_str.indexOf(this.server_id) != -1;
+    }
+
     public boolean is_junior() {
         return Arrays.asList(mContext.getApplicationContext().getResources().getStringArray(R.array.junior_grade)).contains(this.grade);
     }

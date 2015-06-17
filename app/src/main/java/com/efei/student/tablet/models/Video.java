@@ -167,7 +167,7 @@ public class Video {
 
             String video_filename = get_filename_by_url(ele.getString(TabletContract.VideoEntry.COLUMN_VIDEO_URL));
 
-            if (!FileUtils.check_video_file_existence(video_filename)) {
+            if (!FileUtils.check_video_file_existence(video_filename, context)) {
                 NetUtils.download_resource(ele.getString(TabletContract.VideoEntry.COLUMN_VIDEO_URL),
                         video_filename,
                         "video",

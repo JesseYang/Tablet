@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.efei.student.tablet.R;
+import com.efei.student.tablet.models.Course;
 import com.efei.student.tablet.models.Lesson;
 import com.efei.student.tablet.student.CourseActivity;
 
@@ -40,10 +41,17 @@ public class LessonAdapter extends ArrayAdapter<Lesson> {
 
         TextView study_status = (TextView) converterView.findViewById(R.id.tv_course_lesson_study_status);
 
-        if (lesson.is_completed()) {
+        boolean purchase_course = Course.get_course_by_id(lesson.course_id, activity).is_purchased(activity);
+
+        if (!purchase_course) {
+            study_status.setVisibility(View.GONE);
+        }
+        else if (lesson.is_completed()) {
+            study_status.setVisibility(View.VISIBLE);
             study_status.setText(activity.getResources().getString(R.string.completed));
             study_status.setBackground(activity.getResources().getDrawable(R.drawable.exercise_finished_background));
         } else {
+            study_status.setVisibility(View.VISIBLE);
             study_status.setText(activity.getResources().getString(R.string.not_completed));
             study_status.setBackground(activity.getResources().getDrawable(R.drawable.exercise_ongoing_background));
         }

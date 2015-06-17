@@ -40,9 +40,8 @@ public class FileUtils {
         file.delete();
     }
 
-    public static Boolean check_video_file_existence(String video_filename) {
-        File storageRoot = Environment.getExternalStorageDirectory();
-        File file = new File(storageRoot, VIDEO_FOLDER + video_filename);
+    public static Boolean check_video_file_existence(String video_filename, Context context) {
+        File file = context.getApplicationContext().getFileStreamPath(video_filename);
         return file.exists();
     }
 
