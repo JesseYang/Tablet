@@ -1,5 +1,6 @@
 package com.efei.student.tablet.utils;
 
+import android.content.Context;
 import android.os.Environment;
 
 import com.efei.student.tablet.models.Course;
@@ -7,6 +8,7 @@ import com.efei.student.tablet.models.Teacher;
 import com.efei.student.tablet.models.Video;
 
 import java.io.File;
+import java.io.FileOutputStream;
 
 public class FileUtils {
     public static String ROOT_FOLDER = "efei/";
@@ -14,10 +16,16 @@ public class FileUtils {
     public static String TEXTBOOK_FOLDER = "efei/textbooks/";
     public static String VIDEO_FOLDER = "efei/videos/";
 
-    public static void remove_video_file(String video_filename) {
+    public static void remove_video_file(String video_filename, Context context) {
+        File dir = context.getFilesDir();
+        File file = new File(dir, video_filename);
+        boolean deleted = file.delete();
+
+        /*
         File storageRoot = Environment.getExternalStorageDirectory();
         File file = new File(storageRoot, VIDEO_FOLDER + video_filename);
         file.delete();
+        */
     }
 
     public static void remove_textbook_file(Course course) {
@@ -54,6 +62,45 @@ public class FileUtils {
         folder = new File(Environment.getExternalStorageDirectory() + "/" + FileUtils.TEXTBOOK_FOLDER);
         if (!folder.exists()) {
             folder.mkdir();
+        }
+    }
+
+    public static FileOutputStream get_output_stream(String filename, String type, Context context) {
+        try {
+            FileUtils.ensure_folder();
+            File storageRoot = Environment.getExternalStorageDirectory();
+            String path;
+
+            switch (type) {
+                case "avatar":
+                    path = FileUtils.AVATAR_FOLDER + filename;
+                    break;
+                case "video":
+                    path = FileUtils.VIDEO_FOLDER + filename;
+                    break;
+                case "textbook":
+                    path = FileUtils.TEXTBOOK_FOLDER + filename;
+                    break;
+                default:
+                    return null;
+            }
+
+            FileOutputStream fileOutputStream;
+            if (type == "video") {
+                fileOutputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
+            } else {
+                File file = new File(storageRoot, path);
+                if (file.exists()) {
+                    file.delete();
+                }
+                file.createNewFile();
+                fileOutputStream = new FileOutputStream(file);
+            }
+
+            return fileOutputStream;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

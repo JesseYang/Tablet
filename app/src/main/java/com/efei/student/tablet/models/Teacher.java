@@ -123,7 +123,8 @@ public class Teacher {
                 // download the avatar file
                 NetUtils.download_resource(ele.getString(TabletContract.TeacherEntry.COLUMN_AVATAR_URL),
                         server_id + ".png",
-                        "avatar");
+                        "avatar",
+                        context);
             } else {
                 cursor.moveToFirst();
                 if (!cursor.getString(cursor.getColumnIndex(TabletContract.TeacherEntry.COLUMN_UPDATE_AT)).equals(ele.getString(TabletContract.TeacherEntry.COLUMN_UPDATE_AT))) {
@@ -135,7 +136,8 @@ public class Teacher {
                     // download the avatar file
                     NetUtils.download_resource(ele.getString(TabletContract.TeacherEntry.COLUMN_AVATAR_URL),
                             server_id + ".png",
-                            "avatar");
+                            "avatar",
+                            context);
                 }
             }
             cursor.close();

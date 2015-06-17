@@ -140,7 +140,7 @@ public class Video {
                 null);  // sort order
         if (cursor.getCount() == 0) {
             // the video file is not used by other videos, remove the file
-            FileUtils.remove_video_file(Video.get_filename_by_url(this.video_url));
+            FileUtils.remove_video_file(Video.get_filename_by_url(this.video_url), mContext);
         }
         cursor.close();
         db.close();
@@ -170,7 +170,8 @@ public class Video {
             if (!FileUtils.check_video_file_existence(video_filename)) {
                 NetUtils.download_resource(ele.getString(TabletContract.VideoEntry.COLUMN_VIDEO_URL),
                         video_filename,
-                        "video");
+                        "video",
+                        context);
             }
 
             // get the tags for this video

@@ -268,7 +268,8 @@ public class Course {
     public void download_textbook() {
         NetUtils.download_resource(this.textbook_url,
                 this.server_id + ".png",
-                "textbook");
+                "textbook",
+                mContext);
     }
 
     public static void remove_old_courses(String[] course_id_ary, Context context) {

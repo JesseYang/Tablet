@@ -16,7 +16,6 @@ import com.efei.student.tablet.R;
 import com.efei.student.tablet.models.Lesson;
 import com.efei.student.tablet.models.Tag;
 import com.efei.student.tablet.models.Video;
-import com.efei.student.tablet.utils.FileUtils;
 import com.efei.student.tablet.utils.GestureListener;
 import com.efei.student.tablet.views.EpisodeTipView;
 import com.efei.student.tablet.views.ExampleQuestionDialogView;
@@ -26,6 +25,7 @@ import com.efei.student.tablet.views.VideoListView;
 import com.efei.student.tablet.views.VideoTopView;
 import com.efei.student.tablet.views.VideoTtitleView;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 
 public class LessonActivity extends BaseActivity implements SurfaceHolder.Callback, MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, VideoControllerView.MediaPlayerControl {
@@ -96,7 +96,9 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         try {
             player.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mCurVideo = mLesson.videos()[0];
-            player.setDataSource(FileUtils.get_video_local_uri(mCurVideo));
+            FileInputStream fileInputStream = this.openFileInput(Video.get_filename_by_url(mCurVideo.video_url));
+            player.setDataSource(fileInputStream.getFD());
+            // player.setDataSource(FileUtils.get_video_local_uri(mCurVideo));
             player.prepareAsync();
             player.setOnPreparedListener(this);
             player.setOnCompletionListener(this);
@@ -175,7 +177,9 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         try {
             player.reset();
             mCurVideo = video;
-            player.setDataSource(FileUtils.get_video_local_uri(video));
+            FileInputStream fileInputStream = this.openFileInput(Video.get_filename_by_url(mCurVideo.video_url));
+            player.setDataSource(fileInputStream.getFD());
+            // player.setDataSource(FileUtils.get_video_local_uri(video));
             player.prepareAsync();
             player.setOnPreparedListener(this);
 

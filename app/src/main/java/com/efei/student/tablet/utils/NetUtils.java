@@ -4,13 +4,11 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Environment;
 
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -159,7 +157,7 @@ public final class NetUtils {
         }
     }
 
-    public static String download_resource(String urlRes, String filename, String type) {
+    public static void download_resource(String urlRes, String filename, String type, Context context) {
         try {
 
             HttpURLConnection urlConnection;
@@ -169,31 +167,9 @@ public final class NetUtils {
             urlConnection.setRequestMethod("GET");
             // urlConnection.setDoOutput(true);
             urlConnection.connect();
-
-            FileUtils.ensure_folder();
-            File storageRoot = Environment.getExternalStorageDirectory();
-            String path;
-            switch (type) {
-                case "avatar":
-                    path = FileUtils.AVATAR_FOLDER + filename;
-                    break;
-                case "video":
-                    path = FileUtils.VIDEO_FOLDER + filename;
-                    break;
-                case "textbook":
-                    path = FileUtils.TEXTBOOK_FOLDER + filename;
-                    break;
-                default:
-                    return null;
-            }
-            File file = new File(storageRoot, path);
-            if (file.exists()) {
-                file.delete();
-            }
-            file.createNewFile();
-
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
             
+            FileOutputStream fileOutputStream = FileUtils.get_output_stream(filename, type, context);
+
             InputStream inputStream = urlConnection.getInputStream();
             int totalSize = urlConnection.getContentLength();
             int downloadedSize = 0;
@@ -204,10 +180,10 @@ public final class NetUtils {
                 downloadedSize += bufferLength;
             }
             fileOutputStream.close();
-            return file.getPath();
+            return;
         } catch (Exception e) {
             e.printStackTrace();
-            return "";
+            return;
         }
     }
 
