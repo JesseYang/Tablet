@@ -98,7 +98,6 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             mCurVideo = mLesson.videos()[0];
             FileInputStream fileInputStream = this.openFileInput(Video.get_filename_by_url(mCurVideo.video_url));
             player.setDataSource(fileInputStream.getFD());
-            // player.setDataSource(FileUtils.get_video_local_uri(mCurVideo));
             player.prepareAsync();
             player.setOnPreparedListener(this);
             player.setOnCompletionListener(this);
@@ -179,7 +178,6 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             mCurVideo = video;
             FileInputStream fileInputStream = this.openFileInput(Video.get_filename_by_url(mCurVideo.video_url));
             player.setDataSource(fileInputStream.getFD());
-            // player.setDataSource(FileUtils.get_video_local_uri(video));
             player.prepareAsync();
             player.setOnPreparedListener(this);
 
@@ -374,6 +372,8 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             goBackParentVideo();
             return;
         }
+
+        // the video goes end
 
         // todo: check current video type, can be one of the followings:
         //  1. an episode video, and has original video: should switch back to the original video. Otherwise...

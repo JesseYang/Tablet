@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Tablet</string>
+    <string name="app_name">易飞学堂</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -15,7 +15,7 @@
     <string name="action_register">立&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;即&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;注&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;册</string>
     <string name="action_go_register">没有帐号？立即注册</string>
     <string name="action_go_login">已有帐号？立即登录</string>
-    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_login">易飞学堂</string>
     <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_information">InformationActivity</string>
 

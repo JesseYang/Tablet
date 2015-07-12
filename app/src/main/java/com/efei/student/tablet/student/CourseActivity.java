@@ -31,6 +31,7 @@ public class CourseActivity extends BaseActivity {
     private ImageView mReturn;
     private TextView mContinue;
 
+    private TextView mCourseTitle;
     private TextView mCourseDesc;
     private TextView mTeacherDesc;
     private TextView mTeacherName;
@@ -58,6 +59,9 @@ public class CourseActivity extends BaseActivity {
     }
 
     private void setupViews() {
+
+        mCourseTitle = (TextView) findViewById(R.id.my_course_tab);
+        mCourseTitle.setText(mCourse.name);
 
         mReturn = (ImageView) findViewById(R.id.btn_course_return);
 
