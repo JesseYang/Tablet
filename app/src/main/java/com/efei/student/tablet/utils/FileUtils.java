@@ -8,7 +8,9 @@ import com.efei.student.tablet.models.Teacher;
 import com.efei.student.tablet.models.Video;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
 
 public class FileUtils {
     public static String ROOT_FOLDER = "efei/";
@@ -101,6 +103,35 @@ public class FileUtils {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static String copy_video(String video_filename, Context context) {
+        try {
+            File storageRoot = Environment.getExternalStorageDirectory();
+            String path = FileUtils.VIDEO_FOLDER + video_filename;
+            File src = new File(storageRoot, path);
+
+            File dir = context.getFilesDir();
+            File dst = new File(dir, video_filename);
+
+            FileChannel inChannel = new FileInputStream(src).getChannel();
+            FileChannel outChannel = new FileOutputStream(dst).getChannel();
+            try
+            {
+                inChannel.transferTo(0, inChannel.size(), outChannel);
+            }
+            finally
+            {
+                if (inChannel != null)
+                    inChannel.close();
+                if (outChannel != null)
+                    outChannel.close();
+            }
+            src.delete();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return video_filename;
     }
 
     public static String get_video_local_uri(Video video) {

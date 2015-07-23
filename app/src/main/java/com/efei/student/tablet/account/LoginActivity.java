@@ -38,7 +38,7 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         setupViews();
-        no_network = true;
+        no_network = false;
     }
 
     private void setupViews()
@@ -110,7 +110,6 @@ public class LoginActivity extends BaseActivity {
                 e.printStackTrace();
             }
         }
-
     }
 
     private boolean isPasswordValid(String password) {
