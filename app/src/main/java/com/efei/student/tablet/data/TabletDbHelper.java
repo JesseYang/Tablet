@@ -17,7 +17,7 @@ import com.efei.student.tablet.data.TabletContract.VideoEntry;
  */
 public class TabletDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 12;
+    private static final int DATABASE_VERSION = 14;
 
     private static final String DATABASE_NAME = "tablet.db";
 
@@ -95,6 +95,7 @@ public class TabletDbHelper extends SQLiteOpenHelper {
                 TagEntry.COLUMN_EPISODE_ID + " TEXT," +
                 TagEntry.COLUMN_TYPE + " INTEGER NOT NULL," +
                 TagEntry.COLUMN_TIME + " INTEGER NOT NULL," +
+                TagEntry.COLUMN_DURATION + " INTEGER NOT NULL," +
                 TagEntry.COLUMN_NAME + " TEXT NOT NULL," +
 
                 // Set up the teacher id column as a foreign key to teacher table.

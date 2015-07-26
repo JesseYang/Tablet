@@ -137,11 +137,17 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         }
         Tag[] tags = mCurVideo.tags();
         for (Tag tag : tags) {
-            // if (tag.type != Tag.TYPE_EPISODE) { continue; }
+            if (tag.type != tag.TYPE_EXAMPLE) { continue; }
             int time = tag.time;
             if (time * 1000 >= last_position && time * 1000 < position) {
-                episodeTipView.show(tag.episode_id, tag);
+                player.pause();
+                exampleQuestionDialogView.show(tag.name, tag.duration);
             }
+            // if (tag.type != Tag.TYPE_EPISODE) { continue; }
+            // int time = tag.time;
+            // if (time * 1000 >= last_position && time * 1000 < position) {
+            //     episodeTipView.show(tag.episode_id, tag);
+            // }
         }
     }
 
@@ -397,13 +403,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             exerciseDialogView.show();
             return;
         }
-
-        if (nextVideo.type == Video.KNOWLEDGE) {
-            switchVideo(nextVideo);
-        } else if (nextVideo.type == Video.EXAMPLE) {
-            // todo: show dialog which notifies the user to do the example question in the textbook
-            exampleQuestionDialogView.show(nextVideo);
-        }
+        switchVideo(nextVideo);
     }
     // End VideoMediaController.MediaPlayerControl
 }

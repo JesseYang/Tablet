@@ -89,12 +89,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:src="@drawable/dotted"
-                android:layerType="software"/>
+                android:layerType="software"
+                android:visibility="invisible"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="41dp"
-                android:orientation="horizontal" >
+                android:orientation="horizontal"
+                android:visibility="invisible">
 
                 <TextView
                     android:id="@+id/course_item_left_status"
@@ -203,12 +205,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:src="@drawable/dotted"
-                android:layerType="software"/>
+                android:layerType="software"
+                android:visibility="invisible"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="41dp"
-                android:orientation="horizontal" >
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/course_item_right_status"
@@ -226,7 +230,7 @@
                     android:text="@string/course_item_begin_action"
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
-                    android:textColor="@color/title_bar_background" />
+                    android:textColor="@color/title_bar_background"/>
 
             </LinearLayout>
 

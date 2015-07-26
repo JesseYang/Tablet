@@ -103,7 +103,8 @@
                 android:layout_marginTop="30dp"
                 android:text="@string/action_go_register"
                 android:textColor="#ff87adee"
-                android:textSize="13dp" />
+                android:textSize="13dp"
+                android:visibility="invisible"/>
 
 
         </LinearLayout>

@@ -97,8 +97,6 @@ public class Video {
         TabletDbHelper dbHelper = new TabletDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-
-
         Cursor cursor = db.query(TabletContract.TagEntry.TABLE_NAME, // Table to query
                 null,   // all columns
                 TabletContract.TagEntry.COLUMN_VIDEO_ID + "=?",   // columns for the "where" clause

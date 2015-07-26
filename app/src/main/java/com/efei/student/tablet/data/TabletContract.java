@@ -128,6 +128,9 @@ public class TabletContract {
         // Time, stored as Integer
         public static final String COLUMN_TIME = "time";
 
+        // Duration, stored as Integer
+        public static final String COLUMN_DURATION = "duration";
+
         // Name, stored as String
         public static final String COLUMN_NAME = "name";
 

@@ -118,18 +118,31 @@
 
             <TextView
                 android:id="@+id/status_bar_desc"
-                android:layout_width="@dimen/status_bar_desc_width"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="50dp"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:textSize="15dp"
-                android:text="上次学习到" />
+                android:text="张三，"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/status_bar_desc_2"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="50dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textSize="15dp"
+                android:text="你好，欢迎回来 :-)" />
 
             <LinearLayout
                 android:layout_width="@dimen/status_bar_last_time"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:layout_marginTop="5dp"
+                android:visibility="gone"
                 android:layout_marginBottom="5dp">
 
                 <TextView
@@ -156,7 +169,8 @@
             <View
                 android:layout_width="@dimen/status_bar_space_1"
                 android:layout_height="match_parent"
-                android:background="@color/transparent" />
+                android:background="@color/transparent"
+                android:visibility="gone"/>
 
             <Button
                 android:id="@+id/status_bar_continue_btn"
@@ -165,7 +179,8 @@
                 android:background="@drawable/status_bar_button_background"
                 android:text="继续学习"
                 android:textColor="@color/white"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:visibility="gone"/>
 
         </LinearLayout>
 

@@ -230,6 +230,10 @@ public class Lesson {
     public Video[] get_extended_video_items() {
         Video[] videos = this.videos();
         ArrayList<Video> videoList = new ArrayList<>();
+        for (Video v : videos) {
+            videoList.add(v);
+        }
+        /*
         boolean knowledge = false, example = false, episode = false;
         for (Video v : videos) {
             if (v.type == 1 && knowledge == false) {
@@ -244,6 +248,7 @@ public class Lesson {
             }
             videoList.add(v);
         }
+        */
         Video[] ret = new Video[videoList.size()];
         int i = 0;
         for (Video v : videoList) {

@@ -71,7 +71,8 @@ public class ExampleQuestionDialogView extends FrameLayout {
         mShowing = false;
     }
 
-    public void show(Video video) {
+    // public void show(Video video) {
+    public void show(String name, Integer duration) {
         if (!mShowing && mAnchor != null) {
 
             LayoutParams tlp = new LayoutParams(
@@ -82,19 +83,19 @@ public class ExampleQuestionDialogView extends FrameLayout {
 
             mAnchor.addView(this, tlp);
             mShowing = true;
-            mExampleVideo = video;
+            // mExampleVideo = video;
             mButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ((LessonActivity) mContext).switchVideo(mExampleVideo);
+                    // ((LessonActivity) mContext).switchVideo(mExampleVideo);
+                    ((LessonActivity) mContext).start();
                     hide();
                 }
             });
 
             String example_tip = mContext.getResources().getString(R.string.example_tip);
-            example_tip = example_tip.replace("v1", String.valueOf(mExampleVideo.page));
-            example_tip = example_tip.replace("v2", String.valueOf(mExampleVideo.question_name));
-            example_tip = example_tip.replace("v3", String.valueOf(mExampleVideo.time));
+            example_tip = example_tip.replace("v1", name);
+            example_tip = example_tip.replace("v2", String.valueOf(duration));
             mExampleTip.setText(example_tip);
 
         }
