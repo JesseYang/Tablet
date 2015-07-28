@@ -1,6 +1,8 @@
 package com.efei.student.tablet.views;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -15,6 +17,9 @@ import com.efei.student.tablet.models.Lesson;
 import com.efei.student.tablet.models.Video;
 import com.efei.student.tablet.student.LessonActivity;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class ExampleQuestionDialogView extends FrameLayout {
 
     private Lesson mLesson;
@@ -26,6 +31,55 @@ public class ExampleQuestionDialogView extends FrameLayout {
 
     private Button mButton;
     private TextView mExampleTip;
+    private TextView mFinishTip;
+
+    Timer timer = new Timer();
+
+    class CountHandler extends Handler {
+        private final String text;
+
+        CountHandler (String text) {
+            this.text = text;
+        }
+
+        public void handleMessage(Message msg) {
+            mExampleTip.setText(text);
+            super.handleMessage(msg);
+        }
+    }
+
+    Handler handler = new Handler(){
+
+        public void handleMessage(Message msg) {
+            int second = msg.what;
+            int minute = second / 60;
+            second = second % 60;
+            mFinishTip.setText("请点击");
+            mExampleTip.setText("你已经在这道题上花了" + minute + "分" + second + "秒，还是先听听老师的讲解吧 :-)");
+            super.handleMessage(msg);
+        }
+    };
+
+    class CountTime extends TimerTask {
+
+        private final int time;
+
+
+        CountTime ( int time )
+        {
+            this.time = time;
+        }
+
+        public void run() {
+            Message message = new Message();
+            message.what = time;
+            handler.sendMessage(message);
+
+            if (mShowing) {
+                timer.schedule(new CountTime(this.time + 1), 1000);
+            }
+        }
+    }
 
     public ExampleQuestionDialogView(Context context) {
         super(context);
@@ -56,6 +110,7 @@ public class ExampleQuestionDialogView extends FrameLayout {
     private void initControllerView() {
         mButton = (Button) mRoot.findViewById(R.id.next_example_video);
         mExampleTip = (TextView) mRoot.findViewById(R.id.example_tip);
+        mFinishTip = (TextView) mRoot.findViewById(R.id.finish_tip);
     }
 
     public void hide() {
@@ -71,7 +126,6 @@ public class ExampleQuestionDialogView extends FrameLayout {
         mShowing = false;
     }
 
-    // public void show(Video video) {
     public void show(String name, Integer duration) {
         if (!mShowing && mAnchor != null) {
 
@@ -81,13 +135,13 @@ public class ExampleQuestionDialogView extends FrameLayout {
                     Gravity.CENTER
             );
 
+            mFinishTip.setText("完成后请点击");
             mAnchor.addView(this, tlp);
             mShowing = true;
-            // mExampleVideo = video;
+            timer.schedule(new CountTime(duration), duration * 60 * 1000);
             mButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // ((LessonActivity) mContext).switchVideo(mExampleVideo);
                     ((LessonActivity) mContext).start();
                     hide();
                 }
