@@ -76,6 +76,7 @@
     <string name="course_item_subject_prefix">科\n&#160;&#160;\n&#160;&#160;\n目\n：</string>
     <string name="math">数学</string>
     <string name="pyhsics">物理</string>
+    <string name="chinese">语文</string>
     <string name="completed">已完成</string>
     <string name="not_completed">未完成</string>
 

@@ -19,6 +19,7 @@ import com.efei.student.tablet.models.Course;
 import com.efei.student.tablet.models.Lesson;
 import com.efei.student.tablet.models.Teacher;
 import com.efei.student.tablet.utils.FileUtils;
+import com.efei.student.tablet.utils.Subject;
 import com.efei.student.tablet.utils.ToastUtils;
 import com.efei.student.tablet.views.SettingView;
 
@@ -30,6 +31,8 @@ public class CourseActivity extends BaseActivity {
 
     private ImageView mReturn;
     private TextView mContinue;
+
+    private View mTitleBar;
 
     private TextView mCourseTitle;
     private TextView mCourseDesc;
@@ -59,6 +62,16 @@ public class CourseActivity extends BaseActivity {
     }
 
     private void setupViews() {
+
+        mTitleBar = findViewById(R.id.title_bar);
+
+        if (mCourse.subject == Subject.MATH) {
+            mTitleBar.setBackgroundColor(getResources().getColor(R.color.course_math_teacher));
+        } else if (mCourse.subject == Subject.PHYSICS) {
+            mTitleBar.setBackgroundColor(getResources().getColor(R.color.course_phy_teacher));
+        } else {
+            mTitleBar.setBackgroundColor(getResources().getColor(R.color.course_chinese_teacher));
+        }
 
         mCourseTitle = (TextView) findViewById(R.id.my_course_tab);
         mCourseTitle.setText(mCourse.name);

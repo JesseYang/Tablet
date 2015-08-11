@@ -59,9 +59,12 @@ public class CourseGroupAdapter extends ArrayAdapter<CourseGroup> {
         if (leftCourse.subject == Subject.MATH) {
             left_subject_and_teacher.setBackgroundResource(R.drawable.course_math_teacher);
             left_subject.setText(mContext.getResources().getString(R.string.course_item_subject_prefix) + TextUtils.insertBR(mContext.getResources().getString(R.string.math)));
-        } else {
+        } else if (leftCourse.subject == Subject.PHYSICS) {
             left_subject_and_teacher.setBackgroundResource(R.drawable.course_phy_teacher);
             left_subject.setText(mContext.getResources().getString(R.string.course_item_subject_prefix) + TextUtils.insertBR(mContext.getResources().getString(R.string.pyhsics)));
+        } else {
+            left_subject_and_teacher.setBackgroundResource(R.drawable.course_chinese_teacher);
+            left_subject.setText(mContext.getResources().getString(R.string.course_item_subject_prefix) + TextUtils.insertBR(mContext.getResources().getString(R.string.chinese)));
         }
         Teacher leftTeacher = leftCourse.teacher();
         left_teacher.setText(mContext.getResources().getString(R.string.course_item_teacher_prefix) + TextUtils.insertBR(leftCourse.get_teacher_name()));
@@ -107,11 +110,15 @@ public class CourseGroupAdapter extends ArrayAdapter<CourseGroup> {
         if (rightCourse.subject == Subject.MATH) {
             right_subject_and_teacher.setBackgroundResource(R.drawable.course_math_teacher);
             right_subject.setText(mContext.getResources().getString(R.string.course_item_subject_prefix) + TextUtils.insertBR(mContext.getResources().getString(R.string.math)));
-        } else {
+        } else if (rightCourse.subject == Subject.PHYSICS) {
             right_subject_and_teacher.setBackgroundResource(R.drawable.course_phy_teacher);
             right_subject.setText(mContext.getResources().getString(R.string.course_item_subject_prefix) + TextUtils.insertBR(mContext.getResources().getString(R.string.pyhsics)));
+        } else {
+            right_subject_and_teacher.setBackgroundResource(R.drawable.course_chinese_teacher);
+            right_subject.setText(mContext.getResources().getString(R.string.course_item_subject_prefix) + TextUtils.insertBR(mContext.getResources().getString(R.string.chinese)));
 
         }
+
         Teacher rightTeacher = rightCourse.teacher();
         right_teacher.setText(mContext.getResources().getString(R.string.course_item_teacher_prefix) + TextUtils.insertBR(rightCourse.get_teacher_name()));
 
