@@ -36,6 +36,18 @@
     </TextView>
 
     <Button
+        android:id="@+id/btn_mgt_course_item_update_info"
+        style="?android:textAppearanceSmall"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:text=""
+        android:textColor="@android:color/white"
+        android:textStyle="bold"/>
+
+    <Button
         android:id="@+id/btn_mgt_course_item_toggle_content"
         style="?android:textAppearanceSmall"
         android:layout_width="0dp"

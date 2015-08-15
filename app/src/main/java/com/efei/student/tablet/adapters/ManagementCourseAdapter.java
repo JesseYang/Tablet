@@ -49,11 +49,36 @@ public class ManagementCourseAdapter extends ArrayAdapter<Course> {
         TextView teacher = (TextView) converterView.findViewById(R.id.tv_mgt_course_item_teacher);
         teacher.setText(course.get_teacher_name());
 
-        Button button = (Button) converterView.findViewById(R.id.btn_mgt_course_item_toggle_content);
-        button.setText( course.has_content ? "删除课程内容" : "下载课程内容" );
-        button.setOnClickListener(new ToggleCourseClickListener(course, this.activity, button, this.tv_status));
+        // Button button = (Button) converterView.findViewById(R.id.btn_mgt_course_item_update_info);
+        Button btn1 = (Button) converterView.findViewById(R.id.btn_mgt_course_item_update_info);
+        btn1.setText("更新课程信息");
+        btn1.setOnClickListener(new UpdateInfoClickListener(course, this.activity, btn1, this.tv_status));
+
+
+        Button btn2 = (Button) converterView.findViewById(R.id.btn_mgt_course_item_toggle_content);
+        btn2.setText( course.has_content ? "删除课程内容" : "下载课程内容" );
+        btn2.setOnClickListener(new ToggleCourseClickListener(course, this.activity, btn2, this.tv_status));
 
         return converterView;
+    }
+
+    public class UpdateInfoClickListener implements  View.OnClickListener {
+        Course course;
+        Activity activity;
+        Button button;
+        TextView tv_status;
+        public UpdateInfoClickListener(Course course, Activity activity, Button button, TextView tv_status) {
+            this.course = course;
+            this.activity = activity;
+            this.button = button;
+            this.tv_status = tv_status;
+        }
+
+        @Override
+        public void onClick(View v) {
+            UpdateInfoTask updateInfoTask = new UpdateInfoTask(course, tv_status, button, this.activity);
+            updateInfoTask.execute(course);
+        }
     }
 
     public class ToggleCourseClickListener implements View.OnClickListener {
@@ -82,6 +107,33 @@ public class ManagementCourseAdapter extends ArrayAdapter<Course> {
                 downloadContentTask.execute(course);
             }
             button.setOnClickListener(new ToggleCourseClickListener(this.course, this.activity, this.button, this.tv_status));
+        }
+    }
+
+    public class UpdateInfoTask extends AsyncTask<Course, Void, Void> {
+        TextView tv_status;
+        Button button;
+        Context context;
+        Course course;
+
+        public UpdateInfoTask(Course course, TextView tv_status, Button button, Context context) {
+            this.course = course;
+            this.tv_status = tv_status;
+            this.button = button;
+            this.context = context;
+            this.button.setEnabled(false);
+        }
+
+        @Override
+        protected  Void doInBackground(Course... course) {
+            this.course.update_course(context);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void retval) {
+            tv_status.setText("课程信息更新完毕");
+            button.setEnabled(true);
         }
     }
 

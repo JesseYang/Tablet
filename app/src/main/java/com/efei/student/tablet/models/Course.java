@@ -199,6 +199,17 @@ public class Course {
         return course_ary;
     }
 
+    public void update_course(Context context) {
+        String response = NetUtils.get("/tablet/courses/" + this.server_id, "");
+        try {
+            JSONObject jsonRes = new JSONObject(response);
+            JSONObject ele = jsonRes.getJSONObject("course");
+            create_or_update(ele, context);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void update_courses(Context context) {
         String response = NetUtils.get("/tablet/courses", "");
         try {
