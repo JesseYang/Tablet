@@ -32,6 +32,7 @@ public class ExampleQuestionDialogView extends FrameLayout {
     private Button mButton;
     private TextView mExampleTip;
     private TextView mFinishTip;
+    private TextView mTimerTip;
 
     Timer timer = new Timer();
 
@@ -55,7 +56,9 @@ public class ExampleQuestionDialogView extends FrameLayout {
             int minute = second / 60;
             second = second % 60;
             mFinishTip.setText("请点击");
-            mExampleTip.setText("你已经在这道题上花了" + minute + "分" + second + "秒，还是先听听老师的讲解吧 :-)");
+            // mExampleTip.setText("你已经在这道题上花了" + minute + "分" + second + "秒，还是先听听老师的讲解吧 :-)");
+            mTimerTip.setVisibility(VISIBLE);
+            mTimerTip.setText("你已经花了" + minute + "分" + second + "秒，还是先听听老师的讲解吧 :-)");
             super.handleMessage(msg);
         }
     };
@@ -111,6 +114,7 @@ public class ExampleQuestionDialogView extends FrameLayout {
         mButton = (Button) mRoot.findViewById(R.id.next_example_video);
         mExampleTip = (TextView) mRoot.findViewById(R.id.example_tip);
         mFinishTip = (TextView) mRoot.findViewById(R.id.finish_tip);
+        mTimerTip = (TextView) mRoot.findViewById(R.id.timer_tip);
     }
 
     public void hide() {
@@ -138,7 +142,7 @@ public class ExampleQuestionDialogView extends FrameLayout {
             mFinishTip.setText("完成后请点击");
             mAnchor.addView(this, tlp);
             mShowing = true;
-            timer.schedule(new CountTime(duration), duration * 60 * 1000);
+            timer.schedule(new CountTime(duration * 60), duration * 60 * 1000);
             mButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -151,7 +155,7 @@ public class ExampleQuestionDialogView extends FrameLayout {
             example_tip = example_tip.replace("v1", name);
             example_tip = example_tip.replace("v2", String.valueOf(duration));
             mExampleTip.setText(example_tip);
-
+            mTimerTip.setVisibility(GONE);
         }
     }
 }

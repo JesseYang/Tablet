@@ -121,7 +121,7 @@ public class Video {
         TabletDbHelper dbHelper = new TabletDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete(TabletContract.TagEntry.TABLE_NAME,
-                TabletContract.TagEntry.COLUMN_EPISODE_ID + "=\"" + this.server_id + "\"",
+                TabletContract.TagEntry.COLUMN_VIDEO_ID + "=\"" + this.server_id + "\"",
                 null);
         // then delete itself
         db.delete(TabletContract.VideoEntry.TABLE_NAME,
@@ -142,6 +142,38 @@ public class Video {
         }
         cursor.close();
         db.close();
+    }
+
+    public static String find_or_create(JSONObject ele, Context context) {
+        try {
+            String video_url = ele.getString(TabletContract.VideoEntry.COLUMN_VIDEO_URL);
+            TabletDbHelper dbHelper = new TabletDbHelper(context);
+
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+            Cursor cursor = db.query(TabletContract.CourseEntry.TABLE_NAME, // Table to query
+                    null,   // all columns
+                    TabletContract.VideoEntry.COLUMN_VIDEO_URL + "=?",   // columns for the "where" clause
+                    new String[]{video_url},  // values for the "where" clause
+                    null,   // columns to group by
+                    null,   // columns to filter by row groups
+                    null);  // sort order
+            int count = cursor.getCount();
+            if (count == 0) {
+                // the video does not exist, create a new one
+                return Video.create(ele, context);
+            } else {
+                // the video exist, check whether file exist, if file does not exist, try to copy the file
+                String video_filename = get_filename_by_url(ele.getString(TabletContract.VideoEntry.COLUMN_VIDEO_URL));
+                if (!FileUtils.check_video_file_existence(video_filename, context)) {
+                    FileUtils.copy_video(video_filename, context);
+                }
+                return ele.getString(TabletContract.LessonEntry.COLUMN_SERVER_ID);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 
     public static String create(JSONObject ele, Context context) {
@@ -167,12 +199,6 @@ public class Video {
 
             if (!FileUtils.check_video_file_existence(video_filename, context)) {
                 FileUtils.copy_video(video_filename, context);
-                /*
-                NetUtils.download_resource(ele.getString(TabletContract.VideoEntry.COLUMN_VIDEO_URL),
-                        video_filename,
-                        "video",
-                        context);
-                        */
             }
 
             // get the tags for this video

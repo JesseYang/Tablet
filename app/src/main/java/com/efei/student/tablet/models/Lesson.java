@@ -182,7 +182,7 @@ public class Lesson {
         }
     }
 
-    public void download_videos(ManagementCourseAdapter.DownloadContentTask task, int total_lesson, int current_lesson) {
+    public void download_videos(ManagementCourseAdapter.DownloadContentTask task, int total_lesson, int current_lesson, boolean append) {
         String response = NetUtils.get("/tablet/videos", "lesson_id=" + this.server_id);
         try {
             JSONObject jsonRes = new JSONObject(response);
@@ -193,7 +193,11 @@ public class Lesson {
                 ele = video_ary.getJSONObject(i);
                 j = i + 1;
                 task.updateProgress("共" + total_lesson + "讲，正在下载第" + current_lesson + "讲。本讲共" + video_ary.length() + "个视频，正在处理第" + j + "个");
-                Video.create(ele, mContext);
+                if (append) {
+                    Video.find_or_create(ele, mContext);
+                } else {
+                    Video.create(ele, mContext);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

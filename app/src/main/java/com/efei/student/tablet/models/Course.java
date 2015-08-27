@@ -204,7 +204,7 @@ public class Course {
         try {
             JSONObject jsonRes = new JSONObject(response);
             JSONObject ele = jsonRes.getJSONObject("course");
-            create_or_update(ele, context);
+            create_or_update(ele, context, true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -219,7 +219,7 @@ public class Course {
             String[] course_id_ary = new String[course_array.length()];
             for (int i = 0; i < course_array.length(); i++) {
                 ele = course_array.getJSONObject(i);
-                create_or_update(ele, context);
+                create_or_update(ele, context, false);
                 course_id_ary[i] = ele.getString(CourseEntry.COLUMN_SERVER_ID);
             }
             Course.remove_old_courses(course_id_ary, context);
@@ -228,7 +228,7 @@ public class Course {
         }
     }
 
-    public static void create_or_update(JSONObject ele, Context context) {
+    public static void create_or_update(JSONObject ele, Context context, boolean has_content) {
         try {
             String server_id = ele.getString(CourseEntry.COLUMN_SERVER_ID);
             TabletDbHelper dbHelper = new TabletDbHelper(context);
@@ -255,7 +255,7 @@ public class Course {
             contentValues.put(CourseEntry.COLUMN_SUGGESTION, ele.getString(CourseEntry.COLUMN_SUGGESTION));
             contentValues.put(CourseEntry.COLUMN_TEXTBOOK_URL, ele.getString(CourseEntry.COLUMN_TEXTBOOK_URL));
             contentValues.put(CourseEntry.COLUMN_UPDATE_AT, ele.getString(CourseEntry.COLUMN_UPDATE_AT));
-            contentValues.put(CourseEntry.COLUMN_HAS_CONTENT, false);
+            contentValues.put(CourseEntry.COLUMN_HAS_CONTENT, has_content);
             if (count == 0) {
                 // create new record
                 db.insert(CourseEntry.TABLE_NAME, null, contentValues);
@@ -400,12 +400,12 @@ public class Course {
                 new String[]{this.server_id});
     }
 
-    public void download_content(ManagementCourseAdapter.DownloadContentTask task) {
+    public void download_content(ManagementCourseAdapter.DownloadContentTask task, boolean append) {
         // for each lesson, download videos and corresponding tags
         task.updateProgress("共" + this.lessons().length + "讲，正在下载第1讲");
         int i = 1;
         for (Lesson lesson : this.lessons()) {
-            lesson.download_videos(task, this.lessons().length, i);
+            lesson.download_videos(task, this.lessons().length, i, append);
             i++;
             task.updateProgress("共" + this.lessons().length + "讲，正在下载第" + i + "讲");
         }
@@ -447,6 +447,5 @@ public class Course {
             db.close();
             return t;
         }
-
     }
 }

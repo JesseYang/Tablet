@@ -49,15 +49,17 @@ public class ManagementCourseAdapter extends ArrayAdapter<Course> {
         TextView teacher = (TextView) converterView.findViewById(R.id.tv_mgt_course_item_teacher);
         teacher.setText(course.get_teacher_name());
 
-        // Button button = (Button) converterView.findViewById(R.id.btn_mgt_course_item_update_info);
         Button btn1 = (Button) converterView.findViewById(R.id.btn_mgt_course_item_update_info);
         btn1.setText("更新课程信息");
         btn1.setOnClickListener(new UpdateInfoClickListener(course, this.activity, btn1, this.tv_status));
 
-
         Button btn2 = (Button) converterView.findViewById(R.id.btn_mgt_course_item_toggle_content);
         btn2.setText( course.has_content ? "删除课程内容" : "下载课程内容" );
         btn2.setOnClickListener(new ToggleCourseClickListener(course, this.activity, btn2, this.tv_status));
+
+        Button btn3 = (Button) converterView.findViewById(R.id.btn_mgt_course_item_append_video);
+        btn3.setText("补充课程视频");
+        btn3.setOnClickListener(new AppendVideoClickListener(course, this.activity, btn3, this.tv_status));
 
         return converterView;
     }
@@ -103,10 +105,34 @@ public class ManagementCourseAdapter extends ArrayAdapter<Course> {
                 button.setEnabled(true);
                 tv_status.setText("删除课程完毕");
             } else {
-                DownloadContentTask downloadContentTask = new DownloadContentTask(this.tv_status, this.button);
+                boolean append = false;
+                DownloadContentTask downloadContentTask = new DownloadContentTask(this.tv_status, this.button, append);
                 downloadContentTask.execute(course);
             }
             button.setOnClickListener(new ToggleCourseClickListener(this.course, this.activity, this.button, this.tv_status));
+        }
+    }
+
+
+    public class AppendVideoClickListener implements View.OnClickListener {
+        Course course;
+        Activity activity;
+        Button button;
+        TextView tv_status;
+        public AppendVideoClickListener(Course course, Activity activity, Button button, TextView tv_status) {
+            this.course = course;
+            this.activity = activity;
+            this.button = button;
+            this.tv_status = tv_status;
+        }
+
+        @Override
+        public void onClick(View v) {
+            button.setEnabled(false);
+            boolean append = true;
+            DownloadContentTask downloadContentTask = new DownloadContentTask(this.tv_status, this.button, append);
+            downloadContentTask.execute(course);
+            button.setEnabled(true);
         }
     }
 
@@ -141,10 +167,12 @@ public class ManagementCourseAdapter extends ArrayAdapter<Course> {
 
         TextView tv_status;
         Button button;
+        boolean append;
 
-        public DownloadContentTask(TextView tv_status, Button button) {
+        public DownloadContentTask(TextView tv_status, Button button, boolean append) {
             this.tv_status = tv_status;
             this.button = button;
+            this.append = append;
         }
 
         @Override
@@ -153,7 +181,7 @@ public class ManagementCourseAdapter extends ArrayAdapter<Course> {
             if (course.length == 0) {
                 return null;
             }
-            course[0].download_content(this);
+            course[0].download_content(this, append);
             return  null;
         }
 
@@ -169,7 +197,9 @@ public class ManagementCourseAdapter extends ArrayAdapter<Course> {
         @Override
         protected void onPostExecute(Void retval) {
             tv_status.setText("课程下载完毕");
-            button.setText("删除课程内容");
+            if (append == false) {
+                button.setText("删除课程内容");
+            }
             button.setEnabled(true);
         }
     }
