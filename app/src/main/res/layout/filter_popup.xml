@@ -81,13 +81,16 @@
             android:layout_height="wrap_content"
             android:divider="@color/white"></ListView>
 
+
         <ImageView
+            android:visibility="gone"
             android:layout_width="@dimen/filter_popup_inner_width"
             android:layout_height="1dp"
             android:src="@drawable/dotted"
             android:layerType="software" />
 
         <TextView
+            android:visibility="gone"
             android:id="@+id/filter_status_value"
             android:layout_width="@dimen/filter_popup_inner_width"
             android:layout_height="44dp"
@@ -97,17 +100,19 @@
             android:text="状态: 全部" />
 
         <ImageView
+            android:visibility="gone"
             android:layout_width="@dimen/filter_popup_width"
             android:layout_height="1dp"
             android:src="@drawable/dotted"
             android:layerType="software" />
 
+
         <ListView
+            android:visibility="gone"
             android:id="@+id/filter_status_listview"
             android:layout_width="@dimen/filter_popup_inner_width"
             android:layout_height="wrap_content"
             android:divider="@color/white"></ListView>
-
 
     </LinearLayout>
 

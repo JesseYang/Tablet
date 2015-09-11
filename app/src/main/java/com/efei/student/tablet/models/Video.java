@@ -116,6 +116,8 @@ public class Video {
         return tags;
     }
 
+
+
     public void delete() {
         // first delete all tags
         TabletDbHelper dbHelper = new TabletDbHelper(mContext);
@@ -151,7 +153,7 @@ public class Video {
 
             SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-            Cursor cursor = db.query(TabletContract.CourseEntry.TABLE_NAME, // Table to query
+            Cursor cursor = db.query(TabletContract.VideoEntry.TABLE_NAME, // Table to query
                     null,   // all columns
                     TabletContract.VideoEntry.COLUMN_VIDEO_URL + "=?",   // columns for the "where" clause
                     new String[]{video_url},  // values for the "where" clause
@@ -167,6 +169,24 @@ public class Video {
                 String video_filename = get_filename_by_url(ele.getString(TabletContract.VideoEntry.COLUMN_VIDEO_URL));
                 if (!FileUtils.check_video_file_existence(video_filename, context)) {
                     FileUtils.copy_video(video_filename, context);
+                }
+                // refresh the tags for this video
+                // first delete all tags
+                db.delete(TabletContract.TagEntry.TABLE_NAME,
+                        TabletContract.TagEntry.COLUMN_VIDEO_ID + "=\"" + ele.getString(TabletContract.VideoEntry.COLUMN_SERVER_ID) + "\"",
+                        null);
+                // then download the new tags
+                String response = NetUtils.get("/tablet/tags", "video_id=" + ele.getString(TabletContract.VideoEntry.COLUMN_SERVER_ID));
+                try {
+                    JSONObject jsonRes = new JSONObject(response);
+                    JSONObject tag_ele;
+                    JSONArray tag_ary = jsonRes.getJSONArray("tags");
+                    for (int i = 0; i < tag_ary.length(); i++) {
+                        tag_ele = tag_ary.getJSONObject(i);
+                        Tag.create(tag_ele, context);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 return ele.getString(TabletContract.LessonEntry.COLUMN_SERVER_ID);
             }

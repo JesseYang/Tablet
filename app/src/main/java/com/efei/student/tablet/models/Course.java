@@ -255,9 +255,9 @@ public class Course {
             contentValues.put(CourseEntry.COLUMN_SUGGESTION, ele.getString(CourseEntry.COLUMN_SUGGESTION));
             contentValues.put(CourseEntry.COLUMN_TEXTBOOK_URL, ele.getString(CourseEntry.COLUMN_TEXTBOOK_URL));
             contentValues.put(CourseEntry.COLUMN_UPDATE_AT, ele.getString(CourseEntry.COLUMN_UPDATE_AT));
-            contentValues.put(CourseEntry.COLUMN_HAS_CONTENT, has_content);
             if (count == 0) {
                 // create new record
+                contentValues.put(CourseEntry.COLUMN_HAS_CONTENT, has_content);
                 db.insert(CourseEntry.TABLE_NAME, null, contentValues);
                 Course course = Course.get_course_by_id(server_id, context);
                 course.download_textbook();

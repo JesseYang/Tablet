@@ -202,7 +202,6 @@ public class Lesson {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         // then update tags for this video
     }
 
