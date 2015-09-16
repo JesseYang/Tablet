@@ -1,8 +1,11 @@
 package com.efei.student.tablet.student;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,6 +63,53 @@ public class ListActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
         setupViews();
+        SetupViews setupViews = new SetupViews(this);
+        setupViews.execute();
+    }
+
+    private class SetupViews extends AsyncTask<Void, Void, ArrayList<CourseGroup>> {
+
+        Context context;
+
+        public SetupViews(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected ArrayList<CourseGroup> doInBackground(Void... params) {
+
+            SystemClock.sleep(50);
+
+            ArrayList<CourseGroup> courseGroups = Course.list_course_groups(this.context);
+            return courseGroups;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<CourseGroup> courseGroups) {
+            if (courseGroups.size() == 0) {
+                mNoResult.setVisibility(View.VISIBLE);
+                mNoResult.setText(context.getString(R.string.no_course_result));
+                mListView.setVisibility(View.GONE);
+            } else {
+                mNoResult.setVisibility(View.GONE);
+                mListView.setVisibility(View.VISIBLE);
+                mCourseGroupAdapter =
+                        new CourseGroupAdapter(
+                                ListActivity.this,
+                                R.layout.student_course_group_item,
+                                courseGroups
+                        );
+                mListView.setAdapter(mCourseGroupAdapter);
+            }
+
+            mFilterView = new FilterView(this.context);
+            mFilterView.setAnchorView((FrameLayout) findViewById(R.id.activity_list_root_view));
+
+            mSettingView = new SettingView(this.context, "ListActivity");
+            mSettingView.setAnchorView((FrameLayout) findViewById(R.id.activity_list_root_view));
+
+        }
+
     }
 
     private void setupViews() {
@@ -80,13 +130,8 @@ public class ListActivity extends BaseActivity {
 
         mMyCourse.setSelected(true);
         mAllCourse.setSelected(false);
-        refreshCourses();
 
-        mFilterView = new FilterView(this);
-        mFilterView.setAnchorView((FrameLayout) findViewById(R.id.activity_list_root_view));
 
-        mSettingView = new SettingView(this, "ListActivity");
-        mSettingView.setAnchorView((FrameLayout) findViewById(R.id.activity_list_root_view));
 
         mSearchText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,7 +219,7 @@ public class ListActivity extends BaseActivity {
         mConditionStatus = sharedPreferences.getInt("condition_status", 0);
         */
 
-        refreshCourses();
+
     }
 
     public void saveConditions() {
@@ -219,6 +264,7 @@ public class ListActivity extends BaseActivity {
 
         if (courseGroups.size() == 0) {
             mNoResult.setVisibility(View.VISIBLE);
+            mNoResult.setText(this.getString(R.string.no_course_result));
             mListView.setVisibility(View.GONE);
         } else {
             mNoResult.setVisibility(View.GONE);
