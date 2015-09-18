@@ -2,6 +2,7 @@ package com.efei.student.tablet.student;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import com.efei.student.tablet.R;
 import com.efei.student.tablet.models.Lesson;
 import com.efei.student.tablet.models.Tag;
 import com.efei.student.tablet.models.Video;
+import com.efei.student.tablet.models.VideoState;
 import com.efei.student.tablet.utils.GestureListener;
 import com.efei.student.tablet.views.EpisodeTipView;
 import com.efei.student.tablet.views.ExampleQuestionDialogView;
@@ -26,14 +28,15 @@ import com.efei.student.tablet.views.VideoTopView;
 import com.efei.student.tablet.views.VideoTtitleView;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 
-public class LessonActivity extends BaseActivity implements SurfaceHolder.Callback, MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, VideoControllerView.MediaPlayerControl {
+// import io.vov.vitamio.MediaPlayer;
+
+public class LessonActivity extends BaseActivity implements SurfaceHolder.Callback, MediaPlayer.OnCompletionListener, VideoControllerView.MediaPlayerControl {
 
     public Lesson mLesson;
     Video mCurVideo;
     SurfaceView videoSurface;
-    MediaPlayer player;
+    public MediaPlayer player;
     VideoControllerView controller;
     VideoListView list;
     VideoTopView topView;
@@ -42,10 +45,10 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     ExerciseDialogView exerciseDialogView;
     EpisodeTipView episodeTipView;
 
-    public boolean mInterrupt;
     public Video mParentVideo;
     private boolean mIsEpisode;
     public int mParentTime;
+    private SurfaceHolder videoHolder;
 
     private GestureDetector mGestureDetector;
     PowerManager.WakeLock mWakeLock;
@@ -53,12 +56,13 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     private AudioManager audiomanage;
 
     private boolean mFwdPause;
+    public VideoState videoState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        audiomanage = (AudioManager)getSystemService(AUDIO_SERVICE);
-        mInterrupt = false;
+        audiomanage = (AudioManager) getSystemService(AUDIO_SERVICE);
+        videoState = new VideoState("", 0, false);
         mParentVideo = null;
         mParentTime = 0;
 
@@ -68,10 +72,10 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         mLesson = Lesson.get_lesson_by_id(server_id, getApplicationContext());
 
         videoSurface = (SurfaceView) findViewById(R.id.videoSurface);
-        SurfaceHolder videoHolder = videoSurface.getHolder();
+        videoHolder = videoSurface.getHolder();
         videoHolder.addCallback(this);
+        videoHolder.setFormat(PixelFormat.RGBA_8888);
 
-        player = new MediaPlayer();
         controller = new VideoControllerView(this);
         list = new VideoListView(this);
         list.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
@@ -93,24 +97,8 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
 
         mFwdPause = false;
 
-        try {
-            player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mCurVideo = mLesson.videos()[0];
-            FileInputStream fileInputStream = this.openFileInput(Video.get_filename_by_url(mCurVideo.video_url));
-            player.setDataSource(fileInputStream.getFD());
-            player.prepareAsync();
-            player.setOnPreparedListener(this);
-            player.setOnCompletionListener(this);
-            titleView.setVideio(mCurVideo);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        mCurVideo = mLesson.videos()[0];
+        titleView.setVideio(mCurVideo);
 
         // Bind the gestureDetector to GestureListener
         mGestureDetector = new GestureDetector(this, new GestureListener());
@@ -124,24 +112,46 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     public void onStop() {
         super.onStop();
         mWakeLock.release();
-        mInterrupt = true;
-        player.pause();
     }
 
-    public void checkTag(int last_position, int position) {
-        if (player.isPlaying() == false) {
-            return;
+    @Override
+    public void onStart() {
+        super.onStart();
+        mWakeLock.acquire();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    public boolean checkTag(long last_position, long position, boolean includePause) {
+        if (player == null || (includePause == false && player.isPlaying() == false)) {
+            return false;
         }
         if (last_position < 0) {
-            return;
+            return false;
         }
         Tag[] tags = mCurVideo.tags();
         for (Tag tag : tags) {
-            if (tag.type != tag.TYPE_EXAMPLE) { continue; }
+            if (tag.type != tag.TYPE_EXAMPLE) {
+                continue;
+            }
             int time = tag.time;
             if (time * 1000 >= last_position && time * 1000 < position) {
                 player.pause();
                 exampleQuestionDialogView.show(tag.name, tag.duration);
+                return true;
             }
             // if (tag.type != Tag.TYPE_EPISODE) { continue; }
             // int time = tag.time;
@@ -149,6 +159,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             //     episodeTipView.show(tag.episode_id, tag);
             // }
         }
+        return false;
     }
 
     public void goEpisode(Video episode, Tag tag) {
@@ -177,26 +188,12 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     }
 
     public void switchVideo(Video video) {
-        mInterrupt = true;
         controller.mLastPosition = -1;
-        try {
-            player.reset();
-            mCurVideo = video;
-            FileInputStream fileInputStream = this.openFileInput(Video.get_filename_by_url(mCurVideo.video_url));
-            player.setDataSource(fileInputStream.getFD());
-            player.prepareAsync();
-            player.setOnPreparedListener(this);
-
-            titleView.setVideio(video);
-
-            // showOperations();
-            // Toast.makeText(this, getResources().getString(R.string.begin_play) + video.name, Toast.LENGTH_SHORT).show();
-
-
-            // todo: check and finish last learn log, then create new learn log
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        player.reset();
+        mCurVideo = video;
+        startPlay();
+        titleView.setVideio(video);
+        // todo: check and finish last learn log, then create new learn log
     }
 
     public void setVolume(int volume_level) {
@@ -205,29 +202,22 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
 
     public void volumeUp() {
         audiomanage.adjustVolume(AudioManager.ADJUST_RAISE, 0);
-        int volume_level= audiomanage.getStreamVolume(AudioManager.STREAM_MUSIC);
+        int volume_level = audiomanage.getStreamVolume(AudioManager.STREAM_MUSIC);
         controller.setVolume(volume_level);
     }
 
     public void volumeDown() {
         audiomanage.adjustVolume(AudioManager.ADJUST_LOWER, 0);
-        int volume_level= audiomanage.getStreamVolume(AudioManager.STREAM_MUSIC);
+        int volume_level = audiomanage.getStreamVolume(AudioManager.STREAM_MUSIC);
         controller.setVolume(volume_level);
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event)
-    {
-        //method onTouchEvent of GestureDetector class Analyzes the given motion event
-        //and if applicable triggers the appropriate callbacks on the GestureDetector.OnGestureListener supplied.
-        //Returns true if the GestureDetector.OnGestureListener consumed the event, else false.
-
+    public boolean onTouchEvent(MotionEvent event) {
         showOperations();
-
         boolean eventConsumed = mGestureDetector.onTouchEvent(event);
         boolean retval = false;
-        if (eventConsumed)
-        {
+        if (eventConsumed) {
             if (GestureListener.gesture.equals("DOWN")) {
                 showOperations();
             }
@@ -240,10 +230,10 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
                     } else {
                         audiomanage.adjustVolume(AudioManager.ADJUST_LOWER, 0);
                     }
-                    int volume_level= audiomanage.getStreamVolume(AudioManager.STREAM_MUSIC);
+                    int volume_level = audiomanage.getStreamVolume(AudioManager.STREAM_MUSIC);
                     controller.setVolume(volume_level);
                 }
-
+                /*
                 if (Math.abs(GestureListener.distanceX) > Math.abs(GestureListener.distanceY) * 3 && Math.abs(GestureListener.distanceX) > 5) {
                     player.pause();
                     mFwdPause = true;
@@ -255,17 +245,20 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
                         controller.goForward();
                     }
                 }
+                */
             }
             retval = true;
         } else {
             retval = false;
         }
+        /*
         if (event.getAction() == MotionEvent.ACTION_UP) {
             if (mFwdPause) {
                 mFwdPause = false;
                 player.start();
             }
         }
+        */
         return retval;
     }
 
@@ -279,38 +272,60 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     // Implement SurfaceHolder.Callback
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        player.setDisplay(holder);
+        // player = new MediaPlayer(this);
+        player = new MediaPlayer();
+        startPlay();
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-
+        if (player != null) {
+            videoState.dataSource = mCurVideo.video_url;
+            videoState.isPause = !player.isPlaying();
+            videoState.progress = player.getCurrentPosition();
+            player.release();
+            player = null;
+        }
     }
     // End SurfaceHolder.Callback
 
-    // Implement MediaPlayer.OnPreparedListener
-    @Override
-    public void onPrepared(MediaPlayer mp) {
-        controller.setMediaPlayer(this);
-        controller.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
-        int volume_level= audiomanage.getStreamVolume(AudioManager.STREAM_MUSIC);
-        controller.setVolume(volume_level);
-        player.start();
-        if (mIsEpisode == false && mParentTime != 0) {
-            seekTo((mParentTime + 1) * 1000);
-            mParentTime = 0;
-        }
-        mInterrupt = false;
-        showOperations();
-        controller.updatePausePlay();
-        controller.sendCheckProgressMsg();
+    public void clearVideoControl() {
+        controller.clearVideoControl();
     }
-    // End MediaPlayer.OnPreparedListener
+
+    public void startPlay() {
+        try {
+            String video_url = videoState.dataSource == "" ? mCurVideo.video_url : videoState.dataSource;
+            FileInputStream fileInputStream = this.openFileInput(Video.get_filename_by_url(video_url));
+            player.setDataSource(fileInputStream.getFD());
+            player.setDisplay(videoHolder);
+            player.prepare();
+            player.start();
+            player.seekTo((Integer.valueOf(String.valueOf(videoState.progress))));
+            videoState.reset();
+
+
+            controller.setMediaPlayer(this);
+            controller.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
+            int volume_level = audiomanage.getStreamVolume(AudioManager.STREAM_MUSIC);
+            controller.setVolume(volume_level);
+            if (mIsEpisode == false && mParentTime != 0) {
+                seekTo((mParentTime + 1) * 1000);
+                mParentTime = 0;
+            }
+            showOperations();
+            controller.updatePausePlay();
+            controller.sendCheckProgressMsg();
+
+            player.setOnCompletionListener(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     // Implement VideoMediaController.MediaPlayerControl
     @Override
@@ -334,13 +349,13 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     }
 
     @Override
-    public int getCurrentPosition() {
-        return player.getCurrentPosition();
+    public long getCurrentPosition() {
+        return player == null ? -1 : player.getCurrentPosition();
     }
 
     @Override
-    public int getDuration() {
-        return player.getDuration();
+    public long getDuration() {
+        return player == null ? -1 : player.getDuration();
     }
 
     @Override
@@ -355,8 +370,8 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     }
 
     @Override
-    public void seekTo(int i) {
-        player.seekTo(i);
+    public void seekTo(long i) {
+        player.seekTo((Integer.valueOf(String.valueOf(i))));
     }
 
     @Override
@@ -367,11 +382,6 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-
-        // abnormal completion
-        if (mInterrupt) {
-            return;
-        }
 
         // return to the parent video
         if (mParentVideo != null) {

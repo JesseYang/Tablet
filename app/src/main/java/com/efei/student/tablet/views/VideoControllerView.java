@@ -1,7 +1,9 @@
 package com.efei.student.tablet.views;
 
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -26,34 +28,6 @@ import java.lang.ref.WeakReference;
 import java.util.Formatter;
 import java.util.Locale;
 
-/**
- * A view containing controls for a MediaPlayer. Typically contains the
- * buttons like "Play/Pause", "Rewind", "Fast Forward" and a progress
- * slider. It takes care of synchronizing the controls with the state
- * of the MediaPlayer.
- * <p>
- * The way to use this class is to instantiate it programatically.
- * The MediaController will create a default set of controls
- * and put them in a window floating above your application. Specifically,
- * the controls will float above the view specified with setAnchorView().
- * The window will disappear if left idle for three seconds and reappear
- * when the user touches the anchor view.
- * <p>
- * Functions like show() and hide() have no effect when MediaController
- * is created in an xml layout.
- *
- * MediaController will hide and
- * show the buttons according to these rules:
- * <ul>
- * <li> The "previous" and "next" buttons are hidden until setPrevNextListeners()
- *   has been called
- * <li> The "previous" and "next" buttons are visible but disabled if
- *   setPrevNextListeners() was called with null listeners
- * <li> The "rewind" and "fastforward" buttons are shown unless requested
- *   otherwise by using the MediaController(Context, boolean) constructor
- *   with the boolean set to false
- * </ul>
- */
 public class VideoControllerView extends FrameLayout {
     private static final String TAG = "VideoControllerView";
 
@@ -68,6 +42,8 @@ public class VideoControllerView extends FrameLayout {
     private static final int    FADE_OUT = 1;
     private static final int    SHOW_PROGRESS = 2;
     private static final int    CHECK_PROGRESS = 4;
+    private static final int    GO_FORWARD = 8;
+    private static final int    GO_BACKWARD = 16;
     StringBuilder               mFormatBuilder;
     Formatter                   mFormatter;
     private ImageButton         mPauseButton;
@@ -77,8 +53,14 @@ public class VideoControllerView extends FrameLayout {
 
     private ImageView           mVolumeUp;
     private ImageView           mVolumeDown;
+    private ImageView           mForwardBtn;
+    private ImageView           mBackwardBtn;
 
-    public int                 mLastPosition = 0;
+    public long                 mLastPosition = 0;
+
+    public boolean              forwardStatus = false;
+    public boolean              backwardStatus = false;
+    public boolean              isPauseBefore = false;
 
     public VideoControllerView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -100,6 +82,17 @@ public class VideoControllerView extends FrameLayout {
         this(context, true);
 
         Log.i(TAG, TAG);
+    }
+
+    public boolean clearVideoControl() {
+        if (forwardStatus) {
+            mForwardBtn.performClick();
+            return true;
+        } else if (backwardStatus) {
+            mBackwardBtn.performClick();
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -179,6 +172,8 @@ public class VideoControllerView extends FrameLayout {
 
         mVolumeUp = (ImageView) v.findViewById(R.id.volume_up);
         mVolumeDown = (ImageView) v.findViewById(R.id.volume_down);
+        mForwardBtn = (ImageView) v.findViewById(R.id.btn_forward);
+        mBackwardBtn = (ImageView) v.findViewById(R.id.btn_backward);
 
         mVolumeUp.setOnClickListener(new OnClickListener() {
             @Override
@@ -191,6 +186,57 @@ public class VideoControllerView extends FrameLayout {
             @Override
             public void onClick(View view) {
                 ((LessonActivity)mContext).volumeDown();
+            }
+        });
+
+        mForwardBtn.setOnClickListener(new OnClickListener() {
+            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onClick(View view) {
+                forwardStatus = !forwardStatus;
+                if (forwardStatus == true) {
+                    backwardStatus = false;
+                    // mBackwardBtn.setText("快退");
+                    mBackwardBtn.setBackgroundResource(R.drawable.ic_backward);
+                    // mForwardBtn.setText("恢复");
+                    mForwardBtn.setBackgroundResource(R.drawable.ic_forward_pressed);
+                    isPauseBefore = !mPlayer.isPlaying();
+                    if (mPlayer.isPlaying()) {
+                        mPlayer.pause();
+                    }
+                    mHandler.sendEmptyMessage(GO_FORWARD);
+                } else {
+                    // mForwardBtn.setText("快进");
+                    mForwardBtn.setBackgroundResource(R.drawable.ic_forward);
+                    if (!isPauseBefore) {
+                        mPlayer.start();
+                    }
+                }
+            }
+        });
+
+        mBackwardBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                backwardStatus = !backwardStatus;
+                if (backwardStatus == true) {
+                    forwardStatus = false;
+                    // mForwardBtn.setText("快进");
+                    mForwardBtn.setBackgroundResource(R.drawable.ic_forward);
+                    // mBackwardBtn.setText("恢复");
+                    mBackwardBtn.setBackgroundResource(R.drawable.ic_backward_pressed);
+                    isPauseBefore = !mPlayer.isPlaying();
+                    if (mPlayer.isPlaying()) {
+                        mPlayer.pause();
+                    }
+                    mHandler.sendEmptyMessage(GO_BACKWARD);
+                } else {
+                    // mBackwardBtn.setText("快退");
+                    mBackwardBtn.setBackgroundResource(R.drawable.ic_backward);
+                    if (!isPauseBefore) {
+                        mPlayer.start();
+                    }
+                }
             }
         });
 
@@ -308,25 +354,25 @@ public class VideoControllerView extends FrameLayout {
     }
 
 
-    private int checkProgress() {
-        int position = mPlayer.getCurrentPosition();
-        ((LessonActivity)mContext).checkTag(mLastPosition, position);
+    private boolean checkProgress(boolean includePause) {
+        long position = mPlayer.getCurrentPosition();
+        boolean retval = ((LessonActivity)mContext).checkTag(mLastPosition, position, includePause);
         mLastPosition = position;
-        return position;
+        return retval;
     }
 
-    private int setProgress() {
+    private long setProgress() {
         if (mPlayer == null || mDragging) {
             return 0;
         }
 
-        int position = mPlayer.getCurrentPosition();
-        int duration = mPlayer.getDuration();
+        long position = mPlayer.getCurrentPosition();
+        long duration = mPlayer.getDuration();
 
         if (mEndTime != null)
-            mEndTime.setText(stringForTime(duration));
+            mEndTime.setText(stringForTime((int)duration));
         if (mCurrentTime != null)
-            mCurrentTime.setText(stringForTime(position));
+            mCurrentTime.setText(stringForTime((int)position));
 
         return position;
     }
@@ -405,7 +451,6 @@ public class VideoControllerView extends FrameLayout {
         if (mRoot == null || mPauseButton == null || mPlayer == null) {
             return;
         }
-
         if (mPlayer.isPlaying()) {
             mPauseButton.setImageResource(R.drawable.ic_media_pause);
         } else {
@@ -417,7 +462,9 @@ public class VideoControllerView extends FrameLayout {
         if (mPlayer == null) {
             return;
         }
-
+        if (clearVideoControl()) {
+            return;
+        }
         if (mPlayer.isPlaying()) {
             mPlayer.pause();
         } else {
@@ -478,7 +525,7 @@ public class VideoControllerView extends FrameLayout {
             // Ensure that progress is properly updated in the future,
             // the call to show() does not guarantee this because it is a
             // no-op if we are already showing.
-            mHandler.sendEmptyMessage(SHOW_PROGRESS);
+            // mHandler.sendEmptyMessage(SHOW_PROGRESS);
         }
     };
 
@@ -495,7 +542,7 @@ public class VideoControllerView extends FrameLayout {
         if (mPlayer == null) {
             return;
         }
-        int pos = mPlayer.getCurrentPosition();
+        long pos = mPlayer.getCurrentPosition();
         pos -= 1000;
         mPlayer.seekTo(pos);
         // setProgress();
@@ -505,7 +552,7 @@ public class VideoControllerView extends FrameLayout {
         if (mPlayer == null) {
             return;
         }
-        int pos = mPlayer.getCurrentPosition();
+        long pos = mPlayer.getCurrentPosition();
         pos += 1000;
         mPlayer.seekTo(pos);
         // setProgress();
@@ -517,7 +564,7 @@ public class VideoControllerView extends FrameLayout {
                 return;
             }
 
-            int pos = mPlayer.getCurrentPosition();
+            long pos = mPlayer.getCurrentPosition();
             pos -= 5000; // milliseconds
             mPlayer.seekTo(pos);
             // setProgress();
@@ -532,7 +579,7 @@ public class VideoControllerView extends FrameLayout {
                 return;
             }
 
-            int pos = mPlayer.getCurrentPosition();
+            long pos = mPlayer.getCurrentPosition();
             pos += 15000; // milliseconds
             mPlayer.seekTo(pos);
             // setProgress();
@@ -544,9 +591,9 @@ public class VideoControllerView extends FrameLayout {
     public interface MediaPlayerControl {
         void    start();
         void    pause();
-        int     getDuration();
-        int     getCurrentPosition();
-        void    seekTo(int pos);
+        long     getDuration();
+        long     getCurrentPosition();
+        void    seekTo(long pos);
         boolean isPlaying();
         int     getBufferPercentage();
         boolean canPause();
@@ -569,11 +616,45 @@ public class VideoControllerView extends FrameLayout {
                 return;
             }
 
-            int pos;
+            long pos;
             switch (msg.what) {
                 case FADE_OUT:
                     view.hide();
                     break;
+                case GO_FORWARD:
+                    if (view.forwardStatus) {
+                        long cur = view.mPlayer.getCurrentPosition();
+                        long duration = view.mPlayer.getDuration();
+                        if (duration - cur < 1000) {
+                            view.mForwardBtn.performClick();
+                        } else {
+                            boolean findTag = view.checkProgress(true);
+                            if (findTag) {
+                                view.isPauseBefore = true;
+                                view.mForwardBtn.performClick();
+                            } else {
+                                ((LessonActivity) view.mContext).showOperations();
+                                view.goForward();
+                                msg = obtainMessage(GO_FORWARD);
+                                sendMessageDelayed(msg, 30);
+                            }
+                        }
+                    }
+                    break;
+                case GO_BACKWARD:
+                    if (view.backwardStatus) {
+                        long cur = view.mPlayer.getCurrentPosition();
+                        if (cur < 1000) {
+                            view.mBackwardBtn.performClick();
+                        } else {
+                            ((LessonActivity)view.mContext).showOperations();
+                            view.goBackward();
+                            msg = obtainMessage(GO_BACKWARD);
+                            sendMessageDelayed(msg, 30);
+                        }
+                    }
+                    break;
+                /*
                 case SHOW_PROGRESS:
                     pos = view.setProgress();
                     if (!view.mDragging && view.mShowing && view.mPlayer.isPlaying()) {
@@ -581,10 +662,12 @@ public class VideoControllerView extends FrameLayout {
                         sendMessageDelayed(msg, 1000 - (pos % 1000));
                     }
                     break;
+                    */
                 case CHECK_PROGRESS:
-                    pos = view.checkProgress();
+                    view.checkProgress(false);
                     msg = obtainMessage(CHECK_PROGRESS);
-                    sendMessageDelayed(msg, 1000 - (pos % 1000));
+                    // sendMessageDelayed(msg, 1000 - (pos % 1000));
+                    sendMessageDelayed(msg, 500);
                     break;
             }
         }

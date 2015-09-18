@@ -54,14 +54,11 @@ public class VideoTopView extends FrameLayout {
         mReturn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (((LessonActivity)mContext).mParentVideo != null) {
-                    ((LessonActivity)mContext).goBackParentVideo();
-                } else {
-                    ((LessonActivity) mContext).mInterrupt = true;
-                    Intent intent = new Intent(mContext, CourseActivity.class)
-                            .putExtra(Intent.EXTRA_TEXT, mLesson.course_id);
-                    mContext.startActivity(intent);
-                }
+                ((LessonActivity)mContext).clearVideoControl();
+                Intent intent = new Intent(mContext, CourseActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, mLesson.course_id);
+                mContext.startActivity(intent);
+                ((LessonActivity)mContext).finish();
             }
         });
 
