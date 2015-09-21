@@ -6,8 +6,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.efei.student.tablet.data.TabletContract.ActionLogEntry;
 import com.efei.student.tablet.data.TabletContract.CourseEntry;
+import com.efei.student.tablet.data.TabletContract.HomeworkEntry;
 import com.efei.student.tablet.data.TabletContract.LearnLogEntry;
 import com.efei.student.tablet.data.TabletContract.LessonEntry;
+import com.efei.student.tablet.data.TabletContract.QuestionEntry;
 import com.efei.student.tablet.data.TabletContract.TagEntry;
 import com.efei.student.tablet.data.TabletContract.TeacherEntry;
 import com.efei.student.tablet.data.TabletContract.VideoEntry;
@@ -17,7 +19,7 @@ import com.efei.student.tablet.data.TabletContract.VideoEntry;
  */
 public class TabletDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 14;
+    private static final int DATABASE_VERSION = 17;
 
     private static final String DATABASE_NAME = "tablet.db";
 
@@ -89,6 +91,38 @@ public class TabletDbHelper extends SQLiteOpenHelper {
                 LessonEntry.TABLE_NAME + "(" + LessonEntry._ID + ")" +
                 " );";
 
+        final String SQL_CREATE_QUESTION_TABLE = "CREATE TABLE " + QuestionEntry.TABLE_NAME + " ( " +
+                QuestionEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                QuestionEntry.COLUMN_SERVER_ID + " TEXT NOT NULL," +
+                QuestionEntry.COLUMN_HOMEWORK_ID + " TEXT NOT NULL," +
+                QuestionEntry.COLUMN_TYPE + " TEXT NOT NULL," +
+                QuestionEntry.COLUMN_SUBJECT + " INTEGER NOT NULL," +
+                QuestionEntry.COLUMN_CONTENT + " TEXT NOT NULL," +
+                QuestionEntry.COLUMN_ITEMS + " TEXT," +
+                QuestionEntry.COLUMN_ANSWER + " INTEGER," +
+                QuestionEntry.COLUMN_ANSWER_CONTENT + " TEXT," +
+                QuestionEntry.COLUMN_IMAGE_PATH + " TEXT," +
+                QuestionEntry.COLUMN_DURATION + " INTEGER NOT NULL," +
+                QuestionEntry.COLUMN_UPDATE_AT + " TEXT NOT NULL," +
+
+                " FOREIGN KEY (" + QuestionEntry.COLUMN_HOMEWORK_ID + ") REFERENCES " +
+                QuestionEntry.TABLE_NAME + "(" + QuestionEntry._ID + ")" +
+                " );";
+
+        final String SQL_CREATE_HOMEWORK_TABLE = "CREATE TABLE " + HomeworkEntry.TABLE_NAME + " ( " +
+                HomeworkEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                HomeworkEntry.COLUMN_SERVER_ID + " TEXT NOT NULL," +
+                HomeworkEntry.COLUMN_LESSON_ID + " TEXT NOT NULL," +
+                HomeworkEntry.COLUMN_TYPE + " TEXT NOT NULL," +
+                HomeworkEntry.COLUMN_Q_IDS + " TEXT NOT NULL," +
+                HomeworkEntry.COLUMN_UPDATE_AT + " TEXT NOT NULL," +
+
+                " FOREIGN KEY (" + HomeworkEntry.COLUMN_LESSON_ID + ") REFERENCES " +
+                HomeworkEntry.TABLE_NAME + "(" + HomeworkEntry._ID + ")" +
+                " );";
+
+
+
         final String SQL_CREATE_TAG_TABLE = "CREATE TABLE " + TagEntry.TABLE_NAME + " ( " +
                 TagEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 TagEntry.COLUMN_VIDEO_ID + " TEXT NOT NULL," +
@@ -148,6 +182,8 @@ public class TabletDbHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_COURSE_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_LESSON_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_VIDEO_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_QUESTION_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_HOMEWORK_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_TAG_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_LEARN_LOG_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_ACTION_LOG_TABLE);
@@ -159,6 +195,8 @@ public class TabletDbHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + CourseEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + LessonEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + VideoEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + QuestionEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + HomeworkEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TagEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + LearnLogEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + ActionLogEntry.TABLE_NAME);

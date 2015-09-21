@@ -22,6 +22,7 @@ import com.efei.student.tablet.utils.GestureListener;
 import com.efei.student.tablet.views.EpisodeTipView;
 import com.efei.student.tablet.views.ExampleQuestionDialogView;
 import com.efei.student.tablet.views.ExerciseDialogView;
+import com.efei.student.tablet.views.ExerciseView;
 import com.efei.student.tablet.views.VideoControllerView;
 import com.efei.student.tablet.views.VideoListView;
 import com.efei.student.tablet.views.VideoTopView;
@@ -44,6 +45,8 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     ExampleQuestionDialogView exampleQuestionDialogView;
     ExerciseDialogView exerciseDialogView;
     EpisodeTipView episodeTipView;
+
+    ExerciseView exerciseView;
 
     public Video mParentVideo;
     private boolean mIsEpisode;
@@ -94,6 +97,9 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
 
         episodeTipView = new EpisodeTipView(this);
         episodeTipView.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
+
+        exerciseView = new ExerciseView(this);
+        exerciseView.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
 
         mFwdPause = false;
 
@@ -214,6 +220,9 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (exerciseView.isShown()) {
+            return false;
+        }
         showOperations();
         boolean eventConsumed = mGestureDetector.onTouchEvent(event);
         boolean retval = false;
@@ -233,40 +242,21 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
                     int volume_level = audiomanage.getStreamVolume(AudioManager.STREAM_MUSIC);
                     controller.setVolume(volume_level);
                 }
-                /*
-                if (Math.abs(GestureListener.distanceX) > Math.abs(GestureListener.distanceY) * 3 && Math.abs(GestureListener.distanceX) > 5) {
-                    player.pause();
-                    mFwdPause = true;
-                    exampleQuestionDialogView.hide();
-                    exerciseDialogView.hide();
-                    if (GestureListener.distanceX > 0) {
-                        controller.goBackward();
-                    } else {
-                        controller.goForward();
-                    }
-                }
-                */
             }
             retval = true;
         } else {
             retval = false;
         }
-        /*
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            if (mFwdPause) {
-                mFwdPause = false;
-                player.start();
-            }
-        }
-        */
         return retval;
     }
 
     public void showOperations() {
-        controller.show();
-        list.show();
-        topView.show();
-        titleView.show();
+        if (!exerciseView.isShown()) {
+            controller.show();
+            list.show();
+            topView.show();
+            titleView.show();
+        }
     }
 
     // Implement SurfaceHolder.Callback
@@ -278,6 +268,14 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     public void surfaceCreated(SurfaceHolder holder) {
         // player = new MediaPlayer(this);
         player = new MediaPlayer();
+        boolean ret = exerciseView.show(this.mLesson, "pre_test");
+        if (!ret) {
+            startPlay();
+        }
+    }
+
+    public void afterPreTest() {
+        exerciseView.hide();
         startPlay();
     }
 

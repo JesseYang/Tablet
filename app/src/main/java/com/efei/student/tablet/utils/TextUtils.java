@@ -85,4 +85,41 @@ public final class TextUtils
     public static String insertBR(String str) {
         return str.replaceAll("(.)", "$1\n");
     }
+
+    /**
+     * 题目内容字符串转换成题目数组
+     *
+     * @param array
+     * @return 字符串数组
+     */
+    public static String strSeparator = "__,__";
+    public static String convertArrayToString(String[] array){
+        String str = "";
+        for (int i = 0; i < array.length; i++) {
+            str = str + array[i];
+            // Do not append comma at the end of last element
+            if(i<array.length-1){
+                str = str + strSeparator;
+            }
+        }
+        return str;
+    }
+
+    /**
+     * 题目内容字符串转换成题目数组
+     *
+     * @param content
+     * @return 字符串数组
+     */
+    public static String[] convertStringToArray(String content){
+        String[] arr = content.split(strSeparator);
+        return arr;
+    }
+
+    public static String getImageFilename(String content) {
+        String t1 = content.split("_")[1];
+        String[] t2 = t1.split("\\*");
+        String name = t2[0] + "." + t2[1];
+        return name;
+    }
 }

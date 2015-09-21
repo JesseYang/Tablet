@@ -161,7 +161,12 @@ public final class NetUtils {
         try {
 
             HttpURLConnection urlConnection;
-            URL url = new URL(BASE_URL + urlRes);
+            URL url;
+            if (urlRes.startsWith("http")) {
+                url = new URL(urlRes);
+            } else {
+                url = new URL(BASE_URL + urlRes);
+            }
 
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");

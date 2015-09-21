@@ -141,6 +141,46 @@ public class TabletContract {
         public static final String COLUMN_VIDEO_ID = "video_id";
     }
 
+    public final class HomeworkEntry implements BaseColumns {
+        public static final String TABLE_NAME = "homework";
+
+        public static final String COLUMN_SERVER_ID = "server_id";
+
+        public static final String COLUMN_LESSON_ID = "lesson_id";
+
+        public static final String COLUMN_TYPE = "type";
+
+        public static final String COLUMN_Q_IDS = "q_ids";
+
+        public static final String COLUMN_UPDATE_AT = "update_at";
+    }
+
+    public final class QuestionEntry implements BaseColumns {
+        public static final String TABLE_NAME = "question";
+
+        public static final String COLUMN_SERVER_ID = "server_id";
+
+        public static final String COLUMN_HOMEWORK_ID = "homework_id";
+
+        public static final String COLUMN_TYPE = "type";
+
+        public static final String COLUMN_SUBJECT = "subject";
+
+        public static final String COLUMN_CONTENT = "content";
+
+        public static final String COLUMN_ITEMS = "items";
+
+        public static final String COLUMN_ANSWER = "answer";
+
+        public static final String COLUMN_ANSWER_CONTENT = "answer_content";
+
+        public static final String COLUMN_IMAGE_PATH = "image_path";
+
+        public static final String COLUMN_DURATION = "duration";
+
+        public static final String COLUMN_UPDATE_AT = "update_at";
+    }
+
     public final class LearnLogEntry implements BaseColumns {
         public static final String TABLE_NAME = "learn_log";
 

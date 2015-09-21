@@ -24,8 +24,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import io.vov.vitamio.LibsChecker;
-
 public class LoginActivity extends BaseActivity {
 
     private TextView mAccountView;
@@ -38,8 +36,6 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!LibsChecker.checkVitamioLibs(this))
-            return;
         setContentView(R.layout.activity_login);
         setupViews();
         no_network = false;

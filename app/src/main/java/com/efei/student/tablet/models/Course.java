@@ -387,6 +387,7 @@ public class Course {
         // first remove videos
         for (Lesson lesson : this.lessons()) {
             lesson.delete_videos();
+            Homework.delete(lesson.server_id, mContext);
         }
         // then alter the has_content column
         this.has_content = false;

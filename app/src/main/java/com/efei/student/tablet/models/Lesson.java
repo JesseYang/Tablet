@@ -168,6 +168,8 @@ public class Lesson {
     public void delete() {
         // first delete videos
         this.delete_videos();
+        // and delete homeworks
+        Homework.delete(this.server_id, mContext);
         // then delete itself
         TabletDbHelper dbHelper = new TabletDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -202,18 +204,20 @@ public class Lesson {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // then update tags for this video
-    }
 
-    public String[] get_video_items() {
-        Video[] videos = this.videos();
-        String[] video_items = new String[videos.length];
-        int i = 0;
-        for (Video video : videos) {
-            video_items[i] = video.name;
-            i++;
+        response = NetUtils.get("/tablet/homeworks", "lesson_id=" + this.server_id);
+        try {
+            JSONObject jsonRes = new JSONObject(response);
+            JSONObject ele;
+            JSONArray homework_ary = jsonRes.getJSONArray("homeworks");
+            for (int i = 0; i < homework_ary.length(); i++) {
+                ele = homework_ary.getJSONObject(i);
+                // create th homework record
+                Homework.create_or_update(ele, this.server_id, mContext);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return video_items;
     }
 
     public Video find_next_video(Video curVideo) {
@@ -236,22 +240,6 @@ public class Lesson {
         for (Video v : videos) {
             videoList.add(v);
         }
-        /*
-        boolean knowledge = false, example = false, episode = false;
-        for (Video v : videos) {
-            if (v.type == 1 && knowledge == false) {
-                videoList.add(new Video(mContext, "knowledge"));
-                knowledge = true;
-            } else if (v.type == 2 && example == false) {
-                videoList.add(new Video(mContext, "example"));
-                example = true;
-            } else if (v.type == 3 && episode == false) {
-                videoList.add(new Video(mContext, "episode"));
-                episode = true;
-            }
-            videoList.add(v);
-        }
-        */
         Video[] ret = new Video[videoList.size()];
         int i = 0;
         for (Video v : videoList) {
@@ -259,5 +247,29 @@ public class Lesson {
             i++;
         }
         return ret;
+    }
+
+    public Homework get_pre_test(Context context) {
+        TabletDbHelper dbHelper = new TabletDbHelper(context);
+
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        Cursor cursor = db.query(TabletContract.HomeworkEntry.TABLE_NAME, // Table to query
+                null,   // all columns
+                TabletContract.HomeworkEntry.COLUMN_LESSON_ID + "=?" +" AND " + TabletContract.HomeworkEntry.COLUMN_TYPE +"=?",   // columns for the "where" clause
+                new String[]{server_id, "pre_test"},  // values for the "where" clause
+                null,   // columns to group by
+                null,   // columns to filter by row groups
+                null);  // sort order
+
+        if (cursor.getCount() == 0) {
+            return null;
+        }
+
+        cursor.moveToFirst();
+        Homework homework = new Homework(context, cursor);
+        cursor.close();
+        db.close();
+        return homework;
     }
 }

@@ -17,6 +17,7 @@ public class FileUtils {
     public static String AVATAR_FOLDER = "efei/avatars/";
     public static String TEXTBOOK_FOLDER = "efei/textbooks/";
     public static String VIDEO_FOLDER = "efei/videos/";
+    public static String IMAGE_FOLDER = "efei/images/";
 
     public static void remove_video_file(String video_filename, Context context) {
         File dir = context.getFilesDir();
@@ -42,6 +43,14 @@ public class FileUtils {
         file.delete();
     }
 
+    public static void remove_image_file(String filename) {
+        File storageRoot = Environment.getExternalStorageDirectory();
+        File file = new File(storageRoot, IMAGE_FOLDER + filename);
+        if (file.exists()) {
+            file.delete();
+        }
+    }
+
     public static Boolean check_video_file_existence(String video_filename, Context context) {
         File file = context.getApplicationContext().getFileStreamPath(video_filename);
         return file.exists();
@@ -64,6 +73,10 @@ public class FileUtils {
         if (!folder.exists()) {
             folder.mkdir();
         }
+        folder = new File(Environment.getExternalStorageDirectory() + "/" + FileUtils.IMAGE_FOLDER);
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
     }
 
     public static FileOutputStream get_output_stream(String filename, String type, Context context) {
@@ -81,6 +94,9 @@ public class FileUtils {
                     break;
                 case "textbook":
                     path = FileUtils.TEXTBOOK_FOLDER + filename;
+                    break;
+                case "image":
+                    path = FileUtils.IMAGE_FOLDER + filename;
                     break;
                 default:
                     return null;
