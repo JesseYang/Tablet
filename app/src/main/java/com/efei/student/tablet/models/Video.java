@@ -213,6 +213,7 @@ public class Video {
             contentValues.put(TabletContract.VideoEntry.COLUMN_VIDEO_URL, ele.getString(TabletContract.VideoEntry.COLUMN_VIDEO_URL));
             contentValues.put(TabletContract.VideoEntry.COLUMN_UPDATE_AT, ele.getString(TabletContract.VideoEntry.COLUMN_UPDATE_AT));
             contentValues.put(TabletContract.VideoEntry.COLUMN_LESSON_ID, ele.getString(TabletContract.VideoEntry.COLUMN_LESSON_ID));
+
             db.insert(TabletContract.VideoEntry.TABLE_NAME, null, contentValues);
 
             String video_filename = get_filename_by_url(ele.getString(TabletContract.VideoEntry.COLUMN_VIDEO_URL));

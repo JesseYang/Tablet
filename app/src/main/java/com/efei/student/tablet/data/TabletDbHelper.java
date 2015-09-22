@@ -19,7 +19,7 @@ import com.efei.student.tablet.data.TabletContract.VideoEntry;
  */
 public class TabletDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 17;
+    private static final int DATABASE_VERSION = 21;
 
     private static final String DATABASE_NAME = "tablet.db";
 
@@ -52,11 +52,7 @@ public class TabletDbHelper extends SQLiteOpenHelper {
                 CourseEntry.COLUMN_SUGGESTION + " TEXT NOT NULL," +
                 CourseEntry.COLUMN_TEXTBOOK_URL + " TEXT NOT NULL," +
                 CourseEntry.COLUMN_UPDATE_AT + " TEXT NOT NULL," +
-                CourseEntry.COLUMN_HAS_CONTENT + " BOOLEAN NOT NULL," +
-
-                // Set up the teacher id column as a foreign key to teacher table.
-                " FOREIGN KEY (" + CourseEntry.COLUMN_TEACHER_ID + ") REFERENCES " +
-                TeacherEntry.TABLE_NAME + "(" + TeacherEntry._ID + ")" +
+                CourseEntry.COLUMN_HAS_CONTENT + " BOOLEAN NOT NULL" +
                 " );";
 
         final String SQL_CREATE_LESSON_TABLE = "CREATE TABLE " + LessonEntry.TABLE_NAME + " ( " +
@@ -65,11 +61,7 @@ public class TabletDbHelper extends SQLiteOpenHelper {
                 LessonEntry.COLUMN_SERVER_ID + " TEXT NOT NULL," +
                 LessonEntry.COLUMN_NAME + " TEXT NOT NULL," +
                 LessonEntry.COLUMN_ORDER + " INTEGER NOT NULL," +
-                LessonEntry.COLUMN_UPDATE_AT + " TEXT NOT NULL," +
-
-                // Set up the teacher id column as a foreign key to teacher table.
-                " FOREIGN KEY (" + LessonEntry.COLUMN_COURSE_ID + ") REFERENCES " +
-                CourseEntry.TABLE_NAME + "(" + CourseEntry._ID + ")" +
+                LessonEntry.COLUMN_UPDATE_AT + " TEXT NOT NULL" +
                 " );";
 
         final String SQL_CREATE_VIDEO_TABLE = "CREATE TABLE " + VideoEntry.TABLE_NAME + " ( " +
@@ -84,11 +76,7 @@ public class TabletDbHelper extends SQLiteOpenHelper {
                 VideoEntry.COLUMN_QUESTION_NAME + " TEXT," +
                 VideoEntry.COLUMN_CONTENT + " TEXT NOT NULL," +
                 VideoEntry.COLUMN_VIDEO_URL + " TEXT NOT NULL," +
-                VideoEntry.COLUMN_UPDATE_AT + " TEXT NOT NULL," +
-
-                // Set up the teacher id column as a foreign key to teacher table.
-                " FOREIGN KEY (" + VideoEntry.COLUMN_LESSON_ID + ") REFERENCES " +
-                LessonEntry.TABLE_NAME + "(" + LessonEntry._ID + ")" +
+                VideoEntry.COLUMN_UPDATE_AT + " TEXT NOT NULL" +
                 " );";
 
         final String SQL_CREATE_QUESTION_TABLE = "CREATE TABLE " + QuestionEntry.TABLE_NAME + " ( " +
@@ -103,10 +91,9 @@ public class TabletDbHelper extends SQLiteOpenHelper {
                 QuestionEntry.COLUMN_ANSWER_CONTENT + " TEXT," +
                 QuestionEntry.COLUMN_IMAGE_PATH + " TEXT," +
                 QuestionEntry.COLUMN_DURATION + " INTEGER NOT NULL," +
-                QuestionEntry.COLUMN_UPDATE_AT + " TEXT NOT NULL," +
-
-                " FOREIGN KEY (" + QuestionEntry.COLUMN_HOMEWORK_ID + ") REFERENCES " +
-                QuestionEntry.TABLE_NAME + "(" + QuestionEntry._ID + ")" +
+                QuestionEntry.COLUMN_VIDEO_ID + " TEXT," +
+                QuestionEntry.COLUMN_VIDEO_URL + " TEXT," +
+                QuestionEntry.COLUMN_UPDATE_AT + " TEXT NOT NULL" +
                 " );";
 
         final String SQL_CREATE_HOMEWORK_TABLE = "CREATE TABLE " + HomeworkEntry.TABLE_NAME + " ( " +
@@ -115,13 +102,8 @@ public class TabletDbHelper extends SQLiteOpenHelper {
                 HomeworkEntry.COLUMN_LESSON_ID + " TEXT NOT NULL," +
                 HomeworkEntry.COLUMN_TYPE + " TEXT NOT NULL," +
                 HomeworkEntry.COLUMN_Q_IDS + " TEXT NOT NULL," +
-                HomeworkEntry.COLUMN_UPDATE_AT + " TEXT NOT NULL," +
-
-                " FOREIGN KEY (" + HomeworkEntry.COLUMN_LESSON_ID + ") REFERENCES " +
-                HomeworkEntry.TABLE_NAME + "(" + HomeworkEntry._ID + ")" +
+                HomeworkEntry.COLUMN_UPDATE_AT + " TEXT NOT NULL" +
                 " );";
-
-
 
         final String SQL_CREATE_TAG_TABLE = "CREATE TABLE " + TagEntry.TABLE_NAME + " ( " +
                 TagEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -131,12 +113,7 @@ public class TabletDbHelper extends SQLiteOpenHelper {
                 TagEntry.COLUMN_TIME + " INTEGER NOT NULL," +
                 TagEntry.COLUMN_DURATION + " INTEGER NOT NULL," +
                 TagEntry.COLUMN_NAME + " TEXT NOT NULL," +
-
-                // Set up the teacher id column as a foreign key to teacher table.
-                " FOREIGN KEY (" + TagEntry.COLUMN_VIDEO_ID + ") REFERENCES " +
-                VideoEntry.TABLE_NAME + "(" + VideoEntry._ID + ")," +
-                " FOREIGN KEY (" + TagEntry.COLUMN_EPISODE_ID + ") REFERENCES " +
-                VideoEntry.TABLE_NAME + "(" + VideoEntry._ID + ")" +
+                TagEntry.COLUMN_QUESTION_ID + " TEXT" +
                 " );";
 
         final String SQL_CREATE_LEARN_LOG_TABLE = "CREATE TABLE " + LearnLogEntry.TABLE_NAME + " ( " +
@@ -149,16 +126,8 @@ public class TabletDbHelper extends SQLiteOpenHelper {
                 LearnLogEntry.COLUMN_COURSE_ID + " TEXT NOT NULL," +
                 LearnLogEntry.COLUMN_LESSON_ID + " TEXT NOT NULL," +
                 LearnLogEntry.COLUMN_VIDEO_ID + " TEXT NOT NULL," +
-                LearnLogEntry.COLUMN_ORIGINAL_VIDEO_ID + " TEXT NOT NULL," +
-                " FOREIGN KEY (" + LearnLogEntry.COLUMN_COURSE_ID + ") REFERENCES " +
-                CourseEntry.TABLE_NAME + "(" + CourseEntry._ID + ")," +
-                " FOREIGN KEY (" + LearnLogEntry.COLUMN_LESSON_ID + ") REFERENCES " +
-                LessonEntry.TABLE_NAME + "(" + LessonEntry._ID + ")," +
-                " FOREIGN KEY (" + LearnLogEntry.COLUMN_VIDEO_ID + ") REFERENCES " +
-                VideoEntry.TABLE_NAME + "(" + VideoEntry._ID + ")," +
-                " FOREIGN KEY (" + LearnLogEntry.COLUMN_ORIGINAL_VIDEO_ID + ") REFERENCES " +
-                VideoEntry.TABLE_NAME + "(" + VideoEntry._ID + ")" +
-                ");";
+                LearnLogEntry.COLUMN_ORIGINAL_VIDEO_ID + " TEXT NOT NULL" +
+                " );";
 
         final String SQL_CREATE_ACTION_LOG_TABLE = "CREATE TABLE " + ActionLogEntry.TABLE_NAME + " ( " +
                 ActionLogEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -169,14 +138,8 @@ public class TabletDbHelper extends SQLiteOpenHelper {
                 ActionLogEntry.COLUMN_STUDENT_ID + " TEXT NOT NULL," +
                 ActionLogEntry.COLUMN_COURSE_ID + " TEXT NOT NULL," +
                 ActionLogEntry.COLUMN_LESSON_ID + " TEXT NOT NULL," +
-                ActionLogEntry.COLUMN_VIDEO_ID + " TEXT NOT NULL," +
-                " FOREIGN KEY (" + ActionLogEntry.COLUMN_COURSE_ID + ") REFERENCES " +
-                CourseEntry.TABLE_NAME + "(" + CourseEntry._ID + ")," +
-                " FOREIGN KEY (" + ActionLogEntry.COLUMN_LESSON_ID +") REFERENCES " +
-                LessonEntry.TABLE_NAME + "(" + LessonEntry._ID + ")," +
-                " FOREIGN KEY (" + ActionLogEntry.COLUMN_VIDEO_ID +") REFERENCES " +
-                VideoEntry.TABLE_NAME + "(" + VideoEntry._ID + ")" +
-                ");";
+                ActionLogEntry.COLUMN_VIDEO_ID + " TEXT NOT NULL" +
+                " );";
 
         sqLiteDatabase.execSQL(SQL_CREATE_TEACHER_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_COURSE_TABLE);

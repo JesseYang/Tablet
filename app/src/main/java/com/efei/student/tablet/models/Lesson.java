@@ -249,23 +249,19 @@ public class Lesson {
         return ret;
     }
 
-    public Homework get_pre_test(Context context) {
+    public Homework get_exercise(Context context, String type) {
         TabletDbHelper dbHelper = new TabletDbHelper(context);
-
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-
         Cursor cursor = db.query(TabletContract.HomeworkEntry.TABLE_NAME, // Table to query
                 null,   // all columns
                 TabletContract.HomeworkEntry.COLUMN_LESSON_ID + "=?" +" AND " + TabletContract.HomeworkEntry.COLUMN_TYPE +"=?",   // columns for the "where" clause
-                new String[]{server_id, "pre_test"},  // values for the "where" clause
+                new String[]{server_id, type},  // values for the "where" clause
                 null,   // columns to group by
                 null,   // columns to filter by row groups
                 null);  // sort order
-
         if (cursor.getCount() == 0) {
             return null;
         }
-
         cursor.moveToFirst();
         Homework homework = new Homework(context, cursor);
         cursor.close();

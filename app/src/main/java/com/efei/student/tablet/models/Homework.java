@@ -125,12 +125,15 @@ public class Homework {
                 contentValues.put(TabletContract.QuestionEntry.COLUMN_ANSWER_CONTENT, q.getString(TabletContract.QuestionEntry.COLUMN_ANSWER_CONTENT));
                 contentValues.put(TabletContract.QuestionEntry.COLUMN_IMAGE_PATH, q.getString(TabletContract.QuestionEntry.COLUMN_IMAGE_PATH));
                 contentValues.put(TabletContract.QuestionEntry.COLUMN_DURATION, q.getInt(TabletContract.QuestionEntry.COLUMN_DURATION));
+                contentValues.put(TabletContract.QuestionEntry.COLUMN_VIDEO_ID, q.getString(TabletContract.QuestionEntry.COLUMN_VIDEO_ID));
+                contentValues.put(TabletContract.QuestionEntry.COLUMN_VIDEO_URL, q.getString(TabletContract.QuestionEntry.COLUMN_VIDEO_URL));
                 contentValues.put(TabletContract.QuestionEntry.COLUMN_UPDATE_AT, q.getString(TabletContract.QuestionEntry.COLUMN_UPDATE_AT));
                 db.insert(TabletContract.QuestionEntry.TABLE_NAME, null, contentValues);
 
-                // then download the images
+                // then download the images and video if any
                 Question question = Question.get_question_by_id(q.getString(TabletContract.QuestionEntry.COLUMN_SERVER_ID), mContext);
                 question.download_images();
+                question.download_video(context);
             }
         } catch (Exception e) {
             e.printStackTrace();

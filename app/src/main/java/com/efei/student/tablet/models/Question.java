@@ -24,6 +24,8 @@ public class Question {
     public String image_path;
     public String update_at;
     public Integer duration;
+    public String video_id;
+    public String video_url;
 
 
     public Question(Context context, Cursor cursor) {
@@ -39,10 +41,15 @@ public class Question {
         this.answer_content = TextUtils.convertStringToArray(cursor.getString(cursor.getColumnIndex(TabletContract.QuestionEntry.COLUMN_ANSWER_CONTENT)));
         this.image_path = cursor.getString(cursor.getColumnIndex(TabletContract.QuestionEntry.COLUMN_IMAGE_PATH));
         this.duration = cursor.getInt(cursor.getColumnIndex(TabletContract.QuestionEntry.COLUMN_DURATION));
+        this.video_id = cursor.getString(cursor.getColumnIndex(TabletContract.QuestionEntry.COLUMN_VIDEO_ID));
+        this.video_url = cursor.getString(cursor.getColumnIndex(TabletContract.QuestionEntry.COLUMN_VIDEO_URL));
         this.update_at = cursor.getString(cursor.getColumnIndex(TabletContract.QuestionEntry.COLUMN_UPDATE_AT));
     }
 
     public static Question get_question_by_id(String server_id, Context context) {
+        if (server_id == null) {
+            return null;
+        }
         TabletDbHelper dbHelper = new TabletDbHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -63,6 +70,14 @@ public class Question {
         cursor.close();
         db.close();
         return question;
+    }
+
+    public void download_video(Context context) {
+        if (this.video_id == null || this.video_id.equals("")) {
+            return;
+        }
+        String video_filename = Video.get_filename_by_url(this.video_url);
+        FileUtils.copy_video(video_filename, context);
     }
 
     public void download_images() {

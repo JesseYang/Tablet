@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 
 import com.efei.student.tablet.R;
 import com.efei.student.tablet.models.Lesson;
+import com.efei.student.tablet.models.Question;
 import com.efei.student.tablet.models.Tag;
 import com.efei.student.tablet.models.Video;
 import com.efei.student.tablet.models.VideoState;
@@ -60,6 +61,8 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
 
     private boolean mFwdPause;
     public VideoState videoState;
+
+    public Question mCurExercise;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,15 +158,22 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             }
             int time = tag.time;
             if (time * 1000 >= last_position && time * 1000 < position) {
-                player.pause();
-                exampleQuestionDialogView.show(tag.name, tag.duration);
-                return true;
+                Question question = Question.get_question_by_id(tag.question_id, this);
+                if (question == null) {
+                    player.pause();
+                    exampleQuestionDialogView.show(tag.name, tag.duration);
+                    return true;
+                } else {
+                    // should show the exercise page
+                    player.pause();
+                    mCurExercise = question;
+                    if (exerciseView.show(mLesson, "exercise") == false) {
+                        player.pause();
+                        exampleQuestionDialogView.show(tag.name, tag.duration);
+                        return true;
+                    }
+                }
             }
-            // if (tag.type != Tag.TYPE_EPISODE) { continue; }
-            // int time = tag.time;
-            // if (time * 1000 >= last_position && time * 1000 < position) {
-            //     episodeTipView.show(tag.episode_id, tag);
-            // }
         }
         return false;
     }
@@ -277,6 +287,11 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     public void afterPreTest() {
         exerciseView.hide();
         startPlay();
+    }
+
+    public void afterExercise() {
+        exerciseView.hide();
+        player.start();
     }
 
     @Override
@@ -408,7 +423,8 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
                 return;
             }
             // todo: show tips to ask users to do exercise
-            exerciseDialogView.show();
+            exerciseView.show(mLesson, "post_test");
+            //exerciseDialogView.show();
             return;
         }
         switchVideo(nextVideo);

@@ -137,6 +137,9 @@ public class TabletContract {
         // Episode_id, stored as String
         public static final String COLUMN_EPISODE_ID = "episode_id";
 
+        // Question_id, stored as String
+        public static final String COLUMN_QUESTION_ID = "question_id";
+
         // Video_id, stored as String
         public static final String COLUMN_VIDEO_ID = "video_id";
     }
@@ -177,6 +180,10 @@ public class TabletContract {
         public static final String COLUMN_IMAGE_PATH = "image_path";
 
         public static final String COLUMN_DURATION = "duration";
+
+        public static final String COLUMN_VIDEO_ID = "video_id";
+
+        public static final String COLUMN_VIDEO_URL = "video_url";
 
         public static final String COLUMN_UPDATE_AT = "update_at";
     }

@@ -81,6 +81,7 @@
     <string name="completed">已完成</string>
     <string name="not_completed">未完成</string>
 
-    <string name="question_time_tip">建议v1分钟之内完成，还有v2分钟时间。</string>
+    <string name="question_time_tip_short">建议v1分钟之内完成</string>
+    <string name="question_time_tip">建议v1分钟之内完成，还有v2分钟时间</string>
 
 </resources>

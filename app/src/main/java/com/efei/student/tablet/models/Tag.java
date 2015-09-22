@@ -23,6 +23,7 @@ public class Tag {
     public Integer duration;
     public String name;
     public String episode_id;
+    public String question_id;
 
     public Tag(Context context, Cursor cursor) {
         this.mContext = context;
@@ -31,6 +32,7 @@ public class Tag {
         this.time = cursor.getInt(cursor.getColumnIndex(TabletContract.TagEntry.COLUMN_TIME));
         this.name = cursor.getString(cursor.getColumnIndex(TabletContract.TagEntry.COLUMN_NAME));
         this.episode_id = cursor.getString(cursor.getColumnIndex(TabletContract.TagEntry.COLUMN_EPISODE_ID));
+        this.question_id = cursor.getString(cursor.getColumnIndex(TabletContract.TagEntry.COLUMN_QUESTION_ID));
         this.duration = cursor.getInt(cursor.getColumnIndex(TabletContract.TagEntry.COLUMN_DURATION));
     }
 
@@ -46,6 +48,7 @@ public class Tag {
             contentValues.put(TabletContract.TagEntry.COLUMN_DURATION, ele.getInt(TabletContract.TagEntry.COLUMN_DURATION));
             contentValues.put(TabletContract.TagEntry.COLUMN_VIDEO_ID, ele.getString(TabletContract.TagEntry.COLUMN_VIDEO_ID));
             contentValues.put(TabletContract.TagEntry.COLUMN_EPISODE_ID, ele.getString(TabletContract.TagEntry.COLUMN_EPISODE_ID));
+            contentValues.put(TabletContract.TagEntry.COLUMN_QUESTION_ID, ele.getString(TabletContract.TagEntry.COLUMN_QUESTION_ID));
             db.insert(TabletContract.TagEntry.TABLE_NAME, null, contentValues);
 
         } catch (Exception e) {
