@@ -284,32 +284,87 @@
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <ListView
+        <TextView
+            android:id="@+id/pre_test_summary_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/pre_test_summary_list"
-            android:scrollbars="none"
-            android:background="@color/white"
-            android:layout_marginLeft="50dp"
-            android:divider="@color/transparent"/>
+            android:textColor="@color/black"
+            android:textSize="20dp"
+            android:layout_marginBottom="30dp"
+            android:layout_marginLeft="50dp"/>
         <LinearLayout
-            android:layout_gravity="center"
-            android:gravity="center"
+            android:orientation="horizontal"
+            android:id="@+id/pre_test_summary_stat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginBottom="30dp">
+        </LinearLayout>
+        <LinearLayout
             android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="20dp"
-                android:text="赶紧正式进入今天的课程吧！"
+                android:text="详细解答会在课程中展开，赶紧正式进入今天的课程吧！"
                 android:textSize="20dp"
                 android:textColor="@color/black"/>
             <Button
                 android:id="@+id/begin_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="开始"/>
+                android:background="@color/transparent"
+                android:textColor="@color/title_bar_background"
+                android:textSize="20dp"
+                android:text="点击开始！"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/post_test_summary"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/post_test_summary_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="20dp"
+            android:layout_marginBottom="30dp"
+            android:layout_marginLeft="50dp"/>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:id="@+id/post_test_summary_stat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginBottom="50dp">
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:text="点击上面的题目编号，查看详细讲解！"
+                android:textSize="20dp"
+                android:textColor="@color/black"/>
+            <Button
+                android:id="@+id/over_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:textColor="@color/title_bar_background"
+                android:textSize="20dp"
+                android:text="完成！"/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

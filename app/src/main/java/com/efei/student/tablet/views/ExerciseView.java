@@ -10,23 +10,19 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.efei.student.tablet.R;
-import com.efei.student.tablet.adapters.SummaryAdapter;
 import com.efei.student.tablet.models.Homework;
 import com.efei.student.tablet.models.Lesson;
 import com.efei.student.tablet.models.Question;
 import com.efei.student.tablet.student.LessonActivity;
 import com.efei.student.tablet.utils.NetUtils;
-import com.efei.student.tablet.utils.TextUtils;
 import com.efei.student.tablet.utils.UiUtils;
 
 import org.json.JSONArray;
@@ -71,17 +67,22 @@ public class ExerciseView extends FrameLayout {
 
     private Button mNextBtn;
     private Button mBeginBtn;
+    private Button mOverBtn;
 
     private LinearLayout mPreTestSummaryLayout;
+    private LinearLayout mPostTestSummaryLayout;
     private RelativeLayout mExerciseLayout;
 
     private LinearLayout itemsLayout;
     private LinearLayout blankAnswerLayout;
     private LinearLayout blankAnswerContentLayout;
     private LinearLayout blankAnimationLayout;
+    private LinearLayout mPreTestSummaryStatLayout;
+    private LinearLayout mPostTestSummaryStatLayout;
 
+    private TextView mPreTestSummaryText;
+    private TextView mPostTestSummaryText;
 
-    private ListView mPreTestSummaryList;
 
     private int abadon = 0;
 
@@ -120,6 +121,11 @@ public class ExerciseView extends FrameLayout {
         blankAnswerLayout = (LinearLayout) v.findViewById(R.id.blank_answer);
         blankAnimationLayout = (LinearLayout) v.findViewById(R.id.blank_animation);
         blankAnswerContentLayout = (LinearLayout) v.findViewById(R.id.blank_answer_content);
+        mPreTestSummaryStatLayout = (LinearLayout) v.findViewById(R.id.pre_test_summary_stat);
+        mPostTestSummaryStatLayout = (LinearLayout) v.findViewById(R.id.post_test_summary_stat);
+
+        mPreTestSummaryText = (TextView) v.findViewById(R.id.pre_test_summary_text);
+        mPostTestSummaryText = (TextView) v.findViewById(R.id.post_test_summary_text);
 
         mItemA = (ImageView) v.findViewById(R.id.itemImage_A);
         mItemB = (ImageView) v.findViewById(R.id.itemImage_B);
@@ -138,12 +144,12 @@ public class ExerciseView extends FrameLayout {
 
         mNextBtn = (Button) v.findViewById(R.id.next_button);
         mBeginBtn = (Button) v.findViewById(R.id.begin_button);
+        mOverBtn = (Button) v.findViewById(R.id.over_button);
 
         mPreTestSummaryLayout = (LinearLayout) v.findViewById(R.id.pre_test_summary);
+        mPostTestSummaryLayout = (LinearLayout) v.findViewById(R.id.post_test_summary);
         mExerciseLayout = (RelativeLayout) v.findViewById(R.id.exercise);
 
-
-        mPreTestSummaryList = (ListView) v.findViewById(R.id.pre_test_summary_list);
 
         mItemA.setOnClickListener(new OnClickListener() {
             @Override
@@ -221,7 +227,7 @@ public class ExerciseView extends FrameLayout {
             @Override
             public void onClick(View view) {
                 mBlankRight.setBackgroundResource(R.drawable.ic_ok_pressed);
-                mCurAnswer = 0;
+                mCurAnswer = 1;
                 mNextBtn.setEnabled(true);
                 mNextBtn.setTextColor(mContext.getResources().getColor(R.color.white));
             }
@@ -252,6 +258,13 @@ public class ExerciseView extends FrameLayout {
             @Override
             public void onClick(View view) {
                 moveToNext();
+            }
+        });
+
+        mOverBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((LessonActivity)mContext).returnToCourse();
             }
         });
     }
@@ -307,6 +320,29 @@ public class ExerciseView extends FrameLayout {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            } else if (mCurType.equals("post_test")){
+                JSONObject params = new JSONObject();
+                try {
+                    params.put("type", "post_test");
+                    params.put("exercise_id", mExercise.server_id);
+                    params.put("auth_key", mAuthKey);
+                    JSONObject tablet_answer = new JSONObject();
+                    JSONArray answer_ary = new JSONArray();
+                    for (int i = 0; i < mAnswer.length; i++) {
+                        answer_ary.put(mAnswer[i]);
+                    }
+                    JSONArray duration_ary = new JSONArray();
+                    for (int i = 0; i < mDuration.length; i++) {
+                        duration_ary.put(mDuration[i]);
+                    }
+                    tablet_answer.put("answer", answer_ary);
+                    tablet_answer.put("duration", duration_ary);
+                    params.put("tablet_answer", tablet_answer);
+                    UploadAnswerTask uploadAnswerTask = new UploadAnswerTask();
+                    uploadAnswerTask.execute(params);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             } else if (mCurType.equals("exercise")) {
                 JSONObject params = new JSONObject();
                 try {
@@ -351,25 +387,67 @@ public class ExerciseView extends FrameLayout {
             // move to the next page based on the exercise type
             try {
                 if (mCurType.equals("pre_test")) {
-                    // show the summary page
+                    // show the pre test summary page
                     mExerciseLayout.setVisibility(GONE);
                     mPreTestSummaryLayout.setVisibility(VISIBLE);
-                    String summary = "";
-
-                    String[] summary_list = new String[mQuestions.length];
+                    mPostTestSummaryLayout.setVisibility(GONE);
+                    int correct = 0, incorrect = 0, unknown = 0;
                     for (int i = 0; i < mQuestions.length; i++) {
-                        if (mQuestions[i].type.equals("choice") || mQuestions[i].type.equals("blank")) {
-                            summary = "例" + String.valueOf(i+1) + "：正确答案是" + mQuestions[i].answer_in_text() + "，回答";
-                            summary = summary + (mAnswer[i] == mQuestions[i].answer ? "正确" : "错误");
-
+                        Button b = new Button(mContext);
+                        b.setText(String.valueOf(i+1));
+                        int is_answer_corrent = mQuestions[i].is_answer_corrent(mAnswer[i]);
+                        if (is_answer_corrent > 0) {
+                            b.setTextColor(mContext.getResources().getColor(R.color.white));
+                            b.setBackgroundResource(R.drawable.ic_right);
+                            correct++;
+                        } else if (is_answer_corrent < 0) {
+                            b.setTextColor(mContext.getResources().getColor(R.color.white));
+                            b.setBackgroundResource(R.drawable.ic_wrong);
+                            incorrect++;
+                        } else {
+                            b.setTextColor(mContext.getResources().getColor(R.color.black));
+                            b.setBackgroundResource(R.drawable.ic_unknown);
+                            unknown++;
                         }
-                        summary = summary + "，用时" + TextUtils.timeText(mDuration[i]);
-                        summary_list[i] = summary;
+                        mPreTestSummaryStatLayout.addView(b);
                     }
-
-                    ArrayAdapter<String> adapter = new SummaryAdapter(mContext, R.layout.exercise_summary_item, summary_list);
-                    mPreTestSummaryList.setAdapter(adapter);
+                    mPreTestSummaryText.setText("统计结果：正确" + String.valueOf(correct) + "道，错误" + String.valueOf(incorrect) + "道。");
                     mTopTv.setText("课前例题完成情况");
+                }
+                if (mCurType.equals("post_test")) {
+
+                    mExerciseLayout.setVisibility(GONE);
+                    mPreTestSummaryLayout.setVisibility(GONE);
+                    mPostTestSummaryLayout.setVisibility(VISIBLE);
+                    int correct = 0, incorrect = 0, unknown = 0;
+                    for (int i = 0; i < mQuestions.length; i++) {
+                        final int q_index = i;
+                        Button b = new Button(mContext);
+                        b.setText(String.valueOf(i+1));
+                        int is_answer_correnct = mQuestions[i].is_answer_corrent(mAnswer[i]);
+                        if (is_answer_correnct > 0) {
+                            b.setTextColor(mContext.getResources().getColor(R.color.white));
+                            b.setBackgroundResource(R.drawable.ic_right);
+                            correct++;
+                        } else if (is_answer_correnct < 0) {
+                            b.setTextColor(mContext.getResources().getColor(R.color.white));
+                            b.setBackgroundResource(R.drawable.ic_wrong);
+                            incorrect++;
+                        } else {
+                            b.setTextColor(mContext.getResources().getColor(R.color.black));
+                            b.setBackgroundResource(R.drawable.ic_unknown);
+                            unknown++;
+                        }
+                        mPostTestSummaryStatLayout.addView(b);
+                        b.setOnClickListener(new OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                ((LessonActivity)mContext).playQuestionVideo(mQuestions[q_index].video_url);
+                            }
+                        });
+                    }
+                    mPostTestSummaryText.setText("统计结果：正确" + String.valueOf(correct) + "道，错误" + String.valueOf(incorrect) + "道。");
+                    mTopTv.setText("课后测试完成情况");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -384,6 +462,11 @@ public class ExerciseView extends FrameLayout {
         mItemC.setBackgroundResource(R.drawable.ic_c_unpressed);
         mItemD.setBackgroundResource(R.drawable.ic_d_unpressed);
         mItemE.setBackgroundResource(R.drawable.ic_e_unpressed);
+
+        mBlankFinish.setBackgroundResource(R.drawable.ic_ok_unpressed);
+        mBlankAbadon.setBackgroundResource(R.drawable.ic_unok_unpressed);
+        mBlankRight.setBackgroundResource(R.drawable.ic_ok_unpressed);
+        mBlankWrong.setBackgroundResource(R.drawable.ic_unok_unpressed);
     }
 
     public void hide() {
@@ -400,8 +483,11 @@ public class ExerciseView extends FrameLayout {
 
     public boolean show(Lesson lesson, String type) {
 
-        mExerciseLayout.setVisibility(VISIBLE);
-        mPreTestSummaryLayout.setVisibility(GONE);
+        if (!type.equals("keep")) {
+            mExerciseLayout.setVisibility(VISIBLE);
+            mPreTestSummaryLayout.setVisibility(GONE);
+            mPostTestSummaryLayout.setVisibility(GONE);
+        }
 
         if (type.equals("post_test")) {
             mTopTv.setText("课后测试：请在讲义上完成，并如实提交答案");
@@ -416,9 +502,8 @@ public class ExerciseView extends FrameLayout {
             mCurQuestion = mQuestions[mCurQuestionIndex];
             mAnswer = new int[mQuestions.length];
             mDuration = new int[mQuestions.length];
-        }
-
-        if (type.equals("pre_test")) {
+            renderQuestion();
+        } else if (type.equals("pre_test")) {
             mTopTv.setText("课前例题：请在讲义上完成，并如实提交答案");
             mCurType = "pre_test";
             mExercise = lesson.get_exercise(this.mContext, "pre_test");
@@ -431,9 +516,8 @@ public class ExerciseView extends FrameLayout {
             mCurQuestion = mQuestions[mCurQuestionIndex];
             mAnswer = new int[mQuestions.length];
             mDuration = new int[mQuestions.length];
-        }
-
-        if (type.equals("exercise")) {
+            renderQuestion();
+        } else if (type.equals("exercise")) {
             mTopTv.setText("练习：请在讲义上完成，并如实提交答案");
             mCurType = "exercise";
             mExercise = lesson.get_exercise(this.mContext, "exercise");
@@ -446,6 +530,7 @@ public class ExerciseView extends FrameLayout {
             mQuestions[0] = mCurQuestion;
             mAnswer = new int[1];
             mDuration = new int[1];
+            renderQuestion();
         }
 
         if (!mShowing && mAnchor != null) {
@@ -459,9 +544,6 @@ public class ExerciseView extends FrameLayout {
             mAnchor.addView(this, tlp);
             mShowing = true;
         }
-
-        // show the question
-        renderQuestion();
 
         return true;
     }

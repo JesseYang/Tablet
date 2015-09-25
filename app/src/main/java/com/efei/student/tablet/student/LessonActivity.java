@@ -2,9 +2,11 @@ package com.efei.student.tablet.student;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.view.GestureDetector;
@@ -21,15 +23,21 @@ import com.efei.student.tablet.models.Tag;
 import com.efei.student.tablet.models.Video;
 import com.efei.student.tablet.models.VideoState;
 import com.efei.student.tablet.utils.GestureListener;
+import com.efei.student.tablet.utils.NetUtils;
 import com.efei.student.tablet.views.CheckBoxView;
 import com.efei.student.tablet.views.EpisodeTipView;
 import com.efei.student.tablet.views.ExampleQuestionDialogView;
 import com.efei.student.tablet.views.ExerciseDialogView;
 import com.efei.student.tablet.views.ExerciseView;
+import com.efei.student.tablet.views.SummaryControllerView;
 import com.efei.student.tablet.views.VideoControllerView;
 import com.efei.student.tablet.views.VideoListView;
 import com.efei.student.tablet.views.VideoTopView;
 import com.efei.student.tablet.views.VideoTtitleView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.FileInputStream;
 
@@ -50,6 +58,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     EpisodeTipView episodeTipView;
 
     ExerciseView exerciseView;
+    SummaryControllerView summaryControllerView;
     CheckBoxView[] checkBoxView;
     int maxKeyPoint;
 
@@ -57,21 +66,29 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     private boolean mIsEpisode;
     public int mParentTime;
     private SurfaceHolder videoHolder;
+    public boolean questionMode;
 
     private GestureDetector mGestureDetector;
     PowerManager.WakeLock mWakeLock;
 
     private AudioManager audiomanage;
 
-    private boolean mFwdPause;
     public VideoState videoState;
 
     public Question mCurExercise;
     int check_box_size;
+    private String mAuthKey;
+    public String mTitleCache;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        questionMode = false;
+
+        SharedPreferences sharedPreferences = this.getSharedPreferences("MyPref", 0);
+        mAuthKey = sharedPreferences.getString("auth_key", "");
+
         audiomanage = (AudioManager) getSystemService(AUDIO_SERVICE);
         videoState = new VideoState("", 0, false);
         mParentVideo = null;
@@ -109,6 +126,9 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         exerciseView = new ExerciseView(this);
         exerciseView.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
 
+        summaryControllerView = new SummaryControllerView(this);
+        summaryControllerView.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
+
         maxKeyPoint = 10;
         checkBoxView = new CheckBoxView[maxKeyPoint];
         for (int i = 0; i < maxKeyPoint; i++) {
@@ -116,8 +136,6 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             checkBoxView[i].setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
         }
         check_box_size = checkBoxView[0].check_box_size(this);
-
-        mFwdPause = false;
 
         mCurVideo = mLesson.videos()[0];
         titleView.setVideio(mCurVideo);
@@ -185,6 +203,13 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
                             checkBoxView[i].hide();
                         }
                     }
+                    hideOperations();
+
+                    titleView.show();
+                    mTitleCache = titleView.getTitle();
+                    titleView.setTitle("选择你在这道题上的重点或易错点");
+                    titleView.keepShow = true;
+                    summaryControllerView.show(snapshot);
                 }
                 if (tag.type == tag.TYPE_EXAMPLE) {
                     Question question = Question.get_question_by_id(tag.question_id, this);
@@ -207,6 +232,49 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         }
         return false;
     }
+
+    public void submitSummary(Snapshot snapshot) {
+        int key_point_length = snapshot.key_point.length;
+        JSONArray checked = new JSONArray();
+        for (int i = 0; i < key_point_length; i++) {
+            checked.put(checkBoxView[i].checked);
+        }
+        JSONObject params = new JSONObject();
+        try {
+            params.put("snapshot_id", snapshot.server_id);
+            params.put("checked", checked);
+            params.put("auth_key", mAuthKey);
+            UploadSummaryTask uploadSummaryTask = new UploadSummaryTask();
+            uploadSummaryTask.execute(params);
+            player.start();
+            for (int i = 0; i < checkBoxView.length; i++) {
+                checkBoxView[i].hide();
+            }
+            summaryControllerView.hide();
+            titleView.setTitle(mTitleCache);
+            titleView.show();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private class UploadSummaryTask extends AsyncTask<JSONObject, Void, JSONObject> {
+        @Override
+        protected JSONObject doInBackground(JSONObject... params) {
+            String response = NetUtils.post("/tablet/summaries", params[0]);
+            try {
+                JSONObject jsonRes = new JSONObject(response);
+                return jsonRes;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject retval) {
+        }
+    }
+
 
     public void goEpisode(Video episode, Tag tag) {
         mParentVideo = mCurVideo;
@@ -237,7 +305,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         controller.mLastPosition = -1;
         player.reset();
         mCurVideo = video;
-        startPlay();
+        startPlay("");
         titleView.setVideio(video);
         // todo: check and finish last learn log, then create new learn log
     }
@@ -265,12 +333,8 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         }
         showOperations();
         boolean eventConsumed = mGestureDetector.onTouchEvent(event);
-        boolean retval = false;
+        boolean retval;
         if (eventConsumed) {
-            if (GestureListener.gesture.equals("DOWN")) {
-                showOperations();
-            }
-
             if (GestureListener.gesture.equals("SCROLL")) {
                 // should adjust the volume
                 if (Math.abs(GestureListener.distanceY) > Math.abs(GestureListener.distanceX) * 3 && Math.abs(GestureListener.distanceY) > 10) {
@@ -291,12 +355,25 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     }
 
     public void showOperations() {
-        if (!exerciseView.isShown()) {
+        if (questionMode) {
+            controller.show();
+            topView.show();
+            titleView.show();
+        } else if (!exerciseView.isShown() && !summaryControllerView.isShown()) {
             controller.show();
             list.show();
             topView.show();
             titleView.show();
+        } else if (summaryControllerView.isShown()) {
+            titleView.show();
         }
+    }
+
+    public void hideOperations() {
+        controller.hide();
+        list.hide();
+        topView.hide();
+        titleView.hide();
     }
 
     // Implement SurfaceHolder.Callback
@@ -310,13 +387,13 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         player = new MediaPlayer();
         boolean ret = exerciseView.show(this.mLesson, "pre_test");
         if (!ret) {
-            startPlay();
+            startPlay("");
         }
     }
 
     public void afterPreTest() {
         exerciseView.hide();
-        startPlay();
+        startPlay("");
     }
 
     public void afterExercise() {
@@ -340,9 +417,30 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         controller.clearVideoControl();
     }
 
-    public void startPlay() {
+    public void playQuestionVideo(String video_url) {
+        questionMode = true;
+        exerciseView.hide();
+        player.reset();
+        titleView.setTitle("正在播放：题目讲解");
+        startPlay(video_url);
+    }
+
+    public void returnToPostSummary() {
+        player.pause();
+        exerciseView.show(mLesson, "keep");
+    }
+
+    public void returnToCourse() {
+        Intent intent = new Intent(this, CourseActivity.class)
+                .putExtra(Intent.EXTRA_TEXT, mLesson.course_id);
+        this.startActivity(intent);
+        this.finish();
+    }
+
+    public void startPlay(String video_url) {
         try {
-            String video_url = videoState.dataSource == "" ? mCurVideo.video_url : videoState.dataSource;
+            if (video_url.equals(""))
+                video_url = videoState.dataSource == "" ? mCurVideo.video_url : videoState.dataSource;
             FileInputStream fileInputStream = this.openFileInput(Video.get_filename_by_url(video_url));
             player.setDataSource(fileInputStream.getFD());
             player.setDisplay(videoHolder);
@@ -454,7 +552,6 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             }
             // todo: show tips to ask users to do exercise
             exerciseView.show(mLesson, "post_test");
-            //exerciseDialogView.show();
             return;
         }
         switchVideo(nextVideo);

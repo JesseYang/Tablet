@@ -1,7 +1,6 @@
 package com.efei.student.tablet.views;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.view.Gravity;
@@ -13,7 +12,6 @@ import android.widget.ImageView;
 
 import com.efei.student.tablet.R;
 import com.efei.student.tablet.models.Lesson;
-import com.efei.student.tablet.student.CourseActivity;
 import com.efei.student.tablet.student.LessonActivity;
 
 import java.lang.ref.WeakReference;
@@ -55,10 +53,11 @@ public class VideoTopView extends FrameLayout {
             @Override
             public void onClick(View v) {
                 ((LessonActivity)mContext).clearVideoControl();
-                Intent intent = new Intent(mContext, CourseActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, mLesson.course_id);
-                mContext.startActivity(intent);
-                ((LessonActivity)mContext).finish();
+                if (((LessonActivity)mContext).questionMode) {
+                    ((LessonActivity)mContext).returnToPostSummary();
+                } else {
+                    ((LessonActivity)mContext).returnToCourse();
+                }
             }
         });
 

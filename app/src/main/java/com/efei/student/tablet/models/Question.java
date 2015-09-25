@@ -144,4 +144,18 @@ public class Question {
             return "";
         }
     }
+
+    public int is_answer_corrent(int answer) {
+        if (this.type.equals("blank")) {
+            return answer;
+        }
+        if (this.type.equals("choice")) {
+            if (answer == this.answer) {
+                return 1;
+            } else {
+                return -1;
+            }
+        }
+        return 0;
+    }
 }

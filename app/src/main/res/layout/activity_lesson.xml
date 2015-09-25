@@ -17,7 +17,8 @@
             android:id="@+id/videoSurface"
             android:layout_width="1024dp"
             android:layout_height="576dp"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"/>
+
     </FrameLayout>
 
 </RelativeLayout>

@@ -16,7 +16,7 @@ public class CheckBoxView extends FrameLayout {
     private Context mContext;
     private View mRoot;
     private boolean mShowing;
-    private boolean checked ;
+    public boolean checked ;
 
     private ImageView check_box_iv;
 

@@ -30,11 +30,13 @@ public class VideoTtitleView extends FrameLayout {
     private Handler             mHandler = new MessageHandler(this);
 
     private TextView mTitle;
+    public boolean keepShow;
 
     public VideoTtitleView(Context context) {
         super(context);
         mContext = context;
         mLesson = ((LessonActivity)context).mLesson;
+        keepShow = false;
     }
 
     public void setAnchorView(ViewGroup view) {
@@ -82,10 +84,11 @@ public class VideoTtitleView extends FrameLayout {
 
     public void setVideio(Video v) {
         mVideo = v;
-        setTitle();
+        setTitle("正在播放：" + v.name);
     }
 
     public void show(int timeout) {
+        keepShow = false;
         if (!mShowing && mAnchor != null) {
 
             LayoutParams tlp = new LayoutParams(
@@ -106,8 +109,12 @@ public class VideoTtitleView extends FrameLayout {
         }
     }
 
-    public void setTitle() {
-        mTitle.setText(mContext.getResources().getString(R.string.video_title).replace("v1", mVideo.name));
+    public void setTitle(String title) {
+        mTitle.setText(title);
+    }
+
+    public String getTitle() {
+        return String.valueOf(mTitle.getText());
     }
 
     private static class MessageHandler extends Handler {
@@ -119,11 +126,9 @@ public class VideoTtitleView extends FrameLayout {
         @Override
         public void handleMessage(Message msg) {
             VideoTtitleView view = mView.get();
-            if (view == null) {
+            if (view == null || view.keepShow == true) {
                 return;
             }
-
-            int pos;
             switch (msg.what) {
                 case FADE_OUT:
                     view.hide();
