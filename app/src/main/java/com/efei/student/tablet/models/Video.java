@@ -119,11 +119,14 @@ public class Video {
 
 
     public void delete() {
-        // first delete all tags
+        // first delete all tags and snapshots
         TabletDbHelper dbHelper = new TabletDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete(TabletContract.TagEntry.TABLE_NAME,
                 TabletContract.TagEntry.COLUMN_VIDEO_ID + "=\"" + this.server_id + "\"",
+                null);
+        db.delete(TabletContract.SnapshotEntry.TABLE_NAME,
+                TabletContract.SnapshotEntry.COLUMN_VIDEO_ID + "=\"" + this.server_id + "\"",
                 null);
         // then delete itself
         db.delete(TabletContract.VideoEntry.TABLE_NAME,

@@ -15,6 +15,7 @@ public class Tag {
     public static int TYPE_INDEX = 1;
     public static int TYPE_EPISODE = 2;
     public static int TYPE_EXAMPLE = 3;
+    public static int TYPE_SNAPSHOT = 4;
 
     public Context mContext;
 
@@ -24,6 +25,7 @@ public class Tag {
     public String name;
     public String episode_id;
     public String question_id;
+    public String snapshot_id;
 
     public Tag(Context context, Cursor cursor) {
         this.mContext = context;
@@ -34,6 +36,27 @@ public class Tag {
         this.episode_id = cursor.getString(cursor.getColumnIndex(TabletContract.TagEntry.COLUMN_EPISODE_ID));
         this.question_id = cursor.getString(cursor.getColumnIndex(TabletContract.TagEntry.COLUMN_QUESTION_ID));
         this.duration = cursor.getInt(cursor.getColumnIndex(TabletContract.TagEntry.COLUMN_DURATION));
+        this.snapshot_id = cursor.getString(cursor.getColumnIndex(TabletContract.TagEntry.COLUMN_SNAPSHOT_ID));
+    }
+
+    public Snapshot snapshot() {
+        TabletDbHelper dbHelper = new TabletDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.query(TabletContract.SnapshotEntry.TABLE_NAME, // Table to query
+                null,   // all columns
+                TabletContract.SnapshotEntry.COLUMN_SERVER_ID + "=?",   // columns for the "where" clause
+                new String[]{this.snapshot_id},  // values for the "where" clause
+                null,   // columns to group by
+                null,   // columns to filter by row groups
+                null);  // sort order
+        int count = cursor.getCount();
+        if (count > 0) {
+            cursor.moveToFirst();
+            Snapshot snapshot = new Snapshot(mContext, cursor);
+            return snapshot;
+        } else {
+            return null;
+        }
     }
 
     public static void create(JSONObject ele, Context context) {
@@ -49,7 +72,19 @@ public class Tag {
             contentValues.put(TabletContract.TagEntry.COLUMN_VIDEO_ID, ele.getString(TabletContract.TagEntry.COLUMN_VIDEO_ID));
             contentValues.put(TabletContract.TagEntry.COLUMN_EPISODE_ID, ele.getString(TabletContract.TagEntry.COLUMN_EPISODE_ID));
             contentValues.put(TabletContract.TagEntry.COLUMN_QUESTION_ID, ele.getString(TabletContract.TagEntry.COLUMN_QUESTION_ID));
+            contentValues.put(TabletContract.TagEntry.COLUMN_SNAPSHOT_ID, ele.getString(TabletContract.TagEntry.COLUMN_SNAPSHOT_ID));
             db.insert(TabletContract.TagEntry.TABLE_NAME, null, contentValues);
+
+            if (!ele.getString(TabletContract.TagEntry.COLUMN_SNAPSHOT_ID).equals("")) {
+                // create the snapshot
+                contentValues.clear();
+                ele = ele.getJSONObject("snapshot");
+                contentValues.put(TabletContract.SnapshotEntry.COLUMN_SERVER_ID, ele.getString(TabletContract.SnapshotEntry.COLUMN_SERVER_ID));
+                contentValues.put(TabletContract.SnapshotEntry.COLUMN_TIME, (float)ele.getDouble(TabletContract.SnapshotEntry.COLUMN_TIME));
+                contentValues.put(TabletContract.SnapshotEntry.COLUMN_KEY_POINT, ele.getString(TabletContract.SnapshotEntry.COLUMN_KEY_POINT));
+                contentValues.put(TabletContract.SnapshotEntry.COLUMN_VIDEO_ID, ele.getString(TabletContract.SnapshotEntry.COLUMN_VIDEO_ID));
+                db.insert(TabletContract.SnapshotEntry.TABLE_NAME, null, contentValues);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,5 +1,6 @@
 package com.efei.student.tablet.views;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -9,19 +10,23 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.efei.student.tablet.R;
+import com.efei.student.tablet.adapters.SummaryAdapter;
 import com.efei.student.tablet.models.Homework;
 import com.efei.student.tablet.models.Lesson;
 import com.efei.student.tablet.models.Question;
 import com.efei.student.tablet.student.LessonActivity;
 import com.efei.student.tablet.utils.NetUtils;
+import com.efei.student.tablet.utils.TextUtils;
 import com.efei.student.tablet.utils.UiUtils;
 
 import org.json.JSONArray;
@@ -53,6 +58,13 @@ public class ExerciseView extends FrameLayout {
     private ImageView mItemB;
     private ImageView mItemC;
     private ImageView mItemD;
+    private ImageView mItemE;
+
+    private ImageView mBlankFinish;
+    private ImageView mBlankAbadon;
+
+    private ImageView mBlankRight;
+    private ImageView mBlankWrong;
 
     private TextView mTextTimeTip;
     private TextView mTopTv;
@@ -62,6 +74,16 @@ public class ExerciseView extends FrameLayout {
 
     private LinearLayout mPreTestSummaryLayout;
     private RelativeLayout mExerciseLayout;
+
+    private LinearLayout itemsLayout;
+    private LinearLayout blankAnswerLayout;
+    private LinearLayout blankAnswerContentLayout;
+    private LinearLayout blankAnimationLayout;
+
+
+    private ListView mPreTestSummaryList;
+
+    private int abadon = 0;
 
     Timer timer;
 
@@ -94,10 +116,22 @@ public class ExerciseView extends FrameLayout {
     }
 
     private void initControllerView(View v) {
+        itemsLayout = (LinearLayout) v.findViewById(R.id.items_layout);
+        blankAnswerLayout = (LinearLayout) v.findViewById(R.id.blank_answer);
+        blankAnimationLayout = (LinearLayout) v.findViewById(R.id.blank_animation);
+        blankAnswerContentLayout = (LinearLayout) v.findViewById(R.id.blank_answer_content);
+
         mItemA = (ImageView) v.findViewById(R.id.itemImage_A);
         mItemB = (ImageView) v.findViewById(R.id.itemImage_B);
         mItemC = (ImageView) v.findViewById(R.id.itemImage_C);
         mItemD = (ImageView) v.findViewById(R.id.itemImage_D);
+        mItemE = (ImageView) v.findViewById(R.id.itemImage_E);
+
+        mBlankFinish = (ImageView) v.findViewById(R.id.blank_finish);
+        mBlankAbadon = (ImageView) v.findViewById(R.id.blank_abadon);
+
+        mBlankRight = (ImageView) v.findViewById(R.id.blank_right);
+        mBlankWrong = (ImageView) v.findViewById(R.id.blank_wrong);
 
         mTextTimeTip = (TextView) v.findViewById(R.id.question_time_tip);
         mTopTv = (TextView) v.findViewById(R.id.exercise_top_tv);
@@ -107,6 +141,9 @@ public class ExerciseView extends FrameLayout {
 
         mPreTestSummaryLayout = (LinearLayout) v.findViewById(R.id.pre_test_summary);
         mExerciseLayout = (RelativeLayout) v.findViewById(R.id.exercise);
+
+
+        mPreTestSummaryList = (ListView) v.findViewById(R.id.pre_test_summary_list);
 
         mItemA.setOnClickListener(new OnClickListener() {
             @Override
@@ -148,6 +185,59 @@ public class ExerciseView extends FrameLayout {
                 mNextBtn.setTextColor(mContext.getResources().getColor(R.color.white));
             }
         });
+        mItemE.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clearItems();
+                mItemE.setBackgroundResource(R.drawable.ic_e_pressed);
+                mCurAnswer = -1;
+                mNextBtn.setEnabled(true);
+                mNextBtn.setTextColor(mContext.getResources().getColor(R.color.white));
+            }
+        });
+
+        mBlankFinish.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mBlankFinish.setBackgroundResource(R.drawable.ic_ok_pressed);
+                blankAnswerContentLayout.setVisibility(VISIBLE);
+                ObjectAnimator mSlidInAnimator = ObjectAnimator.ofFloat(blankAnimationLayout, "translationX", -2048);
+                mSlidInAnimator.setDuration(200);
+                mSlidInAnimator.start();
+            }
+        });
+
+        mBlankAbadon.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mBlankAbadon.setBackgroundResource(R.drawable.ic_unok_pressed);
+                mCurAnswer = -1;
+                mNextBtn.setEnabled(true);
+                mNextBtn.setTextColor(mContext.getResources().getColor(R.color.white));
+            }
+        });
+
+        mBlankRight.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mBlankRight.setBackgroundResource(R.drawable.ic_ok_pressed);
+                mCurAnswer = 0;
+                mNextBtn.setEnabled(true);
+                mNextBtn.setTextColor(mContext.getResources().getColor(R.color.white));
+            }
+        });
+
+        mBlankWrong.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mBlankWrong.setBackgroundResource(R.drawable.ic_unok_pressed);
+                mCurAnswer = -1;
+                mNextBtn.setEnabled(true);
+                mNextBtn.setTextColor(mContext.getResources().getColor(R.color.white));
+            }
+        });
+
+
 
         mBeginBtn.setOnClickListener(new OnClickListener() {
             @Override
@@ -161,74 +251,86 @@ public class ExerciseView extends FrameLayout {
         mNextBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                // first stop the timer for the current question
-                timer.cancel();
-
-                // gather the answer and duration of the current question
-                if (mCurQuestion.type.equals("choice")) {
-                    mAnswer[mCurQuestionIndex] = mCurAnswer;
-                } else {
-                    mAnswer[mCurQuestionIndex] = -1;
-                }
-                mDuration[mCurQuestionIndex] = mCurDuraton;
-
-                // if answer is not provided, move to next
-                if (mCurQuestionIndex == mQuestions.length - 1) {
-                    // the last question
-                    if (mCurType.equals("pre_test")) {
-                        JSONObject params = new JSONObject();
-                        try {
-                            params.put("type", "pre_test");
-                            params.put("exercise_id", mExercise.server_id);
-                            params.put("auth_key", mAuthKey);
-                            JSONObject tablet_answer = new JSONObject();
-                            JSONArray answer_ary = new JSONArray();
-                            for (int i = 0; i < mAnswer.length; i++) {
-                                answer_ary.put(mAnswer[i]);
-                            }
-                            JSONArray duration_ary = new JSONArray();
-                            for (int i = 0; i < mDuration.length; i++) {
-                                duration_ary.put(mDuration[i]);
-                            }
-                            tablet_answer.put("answer", answer_ary);
-                            tablet_answer.put("duration", duration_ary);
-                            params.put("tablet_answer", tablet_answer);
-                            UploadAnswerTask uploadAnswerTask = new UploadAnswerTask();
-                            uploadAnswerTask.execute(params);
-
-                            // show the loading page
-                            mTopTv.setText("正在提交数据，请稍后");
-                            mExerciseLayout.setVisibility(GONE);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    } else if (mCurType.equals("exercise")) {
-                        JSONObject params = new JSONObject();
-                        try {
-                            params.put("type", "exercise");
-                            params.put("exercise_id", mExercise.server_id);
-                            params.put("question_id", mCurQuestion.server_id);
-                            params.put("auth_key", mAuthKey);
-                            params.put("answer", mAnswer[0]);
-                            params.put("duration", mDuration[0]);
-                            UploadAnswerTask uploadAnswerTask = new UploadAnswerTask();
-                            uploadAnswerTask.execute(params);
-                            ((LessonActivity)mContext).afterExercise();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    clearItems();
-                } else {
-                    // move to the next question
-                    mCurQuestionIndex++;
-                    mCurQuestion = mQuestions[mCurQuestionIndex];
-                    renderQuestion();
-                    clearItems();
-                }
+                moveToNext();
             }
         });
+    }
+
+    public void moveToNext() {
+
+        // first stop the timer for the current question
+        timer.cancel();
+
+        if (mCurAnswer == -1) {
+            abadon++;
+        } else {
+            abadon = 0;
+        }
+
+        // gather the answer and duration of the current question
+        if (mCurQuestion.type.equals("choice")) {
+            mAnswer[mCurQuestionIndex] = mCurAnswer;
+        } else if (mCurQuestion.type.equals("blank")) {
+            mAnswer[mCurQuestionIndex] = mCurAnswer;
+        } else {
+            mAnswer[mCurQuestionIndex] = -1;
+        }
+        mDuration[mCurQuestionIndex] = mCurDuraton;
+
+        // if answer is not provided, move to next
+        if (mCurQuestionIndex == mQuestions.length - 1) {
+            // the last question
+            if (mCurType.equals("pre_test")) {
+                JSONObject params = new JSONObject();
+                try {
+                    params.put("type", "pre_test");
+                    params.put("exercise_id", mExercise.server_id);
+                    params.put("auth_key", mAuthKey);
+                    JSONObject tablet_answer = new JSONObject();
+                    JSONArray answer_ary = new JSONArray();
+                    for (int i = 0; i < mAnswer.length; i++) {
+                        answer_ary.put(mAnswer[i]);
+                    }
+                    JSONArray duration_ary = new JSONArray();
+                    for (int i = 0; i < mDuration.length; i++) {
+                        duration_ary.put(mDuration[i]);
+                    }
+                    tablet_answer.put("answer", answer_ary);
+                    tablet_answer.put("duration", duration_ary);
+                    params.put("tablet_answer", tablet_answer);
+                    UploadAnswerTask uploadAnswerTask = new UploadAnswerTask();
+                    uploadAnswerTask.execute(params);
+
+                    // show the loading page
+                    mTopTv.setText("正在提交数据，请稍后");
+                    mExerciseLayout.setVisibility(GONE);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else if (mCurType.equals("exercise")) {
+                JSONObject params = new JSONObject();
+                try {
+                    params.put("type", "exercise");
+                    params.put("exercise_id", mExercise.server_id);
+                    params.put("question_id", mCurQuestion.server_id);
+                    params.put("auth_key", mAuthKey);
+                    params.put("answer", mAnswer[0]);
+                    params.put("duration", mDuration[0]);
+                    UploadAnswerTask uploadAnswerTask = new UploadAnswerTask();
+                    uploadAnswerTask.execute(params);
+                    ((LessonActivity)mContext).afterExercise();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            clearItems();
+        } else {
+            // move to the next question
+            mCurQuestionIndex++;
+            mCurQuestion = mQuestions[mCurQuestionIndex];
+            renderQuestion();
+            clearItems();
+        }
     }
 
     private class UploadAnswerTask extends AsyncTask<JSONObject, Void, JSONObject> {
@@ -252,6 +354,21 @@ public class ExerciseView extends FrameLayout {
                     // show the summary page
                     mExerciseLayout.setVisibility(GONE);
                     mPreTestSummaryLayout.setVisibility(VISIBLE);
+                    String summary = "";
+
+                    String[] summary_list = new String[mQuestions.length];
+                    for (int i = 0; i < mQuestions.length; i++) {
+                        if (mQuestions[i].type.equals("choice") || mQuestions[i].type.equals("blank")) {
+                            summary = "例" + String.valueOf(i+1) + "：正确答案是" + mQuestions[i].answer_in_text() + "，回答";
+                            summary = summary + (mAnswer[i] == mQuestions[i].answer ? "正确" : "错误");
+
+                        }
+                        summary = summary + "，用时" + TextUtils.timeText(mDuration[i]);
+                        summary_list[i] = summary;
+                    }
+
+                    ArrayAdapter<String> adapter = new SummaryAdapter(mContext, R.layout.exercise_summary_item, summary_list);
+                    mPreTestSummaryList.setAdapter(adapter);
                     mTopTv.setText("课前例题完成情况");
                 }
             } catch (Exception e) {
@@ -266,6 +383,7 @@ public class ExerciseView extends FrameLayout {
         mItemB.setBackgroundResource(R.drawable.ic_b_unpressed);
         mItemC.setBackgroundResource(R.drawable.ic_c_unpressed);
         mItemD.setBackgroundResource(R.drawable.ic_d_unpressed);
+        mItemE.setBackgroundResource(R.drawable.ic_e_unpressed);
     }
 
     public void hide() {
@@ -349,6 +467,7 @@ public class ExerciseView extends FrameLayout {
     }
 
     public void renderElement(String ele, LinearLayout parent) {
+        parent.removeAllViews();
         TextView content = UiUtils.generateTextView();
         content.setText(UiUtils.richTextToSpannable(ele));
         parent.addView(content);
@@ -367,23 +486,40 @@ public class ExerciseView extends FrameLayout {
         LinearLayout contentLayout = (LinearLayout)findViewById(R.id.content_layout);
         contentLayout.removeAllViews();
 
-        TextView temp;
+        String q_type = "";
+        if (mCurQuestion.type.equals("choice")) {
+            q_type = "【选择题】";
+        } else if (mCurQuestion.type.equals("blank")) {
+            q_type = "【填空题】";
+        } else if (mCurQuestion.type.equals("analysis")) {
+            q_type = "【解答题】";
+        }
+        mCurQuestion.content[0] = q_type + mCurQuestion.content[0];
         renderElement(mCurQuestion.content, contentLayout);
 
         // 2. fill the items
-        LinearLayout itemsLayout = (LinearLayout)findViewById(R.id.items_layout);
         if (mCurQuestion.type.equals("choice")) {
+            blankAnswerLayout.setVisibility(GONE);
             itemsLayout.setVisibility(VISIBLE);
-            ((LinearLayout) findViewById(R.id.itemContent_A)).removeAllViews();
-            ((LinearLayout) findViewById(R.id.itemContent_B)).removeAllViews();
-            ((LinearLayout) findViewById(R.id.itemContent_C)).removeAllViews();
-            ((LinearLayout) findViewById(R.id.itemContent_D)).removeAllViews();
             renderElement(mCurQuestion.items[0], (LinearLayout) findViewById(R.id.itemContent_A));
             renderElement(mCurQuestion.items[1], (LinearLayout) findViewById(R.id.itemContent_B));
             renderElement(mCurQuestion.items[2], (LinearLayout) findViewById(R.id.itemContent_C));
             renderElement(mCurQuestion.items[3], (LinearLayout) findViewById(R.id.itemContent_D));
-        } else {
+            renderElement(cry_content(), (LinearLayout) findViewById(R.id.itemContent_E));
+        } else if (mCurQuestion.type.equals("blank")) {
             itemsLayout.setVisibility(GONE);
+            blankAnswerLayout.setVisibility(VISIBLE);
+            renderElement("正确答案：" + mCurQuestion.answer_content[0], (LinearLayout) findViewById(R.id.blank_answer_content));
+            blankAnswerContentLayout.setVisibility(INVISIBLE);
+            blankAnimationLayout.setTranslationX(0);
+            renderElement("正确 $$fig_happy*png*20*20$$", (LinearLayout) findViewById(R.id.blank_right_content));
+            renderElement("错误 $$fig_cry*png*20*20$$", (LinearLayout) findViewById(R.id.blank_wrong_content));
+            renderElement("做完啦 $$fig_happy*png*20*20$$", (LinearLayout) findViewById(R.id.blank_yes_content));
+            renderElement(cry_content(), (LinearLayout) findViewById(R.id.blank_no_content));
+        }
+        else {
+            itemsLayout.setVisibility(GONE);
+            blankAnswerLayout.setVisibility(GONE);
         }
 
         // render the time tip
@@ -391,15 +527,23 @@ public class ExerciseView extends FrameLayout {
         timer = new Timer();
         timer.schedule(new CountTime(0), 1000);
 
-        if (mCurQuestion.type.equals("choice")) {
-            mNextBtn.setEnabled(false);
-            mNextBtn.setTextColor(mContext.getResources().getColor(R.color.title_bar_search_hint_text_color));
-        }
+
+        mNextBtn.setEnabled(false);
+        mNextBtn.setTextColor(mContext.getResources().getColor(R.color.title_bar_search_hint_text_color));
 
         if (mCurQuestionIndex == mQuestions.length - 1) {
             mNextBtn.setText("提交");
         } else {
             mNextBtn.setText("下一题");
+        }
+    }
+
+    public String cry_content() {
+        if (abadon == 1) {
+            return "不会做 $$fig_cry*png*20*20$$";
+        } else {
+            return "不会做 $$fig_cry*png*20*20$$";
+            // return "还是不会做 $$fig_cry*png*20*20$$ $$fig_cry*png*20*20$$";
         }
     }
 

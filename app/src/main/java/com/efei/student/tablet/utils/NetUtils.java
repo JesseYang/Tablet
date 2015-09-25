@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -32,6 +33,7 @@ public final class NetUtils {
     }
 
     public static String post(String urlApi, JSONObject params) {
+
         try {
             StringBuilder response = new StringBuilder();
 
@@ -40,6 +42,8 @@ public final class NetUtils {
             URL url = new URL(builtUri.toString());
 
             urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setConnectTimeout(3000);
+            urlConnection.setReadTimeout(3000);
             urlConnection.setRequestMethod("POST");
             urlConnection.setRequestProperty("Content-Type", "application/json");
             urlConnection.setRequestProperty("Accept","application/json");
@@ -57,7 +61,11 @@ public final class NetUtils {
 
             urlConnection.connect();
 
-            if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            Log.e("AAAAAAAAAAAAAAAAA", "");
+            int res_code = urlConnection.getResponseCode();
+            Log.e("BBBBBBBBBBBBBBBBB", "");
+
+            if (res_code == HttpURLConnection.HTTP_OK) {
 
                 InputStream inputStream = urlConnection.getInputStream();
                 BufferedReader input = new BufferedReader(new InputStreamReader(inputStream));
@@ -71,9 +79,12 @@ public final class NetUtils {
                 return response.toString();
             }
             return "";
-        } catch (IOException e) {
-            return "";
-        } finally {
+        } catch (java.net.SocketTimeoutException e) {
+            e.printStackTrace();
+            return "timeout";
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            return "timeout";
         }
     }
 

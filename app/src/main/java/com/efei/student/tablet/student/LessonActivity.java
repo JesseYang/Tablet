@@ -16,10 +16,12 @@ import android.widget.FrameLayout;
 import com.efei.student.tablet.R;
 import com.efei.student.tablet.models.Lesson;
 import com.efei.student.tablet.models.Question;
+import com.efei.student.tablet.models.Snapshot;
 import com.efei.student.tablet.models.Tag;
 import com.efei.student.tablet.models.Video;
 import com.efei.student.tablet.models.VideoState;
 import com.efei.student.tablet.utils.GestureListener;
+import com.efei.student.tablet.views.CheckBoxView;
 import com.efei.student.tablet.views.EpisodeTipView;
 import com.efei.student.tablet.views.ExampleQuestionDialogView;
 import com.efei.student.tablet.views.ExerciseDialogView;
@@ -48,6 +50,8 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     EpisodeTipView episodeTipView;
 
     ExerciseView exerciseView;
+    CheckBoxView[] checkBoxView;
+    int maxKeyPoint;
 
     public Video mParentVideo;
     private boolean mIsEpisode;
@@ -63,6 +67,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     public VideoState videoState;
 
     public Question mCurExercise;
+    int check_box_size;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +108,14 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
 
         exerciseView = new ExerciseView(this);
         exerciseView.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
+
+        maxKeyPoint = 10;
+        checkBoxView = new CheckBoxView[maxKeyPoint];
+        for (int i = 0; i < maxKeyPoint; i++) {
+            checkBoxView[i] = new CheckBoxView(this);
+            checkBoxView[i].setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
+        }
+        check_box_size = checkBoxView[0].check_box_size(this);
 
         mFwdPause = false;
 
@@ -153,24 +166,41 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         }
         Tag[] tags = mCurVideo.tags();
         for (Tag tag : tags) {
-            if (tag.type != tag.TYPE_EXAMPLE) {
+            if (tag.type != tag.TYPE_EXAMPLE && tag.type != tag.TYPE_SNAPSHOT) {
                 continue;
             }
             int time = tag.time;
             if (time * 1000 >= last_position && time * 1000 < position) {
-                Question question = Question.get_question_by_id(tag.question_id, this);
-                if (question == null) {
+                // tag discovered
+                if (tag.type == tag.TYPE_SNAPSHOT) {
                     player.pause();
-                    exampleQuestionDialogView.show(tag.name, tag.duration);
-                    return true;
-                } else {
-                    // should show the exercise page
-                    player.pause();
-                    mCurExercise = question;
-                    if (exerciseView.show(mLesson, "exercise") == false) {
+                    Snapshot snapshot = tag.snapshot();
+                    for (int i = 0; i< maxKeyPoint; i++) {
+                        if (i < snapshot.key_point.length) {
+                            int x, y;
+                            x = Math.round(Float.valueOf(snapshot.key_point[i].split(",")[0]) * videoSurface.getWidth());
+                            y = Math.round(Float.valueOf(snapshot.key_point[i].split(",")[1]) * videoSurface.getHeight());
+                            checkBoxView[i].show(this.convertPosition(x, y));
+                        } else {
+                            checkBoxView[i].hide();
+                        }
+                    }
+                }
+                if (tag.type == tag.TYPE_EXAMPLE) {
+                    Question question = Question.get_question_by_id(tag.question_id, this);
+                    if (question == null) {
                         player.pause();
                         exampleQuestionDialogView.show(tag.name, tag.duration);
                         return true;
+                    } else {
+                        // should show the exercise page
+                        player.pause();
+                        mCurExercise = question;
+                        if (exerciseView.show(mLesson, "exercise") == false) {
+                            player.pause();
+                            exampleQuestionDialogView.show(tag.name, tag.duration);
+                            return true;
+                        }
                     }
                 }
             }
@@ -430,4 +460,12 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         switchVideo(nextVideo);
     }
     // End VideoMediaController.MediaPlayerControl
+
+    public int[] convertPosition(int x, int y) {
+        int[] ret = new int[2];
+        int top = videoSurface.getTop();
+        ret[0] = x - check_box_size / 2;
+        ret[1] = y - check_box_size / 2 + top;
+        return ret;
+    }
 }

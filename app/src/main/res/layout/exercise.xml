@@ -47,6 +47,95 @@
 
             <LinearLayout
                 android:orientation="vertical"
+                android:id="@+id/blank_answer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="20dp">
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:id="@+id/blank_answer_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginBottom="30dp">
+
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/blank_animation"
+                    android:orientation="horizontal"
+                    android:layout_width="2048dp"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:id="@+id/blank_yes_no"
+                        android:layout_width="1024dp"
+                        android:layout_height="wrap_content"
+                        android:minHeight="60dp">
+                        <ImageView
+                            android:id="@+id/blank_finish"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="10dp"
+                            android:background="@drawable/ic_ok"/>
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:id="@+id/blank_yes_content"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                        </LinearLayout>
+                        <ImageView
+                            android:id="@+id/blank_abadon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginLeft="30dp"
+                            android:background="@drawable/ic_unok"/>
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:id="@+id/blank_no_content"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:id="@+id/blank_right_wrong"
+                        android:layout_width="1024dp"
+                        android:layout_height="wrap_content"
+                        android:minHeight="60dp">
+                        <ImageView
+                            android:id="@+id/blank_right"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="10dp"
+                            android:background="@drawable/ic_ok"/>
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:id="@+id/blank_right_content"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                        </LinearLayout>
+                        <ImageView
+                            android:id="@+id/blank_wrong"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginLeft="30dp"
+                            android:background="@drawable/ic_unok"/>
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:id="@+id/blank_wrong_content"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
                 android:id="@+id/items_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -133,6 +222,26 @@
                         android:layout_height="wrap_content">
                     </LinearLayout>
                 </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/item_E"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="60dp"
+                    android:gravity="center_vertical">
+                    <ImageView
+                        android:id="@+id/itemImage_E"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/ic_e"/>
+                    <LinearLayout
+                        android:id="@+id/itemContent_E"
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
 
@@ -175,17 +284,32 @@
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <LinearLayout
-            android:id="@+id/exercise_summary"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/begin_button"
+        <ListView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="开始"/>
+            android:id="@+id/pre_test_summary_list"
+            android:scrollbars="none"
+            android:background="@color/white"
+            android:layout_marginLeft="50dp"
+            android:divider="@color/transparent"/>
+        <LinearLayout
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:text="赶紧正式进入今天的课程吧！"
+                android:textSize="20dp"
+                android:textColor="@color/black"/>
+            <Button
+                android:id="@+id/begin_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="开始"/>
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

@@ -13,13 +13,14 @@ import com.efei.student.tablet.data.TabletContract.QuestionEntry;
 import com.efei.student.tablet.data.TabletContract.TagEntry;
 import com.efei.student.tablet.data.TabletContract.TeacherEntry;
 import com.efei.student.tablet.data.TabletContract.VideoEntry;
+import com.efei.student.tablet.data.TabletContract.SnapshotEntry;
 
 /**
  * Created by jesse on 15-5-4.
  */
 public class TabletDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 21;
+    private static final int DATABASE_VERSION = 22;
 
     private static final String DATABASE_NAME = "tablet.db";
 
@@ -111,9 +112,18 @@ public class TabletDbHelper extends SQLiteOpenHelper {
                 TagEntry.COLUMN_EPISODE_ID + " TEXT," +
                 TagEntry.COLUMN_TYPE + " INTEGER NOT NULL," +
                 TagEntry.COLUMN_TIME + " INTEGER NOT NULL," +
-                TagEntry.COLUMN_DURATION + " INTEGER NOT NULL," +
-                TagEntry.COLUMN_NAME + " TEXT NOT NULL," +
+                TagEntry.COLUMN_DURATION + " INTEGER," +
+                TagEntry.COLUMN_NAME + " TEXT," +
+                TagEntry.COLUMN_SNAPSHOT_ID + " TEXT," +
                 TagEntry.COLUMN_QUESTION_ID + " TEXT" +
+                " );";
+
+        final String SQL_CREATE_SNAPSHOT_TABLE = "CREATE TABLE " + SnapshotEntry.TABLE_NAME + " ( " +
+                SnapshotEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                SnapshotEntry.COLUMN_SERVER_ID + " TEXT NOT NULL," +
+                SnapshotEntry.COLUMN_TIME + " FLOAT," +
+                SnapshotEntry.COLUMN_KEY_POINT + " TEXT," +
+                SnapshotEntry.COLUMN_VIDEO_ID + " TEXT" +
                 " );";
 
         final String SQL_CREATE_LEARN_LOG_TABLE = "CREATE TABLE " + LearnLogEntry.TABLE_NAME + " ( " +
@@ -148,6 +158,7 @@ public class TabletDbHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_QUESTION_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_HOMEWORK_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_TAG_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_SNAPSHOT_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_LEARN_LOG_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_ACTION_LOG_TABLE);
     }
@@ -161,8 +172,10 @@ public class TabletDbHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + QuestionEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + HomeworkEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TagEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SnapshotEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + LearnLogEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + ActionLogEntry.TABLE_NAME);
+
         onCreate(sqLiteDatabase);
     }
 }

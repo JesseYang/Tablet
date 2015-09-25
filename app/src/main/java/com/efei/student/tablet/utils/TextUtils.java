@@ -10,6 +10,15 @@ public final class TextUtils
     {
     }
 
+    public static String timeText(int time) {
+        int minute = time / 60;
+        int second = time % 60;
+        if (minute == 0)
+            return String.valueOf(time % 60) + "秒";
+        else
+            return String.valueOf(time / 60) + "分" + String.valueOf(time % 60) + "秒。";
+    }
+
     public static boolean isBlank(CharSequence string)
     {
         int strLen;

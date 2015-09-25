@@ -142,6 +142,7 @@ public class LoginActivity extends BaseActivity {
                 JSONObject jsonRes = new JSONObject(response);
                 return jsonRes;
             } catch (Exception e) {
+                ToastUtils.showToast(mActivity, "网络不给力，请检查网络设置");
                 return null;
             }
         }

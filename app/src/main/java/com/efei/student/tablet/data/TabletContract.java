@@ -142,6 +142,21 @@ public class TabletContract {
 
         // Video_id, stored as String
         public static final String COLUMN_VIDEO_ID = "video_id";
+
+        // Snapshot_id, stored as String
+        public static final String COLUMN_SNAPSHOT_ID = "snapshot_id";
+    }
+
+    public final class SnapshotEntry implements  BaseColumns {
+        public static final String TABLE_NAME = "snapshot";
+
+        public static final String COLUMN_SERVER_ID = "server_id";
+
+        public static final String COLUMN_TIME = "time";
+
+        public static final String COLUMN_KEY_POINT = "key_point";
+
+        public static final String COLUMN_VIDEO_ID = "video_id";
     }
 
     public final class HomeworkEntry implements BaseColumns {

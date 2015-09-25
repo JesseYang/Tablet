@@ -132,4 +132,16 @@ public class Question {
             }
         }
     }
+
+    public String answer_in_text() {
+
+        if (this.type.equals("choice")) {
+            String[] item_ary = new String[] { "A", "B", "C", "D" };
+            return item_ary[this.answer];
+        } else if (this.type.equals("blank")) {
+            return this.answer_content[0];
+        } else {
+            return "";
+        }
+    }
 }
