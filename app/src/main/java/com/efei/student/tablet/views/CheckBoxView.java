@@ -78,6 +78,7 @@ public class CheckBoxView extends FrameLayout {
     }
 
     public boolean show(int[] pos) {
+        check_box_iv.setBackground(mContext.getResources().getDrawable(R.drawable.checkbox));
         if (!mShowing && mAnchor != null) {
             LayoutParams tlp = new LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
