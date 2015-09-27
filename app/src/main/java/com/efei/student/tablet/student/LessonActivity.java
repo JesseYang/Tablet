@@ -46,7 +46,7 @@ import java.io.FileInputStream;
 public class LessonActivity extends BaseActivity implements SurfaceHolder.Callback, MediaPlayer.OnCompletionListener, VideoControllerView.MediaPlayerControl {
 
     public Lesson mLesson;
-    Video mCurVideo;
+    public Video mCurVideo;
     SurfaceView videoSurface;
     public MediaPlayer player;
     VideoControllerView controller;
@@ -80,16 +80,11 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     private String mAuthKey;
     public String mTitleCache;
 
-    private int mLockTagTime;
-    private boolean checkProgress;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         questionMode = false;
-        mLockTagTime = 0;
-        checkProgress = false;
 
         SharedPreferences sharedPreferences = this.getSharedPreferences("MyPref", 0);
         mAuthKey = sharedPreferences.getString("auth_key", "");
@@ -181,49 +176,22 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     }
 
     public boolean checkTag(long last_position, long position, boolean includePause) {
-        if (last_position > position)
+        if (player == null || last_position < 0 || last_position > position)
             return false;
 
-        /*
-        if (mLockTagTime != 0) {
-            if (mLockTagTime < last_position - 3000)
-                mLockTagTime = 0;
-            return false;
-        }
-        */
-        // if (player == null || (includePause == false && player.isPlaying() == false)) {
-        if (player == null) {
-            return false;
-        }
-        if (last_position < 0) {
-            return false;
-        }
         Tag[] tags = mCurVideo.tags();
         Tag target_tag = null;
         for (Tag tag :tags) {
-            if (tag.type != tag.TYPE_EXAMPLE && tag.type != tag.TYPE_SNAPSHOT) {
+            if ((tag.type != tag.TYPE_EXAMPLE && tag.type != tag.TYPE_SNAPSHOT) ||  (target_tag != null && tag.time >= target_tag.time))
                 continue;
-            }
-            if (target_tag != null && tag.time >= target_tag.time) {
-                continue;
-            }
-            if (tag.time * 1000 > last_position && tag.time * 1000 <= position) {
+            if (tag.time * 1000 > last_position && tag.time * 1000 <= position)
                 target_tag = tag;
-            }
         }
 
         if (target_tag != null) {
-            // first stop the forward or backward
+            // first stop the forward or backward and make the player pause
             controller.clearVideoControl();
             player.pause();
-
-            // then seek to the tag time
-            /*
-            if (player.getCurrentPosition() - target_tag.time * 1000 > 1000) {
-                player.seekTo(target_tag.time * 1000);
-                mLockTagTime = target_tag.time * 1000;
-            }
-            */
 
             if (target_tag.type == target_tag.TYPE_SNAPSHOT) {
                 player.pause();
@@ -239,7 +207,6 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
                     }
                 }
                 hideOperations();
-
                 titleView.show();
                 mTitleCache = titleView.getTitle();
                 titleView.setTitle("选择你在这道题上的重点或易错点");
@@ -340,7 +307,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         mCurVideo = video;
         startPlay("");
         titleView.setVideio(video);
-        // todo: check and finish last learn log, then create new learn log
+        list.mVideoAdapter.notifyDataSetChanged();
     }
 
     public void setVolume(int volume_level) {
@@ -365,26 +332,19 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             return false;
         }
         showOperations();
-        boolean eventConsumed = mGestureDetector.onTouchEvent(event);
-        boolean retval;
-        if (eventConsumed) {
+        if (mGestureDetector.onTouchEvent(event)) {
             if (GestureListener.gesture.equals("SCROLL")) {
                 // should adjust the volume
                 if (Math.abs(GestureListener.distanceY) > Math.abs(GestureListener.distanceX) * 3 && Math.abs(GestureListener.distanceY) > 10) {
-                    if (GestureListener.distanceY > 0) {
-                        audiomanage.adjustVolume(AudioManager.ADJUST_RAISE, 0);
-                    } else {
-                        audiomanage.adjustVolume(AudioManager.ADJUST_LOWER, 0);
-                    }
+                    audiomanage.adjustVolume((GestureListener.distanceY > 0 ? AudioManager.ADJUST_RAISE : AudioManager.ADJUST_LOWER), 0);
                     int volume_level = audiomanage.getStreamVolume(AudioManager.STREAM_MUSIC);
                     controller.setVolume(volume_level);
                 }
             }
-            retval = true;
+            return true;
         } else {
-            retval = false;
+            return false;
         }
-        return retval;
     }
 
     public void showOperations() {
@@ -396,8 +356,6 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             controller.show();
             list.show();
             topView.show();
-            titleView.show();
-        } else if (summaryControllerView.isShown()) {
             titleView.show();
         }
     }
@@ -493,12 +451,6 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             showOperations();
             controller.updatePausePlay();
             controller.sendCheckProgressMsg();
-            /*
-            if (checkProgress == false) {
-                controller.sendCheckProgressMsg();
-                checkProgress = true;
-            }
-*/
             player.setOnCompletionListener(this);
         } catch (Exception e) {
             e.printStackTrace();
@@ -544,7 +496,6 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     @Override
     public void pause() {
         player.pause();
-        // todo: new action log
     }
 
     @Override
@@ -555,7 +506,6 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     @Override
     public void start() {
         player.start();
-        // todo: new action log
     }
 
     @Override

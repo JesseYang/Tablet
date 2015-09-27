@@ -31,7 +31,7 @@ public class VideoListView extends FrameLayout {
     private Video[] mVideos;
     private View mRoot;
     private boolean mShowing;
-    private VideoAdapter mVideoAdapter;
+    public VideoAdapter mVideoAdapter;
     private static final int    sDefaultTimeout = 6000;
     private static final int    FADE_OUT = 1;
     private Handler             mHandler = new MessageHandler(this);
@@ -47,7 +47,6 @@ public class VideoListView extends FrameLayout {
         mContext = context;
         mLesson = ((LessonActivity)context).mLesson;
         mVideoItems = mLesson.get_extended_video_items();
-        // mVideos = mLesson.videos();
         mVideos = mLesson.get_extended_video_items();
         mVideoAdapter = new VideoAdapter(context, R.layout.video_item, mVideoItems);
     }
@@ -156,6 +155,7 @@ public class VideoListView extends FrameLayout {
     }
 
     public void show(int timeout) {
+        // mVideoAdapter.notifyDataSetChanged();
         if (!mShowing && mAnchor != null) {
 
             FrameLayout.LayoutParams tlp = new FrameLayout.LayoutParams(

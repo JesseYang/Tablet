@@ -13,6 +13,8 @@
     <color name="transparent">#00000000</color>
     <color name="title_bar_search_hint_text_color">#d4d3d3</color>
 
+    <color name="video_list_background">#555555</color>
+
     <color name="course_phy_teacher">#00D8F1</color>
     <color name="course_math_teacher">#00BDBF</color>
     <color name="course_chinese_teacher">#FF8AA7</color>

@@ -26,15 +26,17 @@
             android:layout_width="250dp"
             android:layout_height="match_parent"
             android:orientation="vertical"
+            android:background="@color/video_list_background"
             android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp" >
+                android:layout_height="50dp"
+                android:background="@color/transparent">
                 <TextView
                     android:layout_width="200dp"
                     android:layout_height="match_parent"
-                    android:background="@color/filter_yellow"
+                    android:background="@color/transparent"
                     android:paddingLeft="40dp"
                     android:text="@string/index_list"
                     android:textSize="16dp"
@@ -44,7 +46,7 @@
                     android:id="@+id/hide_video_list"
                     android:layout_width="50dp"
                     android:layout_height="match_parent"
-                    android:background="@drawable/filter_yellow_background"
+                    android:background="@color/transparent"
                     android:src="@drawable/hide_video_list"/>
             </LinearLayout>
 
@@ -53,12 +55,10 @@
                 android:layout_height="526dp"
                 android:id="@+id/lv_video_list"
                 android:scrollbars="none"
+                android:paddingTop="30dp"
                 android:background="@color/transparent"
+                android:listSelector="@color/text_grey"
                 android:divider="@color/transparent"/>
         </LinearLayout>
-
-
-
     </LinearLayout>
-
 </LinearLayout>
