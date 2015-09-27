@@ -80,11 +80,16 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     private String mAuthKey;
     public String mTitleCache;
 
+    private int mLockTagTime;
+    private boolean checkProgress;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         questionMode = false;
+        mLockTagTime = 0;
+        checkProgress = false;
 
         SharedPreferences sharedPreferences = this.getSharedPreferences("MyPref", 0);
         mAuthKey = sharedPreferences.getString("auth_key", "");
@@ -176,56 +181,84 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     }
 
     public boolean checkTag(long last_position, long position, boolean includePause) {
-        if (player == null || (includePause == false && player.isPlaying() == false)) {
+        if (last_position > position)
+            return false;
+
+        /*
+        if (mLockTagTime != 0) {
+            if (mLockTagTime < last_position - 3000)
+                mLockTagTime = 0;
+            return false;
+        }
+        */
+        // if (player == null || (includePause == false && player.isPlaying() == false)) {
+        if (player == null) {
             return false;
         }
         if (last_position < 0) {
             return false;
         }
         Tag[] tags = mCurVideo.tags();
-        for (Tag tag : tags) {
+        Tag target_tag = null;
+        for (Tag tag :tags) {
             if (tag.type != tag.TYPE_EXAMPLE && tag.type != tag.TYPE_SNAPSHOT) {
                 continue;
             }
-            int time = tag.time;
-            if (time * 1000 >= last_position && time * 1000 < position) {
-                // tag discovered
-                if (tag.type == tag.TYPE_SNAPSHOT) {
-                    player.pause();
-                    Snapshot snapshot = tag.snapshot();
-                    for (int i = 0; i< maxKeyPoint; i++) {
-                        if (i < snapshot.key_point.length) {
-                            int x, y;
-                            x = Math.round(Float.valueOf(snapshot.key_point[i].split(",")[0]) * videoSurface.getWidth());
-                            y = Math.round(Float.valueOf(snapshot.key_point[i].split(",")[1]) * videoSurface.getHeight());
-                            checkBoxView[i].show(this.convertPosition(x, y));
-                        } else {
-                            checkBoxView[i].hide();
-                        }
-                    }
-                    hideOperations();
+            if (target_tag != null && tag.time >= target_tag.time) {
+                continue;
+            }
+            if (tag.time * 1000 > last_position && tag.time * 1000 <= position) {
+                target_tag = tag;
+            }
+        }
 
-                    titleView.show();
-                    mTitleCache = titleView.getTitle();
-                    titleView.setTitle("选择你在这道题上的重点或易错点");
-                    titleView.keepShow = true;
-                    summaryControllerView.show(snapshot);
-                }
-                if (tag.type == tag.TYPE_EXAMPLE) {
-                    Question question = Question.get_question_by_id(tag.question_id, this);
-                    if (question == null) {
-                        player.pause();
-                        exampleQuestionDialogView.show(tag.name, tag.duration);
-                        return true;
+        if (target_tag != null) {
+            // first stop the forward or backward
+            controller.clearVideoControl();
+            player.pause();
+
+            // then seek to the tag time
+            /*
+            if (player.getCurrentPosition() - target_tag.time * 1000 > 1000) {
+                player.seekTo(target_tag.time * 1000);
+                mLockTagTime = target_tag.time * 1000;
+            }
+            */
+
+            if (target_tag.type == target_tag.TYPE_SNAPSHOT) {
+                player.pause();
+                Snapshot snapshot = target_tag.snapshot();
+                for (int i = 0; i< maxKeyPoint; i++) {
+                    if (i < snapshot.key_point.length) {
+                        int x, y;
+                        x = Math.round(Float.valueOf(snapshot.key_point[i].split(",")[0]) * videoSurface.getWidth());
+                        y = Math.round(Float.valueOf(snapshot.key_point[i].split(",")[1]) * videoSurface.getHeight());
+                        checkBoxView[i].show(this.convertPosition(x, y));
                     } else {
-                        // should show the exercise page
+                        checkBoxView[i].hide();
+                    }
+                }
+                hideOperations();
+
+                titleView.show();
+                mTitleCache = titleView.getTitle();
+                titleView.setTitle("选择你在这道题上的重点或易错点");
+                titleView.keepShow = true;
+                summaryControllerView.show(snapshot);
+                return true;
+            }
+            if (target_tag.type == target_tag.TYPE_EXAMPLE) {
+                Question question = Question.get_question_by_id(target_tag.question_id, this);
+                if (question == null) {
+                    exampleQuestionDialogView.show(target_tag.name, target_tag.duration);
+                    return true;
+                } else {
+                    // should show the exercise page
+                    mCurExercise = question;
+                    if (exerciseView.show(mLesson, "exercise") == false) {
                         player.pause();
-                        mCurExercise = question;
-                        if (exerciseView.show(mLesson, "exercise") == false) {
-                            player.pause();
-                            exampleQuestionDialogView.show(tag.name, tag.duration);
-                            return true;
-                        }
+                        exampleQuestionDialogView.show(target_tag.name, target_tag.duration);
+                        return true;
                     }
                 }
             }
@@ -246,13 +279,13 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             params.put("auth_key", mAuthKey);
             UploadSummaryTask uploadSummaryTask = new UploadSummaryTask();
             uploadSummaryTask.execute(params);
-            player.start();
             for (int i = 0; i < checkBoxView.length; i++) {
                 checkBoxView[i].hide();
             }
             summaryControllerView.hide();
             titleView.setTitle(mTitleCache);
             titleView.show();
+            player.start();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -383,7 +416,6 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        // player = new MediaPlayer(this);
         player = new MediaPlayer();
         boolean ret = exerciseView.show(this.mLesson, "pre_test");
         if (!ret) {
@@ -461,7 +493,12 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             showOperations();
             controller.updatePausePlay();
             controller.sendCheckProgressMsg();
-
+            /*
+            if (checkProgress == false) {
+                controller.sendCheckProgressMsg();
+                checkProgress = true;
+            }
+*/
             player.setOnCompletionListener(this);
         } catch (Exception e) {
             e.printStackTrace();

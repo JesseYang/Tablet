@@ -1,5 +1,6 @@
 package com.efei.student.tablet.views;
 
+import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -29,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -82,6 +84,30 @@ public class ExerciseView extends FrameLayout {
 
     private TextView mPreTestSummaryText;
     private TextView mPostTestSummaryText;
+
+    private boolean btnFrozen;
+
+    final Animator.AnimatorListener next = new Animator.AnimatorListener() {
+        @Override
+        public void onAnimationStart(Animator animator) {
+
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animator) {
+            moveToNext();
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animator) {
+
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animator) {
+
+        }
+    };
 
 
     private int abadon = 0;
@@ -150,56 +176,25 @@ public class ExerciseView extends FrameLayout {
         mPostTestSummaryLayout = (LinearLayout) v.findViewById(R.id.post_test_summary);
         mExerciseLayout = (RelativeLayout) v.findViewById(R.id.exercise);
 
-
         mItemA.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View view) {
-                clearItems();
-                mItemA.setBackgroundResource(R.drawable.ic_a_pressed);
-                mCurAnswer = 0;
-                mNextBtn.setEnabled(true);
-                mNextBtn.setTextColor(mContext.getResources().getColor(R.color.white));
-            }
+            public void onClick(View view) { btnClickHandler(mItemA);}
         });
         mItemB.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View view) {
-                clearItems();
-                mItemB.setBackgroundResource(R.drawable.ic_b_pressed);
-                mCurAnswer = 1;
-                mNextBtn.setEnabled(true);
-                mNextBtn.setTextColor(mContext.getResources().getColor(R.color.white));
-            }
+            public void onClick(View view) { btnClickHandler(mItemB);    }
         });
         mItemC.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View view) {
-                clearItems();
-                mItemC.setBackgroundResource(R.drawable.ic_c_pressed);
-                mCurAnswer = 2;
-                mNextBtn.setEnabled(true);
-                mNextBtn.setTextColor(mContext.getResources().getColor(R.color.white));
-            }
+            public void onClick(View view) { btnClickHandler(mItemC);    }
         });
         mItemD.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View view) {
-                clearItems();
-                mItemD.setBackgroundResource(R.drawable.ic_d_pressed);
-                mCurAnswer = 3;
-                mNextBtn.setEnabled(true);
-                mNextBtn.setTextColor(mContext.getResources().getColor(R.color.white));
-            }
+            public void onClick(View view) { btnClickHandler(mItemD); }
         });
         mItemE.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View view) {
-                clearItems();
-                mItemE.setBackgroundResource(R.drawable.ic_e_pressed);
-                mCurAnswer = -1;
-                mNextBtn.setEnabled(true);
-                mNextBtn.setTextColor(mContext.getResources().getColor(R.color.white));
-            }
+            public void onClick(View view) { btnClickHandler(mItemE); }
         });
 
         mBlankFinish.setOnClickListener(new OnClickListener() {
@@ -215,35 +210,17 @@ public class ExerciseView extends FrameLayout {
 
         mBlankAbadon.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View view) {
-                mBlankAbadon.setBackgroundResource(R.drawable.ic_unok_pressed);
-                mCurAnswer = -1;
-                mNextBtn.setEnabled(true);
-                mNextBtn.setTextColor(mContext.getResources().getColor(R.color.white));
+            public void onClick(View view) { btnClickHandler(mBlankAbadon);
             }
         });
-
         mBlankRight.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View view) {
-                mBlankRight.setBackgroundResource(R.drawable.ic_ok_pressed);
-                mCurAnswer = 1;
-                mNextBtn.setEnabled(true);
-                mNextBtn.setTextColor(mContext.getResources().getColor(R.color.white));
-            }
+            public void onClick(View view) { btnClickHandler((mBlankRight)); }
         });
-
         mBlankWrong.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View view) {
-                mBlankWrong.setBackgroundResource(R.drawable.ic_unok_pressed);
-                mCurAnswer = -1;
-                mNextBtn.setEnabled(true);
-                mNextBtn.setTextColor(mContext.getResources().getColor(R.color.white));
-            }
+            public void onClick(View view) { btnClickHandler(mBlankWrong); }
         });
-
-
 
         mBeginBtn.setOnClickListener(new OnClickListener() {
             @Override
@@ -263,10 +240,28 @@ public class ExerciseView extends FrameLayout {
 
         mOverBtn.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View view) {
-                ((LessonActivity)mContext).returnToCourse();
-            }
+            public void onClick(View view) { ((LessonActivity)mContext).returnToCourse(); }
         });
+    }
+
+    public void btnClickHandler(ImageView btn) {
+        if (btnFrozen)
+            return;
+        ImageView[] btns = new ImageView[] { mItemA, mItemB, mItemC, mItemD, mItemE, mBlankAbadon, mBlankRight, mBlankWrong};
+        int[] answer = new int[] { 0, 1, 2, 3, -1, -1, 1, -1 };
+        int[] resId = new int[] { R.drawable.ic_a_pressed, R.drawable.ic_b_pressed, R.drawable.ic_c_pressed, R.drawable.ic_d_pressed, R.drawable.ic_e_pressed, R.drawable.ic_unok_pressed, R.drawable.ic_ok_pressed, R.drawable.ic_unok_pressed };
+        int index = Arrays.asList(btns).indexOf(btn);
+        btn.setBackgroundResource(resId[index]);
+        mCurAnswer = answer[index];
+        waitForNext();
+    }
+
+    public void waitForNext() {
+        btnFrozen = true;
+        ObjectAnimator mSlideOutAnimator = ObjectAnimator.ofFloat(mExerciseLayout, "translationX", 0);
+        mSlideOutAnimator.setDuration(200);
+        mSlideOutAnimator.start();
+        mSlideOutAnimator.addListener(next);
     }
 
     public void moveToNext() {
@@ -340,6 +335,10 @@ public class ExerciseView extends FrameLayout {
                     params.put("tablet_answer", tablet_answer);
                     UploadAnswerTask uploadAnswerTask = new UploadAnswerTask();
                     uploadAnswerTask.execute(params);
+
+                    // show the loading page
+                    mTopTv.setText("正在提交数据，请稍后");
+                    mExerciseLayout.setVisibility(GONE);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -570,11 +569,11 @@ public class ExerciseView extends FrameLayout {
 
         String q_type = "";
         if (mCurQuestion.type.equals("choice")) {
-            q_type = "【选择题】";
+            q_type = "【" + String.valueOf(mCurQuestionIndex + 1) + ". 选择题】";
         } else if (mCurQuestion.type.equals("blank")) {
-            q_type = "【填空题】";
+            q_type = "【" + String.valueOf(mCurQuestionIndex + 1) + ". 填空题】";
         } else if (mCurQuestion.type.equals("analysis")) {
-            q_type = "【解答题】";
+            q_type = "【" + String.valueOf(mCurQuestionIndex + 1) + ". 解答题】";
         }
         mCurQuestion.content[0] = q_type + mCurQuestion.content[0];
         renderElement(mCurQuestion.content, contentLayout);
@@ -613,11 +612,14 @@ public class ExerciseView extends FrameLayout {
         mNextBtn.setEnabled(false);
         mNextBtn.setTextColor(mContext.getResources().getColor(R.color.title_bar_search_hint_text_color));
 
+        /*
         if (mCurQuestionIndex == mQuestions.length - 1) {
             mNextBtn.setText("提交");
         } else {
             mNextBtn.setText("下一题");
         }
+        */
+        btnFrozen = false;
     }
 
     public String cry_content() {

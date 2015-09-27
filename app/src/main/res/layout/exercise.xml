@@ -267,6 +267,7 @@
                 android:text="@string/question_time_tip"/>
             <Button
                 android:id="@+id/next_button"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/transparent"
@@ -309,7 +310,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="20dp"
-                android:text="详细解答会在课程中展开，赶紧正式进入今天的课程吧！"
+                android:text="课程中会有详细解答，赶紧正式进入今天的课程吧！"
                 android:textSize="20dp"
                 android:textColor="@color/black"/>
             <Button

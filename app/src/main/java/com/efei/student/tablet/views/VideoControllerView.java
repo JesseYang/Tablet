@@ -6,7 +6,6 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -62,26 +61,10 @@ public class VideoControllerView extends FrameLayout {
     public boolean              backwardStatus = false;
     public boolean              isPauseBefore = false;
 
-    public VideoControllerView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        mRoot = null;
-        mContext = context;
-
-        Log.i(TAG, TAG);
-    }
-
-    public VideoControllerView(Context context, boolean useFastForward) {
+    public VideoControllerView(Context context) {
         super(context);
         mContext = context;
         mHandler = new MessageHandler(this, context);
-
-        Log.i(TAG, TAG);
-    }
-
-    public VideoControllerView(Context context) {
-        this(context, true);
-
-        Log.i(TAG, TAG);
     }
 
     public boolean clearVideoControl() {
@@ -110,14 +93,8 @@ public class VideoControllerView extends FrameLayout {
         mVolumeBar.setProgress(volume_level);
     }
 
-    /**
-     * Set the view that acts as the anchor for the control view.
-     * This can for example be a VideoView, or your Activity's main view.
-     * @param view The view to which to anchor the controller when it is visible.
-     */
     public void setAnchorView(ViewGroup view) {
         mAnchor = view;
-
         FrameLayout.LayoutParams frameParams = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
@@ -128,12 +105,6 @@ public class VideoControllerView extends FrameLayout {
         addView(v, frameParams);
     }
 
-    /**
-     * Create the view that holds the widgets that control playback.
-     * Derived classes can override this to create their own.
-     * @return The controller view.
-     * @hide This doesn't work as advertised
-     */
     protected View makeControllerView() {
         LayoutInflater inflate = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mRoot = inflate.inflate(R.layout.media_control, null);
@@ -196,9 +167,7 @@ public class VideoControllerView extends FrameLayout {
                 forwardStatus = !forwardStatus;
                 if (forwardStatus == true) {
                     backwardStatus = false;
-                    // mBackwardBtn.setText("快退");
                     mBackwardBtn.setBackgroundResource(R.drawable.ic_backward);
-                    // mForwardBtn.setText("恢复");
                     mForwardBtn.setBackgroundResource(R.drawable.ic_forward_pressed);
                     isPauseBefore = !mPlayer.isPlaying();
                     if (mPlayer.isPlaying()) {
@@ -206,7 +175,6 @@ public class VideoControllerView extends FrameLayout {
                     }
                     mHandler.sendEmptyMessage(GO_FORWARD);
                 } else {
-                    // mForwardBtn.setText("快进");
                     mForwardBtn.setBackgroundResource(R.drawable.ic_forward);
                     if (!isPauseBefore) {
                         mPlayer.start();
@@ -247,48 +215,16 @@ public class VideoControllerView extends FrameLayout {
 
     }
 
-    /**
-     * Show the controller on screen. It will go away
-     * automatically after 3 seconds of inactivity.
-     */
     public void show() {
         show(sDefaultTimeout);
     }
 
-    /**
-     * Disable pause or seek buttons if the stream cannot be paused or seeked.
-     * This requires the control interface to be a MediaPlayerControlExt
-     */
-    private void disableUnsupportedButtons() {
-        if (mPlayer == null) {
-            return;
-        }
-
-        try {
-            if (mPauseButton != null && !mPlayer.canPause()) {
-                mPauseButton.setEnabled(false);
-            }
-        } catch (IncompatibleClassChangeError ex) {
-            // We were given an old version of the interface, that doesn't have
-            // the canPause/canSeekXYZ methods. This is OK, it just means we
-            // assume the media can be paused and seeked, and so we don't disable
-            // the buttons.
-        }
-    }
-
-    /**
-     * Show the controller on screen. It will go away
-     * automatically after 'timeout' milliseconds of inactivity.
-     * @param timeout The timeout in milliseconds. Use 0 to show
-     * the controller until hide() is called.
-     */
     public void show(int timeout) {
         if (!mShowing && mAnchor != null) {
             setProgress();
             if (mPauseButton != null) {
                 mPauseButton.requestFocus();
             }
-            disableUnsupportedButtons();
 
             FrameLayout.LayoutParams tlp = new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -299,11 +235,7 @@ public class VideoControllerView extends FrameLayout {
             mAnchor.addView(this, tlp);
             mShowing = true;
         }
-        // updatePausePlay();
 
-        // cause the progress bar to be updated even if mShowing
-        // was already true.  This happens, for example, if we're
-        // paused with the progress bar showing the user hits play.
         mHandler.sendEmptyMessage(SHOW_PROGRESS);
 
         Message msg = mHandler.obtainMessage(FADE_OUT);
@@ -321,9 +253,6 @@ public class VideoControllerView extends FrameLayout {
         return mShowing;
     }
 
-    /**
-     * Remove the controller from the screen.
-     */
     public void hide() {
         if (mAnchor == null) {
             return;
@@ -473,17 +402,6 @@ public class VideoControllerView extends FrameLayout {
         updatePausePlay();
     }
 
-    // There are two scenarios that can trigger the seekbar listener to trigger:
-    //
-    // The first is the user using the touchpad to adjust the posititon of the
-    // seekbar's thumb. In this case onStartTrackingTouch is called followed by
-    // a number of onProgressChanged notifications, concluded by onStopTrackingTouch.
-    // We're setting the field "mDragging" to true for the duration of the dragging
-    // session to avoid jumps in the position in case of ongoing playback.
-    //
-    // The second scenario involves the user operating the scroll ball, in this
-    // case there WON'T BE onStartTrackingTouch/onStopTrackingTouch notifications,
-    // we will simply apply the updated position without suspending regular updates.
     private OnSeekBarChangeListener mSeekListener = new OnSeekBarChangeListener() {
         public void onStartTrackingTouch(SeekBar bar) {
             show(3600000);
@@ -521,11 +439,6 @@ public class VideoControllerView extends FrameLayout {
             // setProgress();
             updatePausePlay();
             show(sDefaultTimeout);
-
-            // Ensure that progress is properly updated in the future,
-            // the call to show() does not guarantee this because it is a
-            // no-op if we are already showing.
-            // mHandler.sendEmptyMessage(SHOW_PROGRESS);
         }
     };
 
@@ -534,7 +447,6 @@ public class VideoControllerView extends FrameLayout {
         if (mPauseButton != null) {
             mPauseButton.setEnabled(enabled);
         }
-        disableUnsupportedButtons();
         super.setEnabled(enabled);
     }
 
@@ -555,7 +467,6 @@ public class VideoControllerView extends FrameLayout {
         long pos = mPlayer.getCurrentPosition();
         pos += 1000;
         mPlayer.seekTo(pos);
-        // setProgress();
     }
 
     private View.OnClickListener mRewListener = new View.OnClickListener() {
@@ -568,7 +479,6 @@ public class VideoControllerView extends FrameLayout {
             pos -= 5000; // milliseconds
             mPlayer.seekTo(pos);
             // setProgress();
-
             show(sDefaultTimeout);
         }
     };
@@ -583,7 +493,6 @@ public class VideoControllerView extends FrameLayout {
             pos += 15000; // milliseconds
             mPlayer.seekTo(pos);
             // setProgress();
-
             show(sDefaultTimeout);
         }
     };
@@ -631,7 +540,8 @@ public class VideoControllerView extends FrameLayout {
                             boolean findTag = view.checkProgress(true);
                             if (findTag) {
                                 view.isPauseBefore = true;
-                                view.mForwardBtn.performClick();
+                                view.clearVideoControl();
+                                // view.mForwardBtn.performClick();
                             } else {
                                 ((LessonActivity) view.mContext).showOperations();
                                 view.goForward();
@@ -654,19 +564,9 @@ public class VideoControllerView extends FrameLayout {
                         }
                     }
                     break;
-                /*
-                case SHOW_PROGRESS:
-                    pos = view.setProgress();
-                    if (!view.mDragging && view.mShowing && view.mPlayer.isPlaying()) {
-                        msg = obtainMessage(SHOW_PROGRESS);
-                        sendMessageDelayed(msg, 1000 - (pos % 1000));
-                    }
-                    break;
-                    */
                 case CHECK_PROGRESS:
                     view.checkProgress(false);
                     msg = obtainMessage(CHECK_PROGRESS);
-                    // sendMessageDelayed(msg, 1000 - (pos % 1000));
                     sendMessageDelayed(msg, 500);
                     break;
             }

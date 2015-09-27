@@ -54,11 +54,6 @@ public class SummaryControllerView extends FrameLayout {
             initControllerView(mRoot);
     }
 
-    /**
-     * Set the view that acts as the anchor for the control view.
-     * This can for example be a VideoView, or your Activity's main view.
-     * @param view The view to which to anchor the controller when it is visible.
-     */
     public void setAnchorView(ViewGroup view) {
         mAnchor = view;
 
@@ -72,12 +67,6 @@ public class SummaryControllerView extends FrameLayout {
         addView(v, frameParams);
     }
 
-    /**
-     * Create the view that holds the widgets that control playback.
-     * Derived classes can override this to create their own.
-     * @return The controller view.
-     * @hide This doesn't work as advertised
-     */
     protected View makeControllerView() {
         LayoutInflater inflate = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mRoot = inflate.inflate(R.layout.summary_control, null);
@@ -97,11 +86,6 @@ public class SummaryControllerView extends FrameLayout {
         });
     }
 
-    /**
-     * Show the controller on screen. It will go away
-     * automatically after 'timeout' milliseconds of inactivity.
-     * the controller until hide() is called.
-     */
     public void show(Snapshot snapshot) {
         if (!mShowing && mAnchor != null) {
 
@@ -120,9 +104,6 @@ public class SummaryControllerView extends FrameLayout {
         return mShowing;
     }
 
-    /**
-     * Remove the controller from the screen.
-     */
     public void hide() {
         if (mAnchor == null) {
             return;
