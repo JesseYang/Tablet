@@ -16,6 +16,7 @@ import com.efei.student.tablet.R;
 import com.efei.student.tablet.admin.ManagementActivity;
 import com.efei.student.tablet.student.BaseActivity;
 import com.efei.student.tablet.student.ListActivity;
+import com.efei.student.tablet.utils.EfeiApplication;
 import com.efei.student.tablet.utils.NetUtils;
 import com.efei.student.tablet.utils.TextUtils;
 import com.efei.student.tablet.utils.ToastUtils;

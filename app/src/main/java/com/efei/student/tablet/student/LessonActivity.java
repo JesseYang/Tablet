@@ -9,10 +9,12 @@ import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.provider.Settings;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.efei.student.tablet.R;
@@ -61,6 +63,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     SummaryControllerView summaryControllerView;
     CheckBoxView[] checkBoxView;
     int maxKeyPoint;
+    public float mBrightness;
 
     public Video mParentVideo;
     private boolean mIsEpisode;
@@ -83,6 +86,13 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        try {
+            mBrightness = android.provider.Settings.System.getInt(
+                    getContentResolver(), android.provider.Settings.System.SCREEN_BRIGHTNESS);
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
 
         questionMode = false;
 
@@ -172,6 +182,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
 
     @Override
     protected void onDestroy() {
+        adjustBrightness(mBrightness / 100);
         super.onDestroy();
     }
 
@@ -326,6 +337,12 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         controller.setVolume(volume_level);
     }
 
+    public void adjustBrightness(float brightness) {
+        WindowManager.LayoutParams layout = getWindow().getAttributes();
+        layout.screenBrightness = brightness;
+        getWindow().setAttributes(layout);
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (exerciseView.isShown()) {
@@ -375,8 +392,13 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         player = new MediaPlayer();
-        boolean ret = exerciseView.show(this.mLesson, "pre_test");
-        if (!ret) {
+        if (videoState.begin) {
+            videoState.begin = false;
+            boolean ret = exerciseView.show(this.mLesson, "pre_test");
+            if (!ret) {
+                startPlay("");
+            }
+        } else if (videoState.isPause == false) {
             startPlay("");
         }
     }
@@ -393,7 +415,10 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        if (player != null) {
+        if (exerciseView.isShown()) {
+            videoState.exercise = exerciseView.mCurType;
+            videoState.isPause = true;
+        } else if (player != null) {
             videoState.dataSource = mCurVideo.video_url;
             videoState.isPause = !player.isPlaying();
             videoState.progress = player.getCurrentPosition();
@@ -436,6 +461,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             player.setDisplay(videoHolder);
             player.prepare();
             player.start();
+            adjustBrightness(1F);
             player.seekTo((Integer.valueOf(String.valueOf(videoState.progress))));
             videoState.reset();
 
@@ -517,20 +543,13 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             return;
         }
 
-        // the video goes end
-
-        // todo: check current video type, can be one of the followings:
-        //  1. an episode video, and has original video: should switch back to the original video. Otherwise...
-        //  2. next video is an example question video, should pause and show tips, waiting for the student to finish the question
-        //  3. next video is still a knowledge video, should play the next video
-        //  4. no next video, should show tips, asking the student to finish the exercise
-
-        // todo: check and finish last learn log, then create new learn log
+        if (questionMode == true) {
+            returnToPostSummary();
+            return;
+        }
 
         // move to the next video
         Video nextVideo = mLesson.find_next_video(mCurVideo);
-
-
         if (nextVideo == null) {
             if (mCurVideo.type == 3) {
                 // current video is an episode, just stop here

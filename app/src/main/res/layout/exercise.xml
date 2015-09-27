@@ -313,14 +313,12 @@
                 android:text="课程中会有详细解答，赶紧正式进入今天的课程吧！"
                 android:textSize="20dp"
                 android:textColor="@color/black"/>
-            <Button
+            <ImageView
                 android:id="@+id/begin_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/transparent"
-                android:textColor="@color/title_bar_background"
-                android:textSize="20dp"
-                android:text="点击开始！"/>
+                android:layout_width="70dp"
+                android:layout_height="30dp"
+                android:background="@drawable/begin_background"
+                android:gravity="center"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -358,14 +356,12 @@
                 android:text="点击上面的题目编号，查看详细讲解！"
                 android:textSize="20dp"
                 android:textColor="@color/black"/>
-            <Button
+            <ImageView
                 android:id="@+id/over_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/transparent"
-                android:textColor="@color/title_bar_background"
-                android:textSize="20dp"
-                android:text="完成！"/>
+                android:background="@drawable/over_background"
+                android:layout_width="70dp"
+                android:layout_height="30dp"
+                android:gravity="center"/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

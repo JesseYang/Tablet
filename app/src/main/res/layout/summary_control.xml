@@ -20,15 +20,13 @@
     android:background="#CC000000"
     android:orientation="vertical">
 
-    <Button
+    <ImageView
+        android:id="@+id/continue_button"
+        android:background="@drawable/goon_background"
+        android:layout_width="117dp"
+        android:layout_height="50dp"
         android:layout_gravity="center"
         android:gravity="center"
-        android:id="@+id/continue_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/transparent"
-        android:padding="10dp"
-        android:textSize="20dp"
-        android:textColor="@color/white"
-        android:text="继续"/>
+        android:layout_marginBottom="30dp"
+        />
 </LinearLayout>

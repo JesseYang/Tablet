@@ -8,8 +8,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import com.efei.student.tablet.R;
 import com.efei.student.tablet.models.Snapshot;
@@ -23,7 +23,7 @@ public class SummaryControllerView extends FrameLayout {
     private View                mRoot;
     private boolean             mShowing;
 
-    private Button              mContinueBtn;
+    private ImageView           mContinueBtn;
 
     private Snapshot            snapshot;
 
@@ -77,7 +77,7 @@ public class SummaryControllerView extends FrameLayout {
     }
 
     private void initControllerView(View v) {
-        mContinueBtn = (Button) v.findViewById(R.id.continue_button);
+        mContinueBtn = (ImageView) v.findViewById(R.id.continue_button);
         mContinueBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {

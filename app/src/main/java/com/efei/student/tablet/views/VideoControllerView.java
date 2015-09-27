@@ -534,14 +534,13 @@ public class VideoControllerView extends FrameLayout {
                     if (view.forwardStatus) {
                         long cur = view.mPlayer.getCurrentPosition();
                         long duration = view.mPlayer.getDuration();
-                        if (duration - cur < 1000) {
+                        if (duration - cur < 3000) {
                             view.mForwardBtn.performClick();
                         } else {
                             boolean findTag = view.checkProgress(true);
                             if (findTag) {
                                 view.isPauseBefore = true;
                                 view.clearVideoControl();
-                                // view.mForwardBtn.performClick();
                             } else {
                                 ((LessonActivity) view.mContext).showOperations();
                                 view.goForward();
@@ -565,7 +564,8 @@ public class VideoControllerView extends FrameLayout {
                     }
                     break;
                 case CHECK_PROGRESS:
-                    view.checkProgress(false);
+                    if (view.forwardStatus == false)
+                        view.checkProgress(false);
                     msg = obtainMessage(CHECK_PROGRESS);
                     sendMessageDelayed(msg, 500);
                     break;

@@ -40,7 +40,7 @@ public class ExerciseView extends FrameLayout {
     private ViewGroup mAnchor;
     private Context mContext;
     private View mRoot;
-    private String mCurType;
+    public String mCurType;
     private boolean mShowing;
     public Homework mExercise;
     private Question[] mQuestions;
@@ -68,8 +68,8 @@ public class ExerciseView extends FrameLayout {
     private TextView mTopTv;
 
     private Button mNextBtn;
-    private Button mBeginBtn;
-    private Button mOverBtn;
+    private ImageView mBeginBtn;
+    private ImageView mOverBtn;
 
     private LinearLayout mPreTestSummaryLayout;
     private LinearLayout mPostTestSummaryLayout;
@@ -169,8 +169,8 @@ public class ExerciseView extends FrameLayout {
         mTopTv = (TextView) v.findViewById(R.id.exercise_top_tv);
 
         mNextBtn = (Button) v.findViewById(R.id.next_button);
-        mBeginBtn = (Button) v.findViewById(R.id.begin_button);
-        mOverBtn = (Button) v.findViewById(R.id.over_button);
+        mBeginBtn = (ImageView) v.findViewById(R.id.begin_button);
+        mOverBtn = (ImageView) v.findViewById(R.id.over_button);
 
         mPreTestSummaryLayout = (LinearLayout) v.findViewById(R.id.pre_test_summary);
         mPostTestSummaryLayout = (LinearLayout) v.findViewById(R.id.post_test_summary);
@@ -543,6 +543,8 @@ public class ExerciseView extends FrameLayout {
             mAnchor.addView(this, tlp);
             mShowing = true;
         }
+
+        ((LessonActivity)mContext).adjustBrightness(0F);
 
         return true;
     }
