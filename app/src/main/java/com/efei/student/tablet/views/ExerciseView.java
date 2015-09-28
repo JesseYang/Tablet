@@ -59,10 +59,13 @@ public class ExerciseView extends FrameLayout {
     private ImageView mItemE;
 
     private ImageView mBlankFinish;
-    private ImageView mBlankAbadon;
+    private ImageView mBlankAbandon;
 
     private ImageView mBlankRight;
     private ImageView mBlankWrong;
+
+    private ImageView mAnalysisFinish;
+    private ImageView mAnalysisAbandon;
 
     private TextView mTextTimeTip;
     private TextView mTopTv;
@@ -77,6 +80,7 @@ public class ExerciseView extends FrameLayout {
 
     private LinearLayout itemsLayout;
     private LinearLayout blankAnswerLayout;
+    private LinearLayout analysisAnswerLayout;
     private LinearLayout blankAnswerContentLayout;
     private LinearLayout blankAnimationLayout;
     private LinearLayout mPreTestSummaryStatLayout;
@@ -145,6 +149,7 @@ public class ExerciseView extends FrameLayout {
     private void initControllerView(View v) {
         itemsLayout = (LinearLayout) v.findViewById(R.id.items_layout);
         blankAnswerLayout = (LinearLayout) v.findViewById(R.id.blank_answer);
+        analysisAnswerLayout = (LinearLayout) v.findViewById(R.id.analysis_answer);
         blankAnimationLayout = (LinearLayout) v.findViewById(R.id.blank_animation);
         blankAnswerContentLayout = (LinearLayout) v.findViewById(R.id.blank_answer_content);
         mPreTestSummaryStatLayout = (LinearLayout) v.findViewById(R.id.pre_test_summary_stat);
@@ -160,10 +165,13 @@ public class ExerciseView extends FrameLayout {
         mItemE = (ImageView) v.findViewById(R.id.itemImage_E);
 
         mBlankFinish = (ImageView) v.findViewById(R.id.blank_finish);
-        mBlankAbadon = (ImageView) v.findViewById(R.id.blank_abadon);
+        mBlankAbandon = (ImageView) v.findViewById(R.id.blank_abandon);
 
         mBlankRight = (ImageView) v.findViewById(R.id.blank_right);
         mBlankWrong = (ImageView) v.findViewById(R.id.blank_wrong);
+
+        mAnalysisFinish = (ImageView) v.findViewById(R.id.analysis_finish);
+        mAnalysisAbandon = (ImageView) v.findViewById(R.id.analysis_abandon);
 
         mTextTimeTip = (TextView) v.findViewById(R.id.question_time_tip);
         mTopTv = (TextView) v.findViewById(R.id.exercise_top_tv);
@@ -208,9 +216,10 @@ public class ExerciseView extends FrameLayout {
             }
         });
 
-        mBlankAbadon.setOnClickListener(new OnClickListener() {
+        mBlankAbandon.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View view) { btnClickHandler(mBlankAbadon);
+            public void onClick(View view) {
+                btnClickHandler(mBlankAbandon);
             }
         });
         mBlankRight.setOnClickListener(new OnClickListener() {
@@ -220,6 +229,15 @@ public class ExerciseView extends FrameLayout {
         mBlankWrong.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) { btnClickHandler(mBlankWrong); }
+        });
+
+        mAnalysisFinish.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) { btnClickHandler(mAnalysisFinish); }
+        });
+        mAnalysisAbandon.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) { btnClickHandler(mAnalysisAbandon); }
         });
 
         mBeginBtn.setOnClickListener(new OnClickListener() {
@@ -247,9 +265,9 @@ public class ExerciseView extends FrameLayout {
     public void btnClickHandler(ImageView btn) {
         if (btnFrozen)
             return;
-        ImageView[] btns = new ImageView[] { mItemA, mItemB, mItemC, mItemD, mItemE, mBlankAbadon, mBlankRight, mBlankWrong};
-        int[] answer = new int[] { 0, 1, 2, 3, -1, -1, 1, -1 };
-        int[] resId = new int[] { R.drawable.ic_a_pressed, R.drawable.ic_b_pressed, R.drawable.ic_c_pressed, R.drawable.ic_d_pressed, R.drawable.ic_e_pressed, R.drawable.ic_unok_pressed, R.drawable.ic_ok_pressed, R.drawable.ic_unok_pressed };
+        ImageView[] btns = new ImageView[] { mItemA, mItemB, mItemC, mItemD, mItemE, mBlankAbandon, mBlankRight, mBlankWrong, mAnalysisFinish, mAnalysisAbandon};
+        int[] answer = new int[] { 0, 1, 2, 3, -1, -1, 1, -1, 0, -1 };
+        int[] resId = new int[] { R.drawable.ic_a_pressed, R.drawable.ic_b_pressed, R.drawable.ic_c_pressed, R.drawable.ic_d_pressed, R.drawable.ic_e_pressed, R.drawable.ic_unok_pressed, R.drawable.ic_ok_pressed, R.drawable.ic_unok_pressed, R.drawable.ic_ok_pressed, R.drawable.ic_unok_pressed };
         int index = Arrays.asList(btns).indexOf(btn);
         btn.setBackgroundResource(resId[index]);
         mCurAnswer = answer[index];
@@ -281,7 +299,7 @@ public class ExerciseView extends FrameLayout {
         } else if (mCurQuestion.type.equals("blank")) {
             mAnswer[mCurQuestionIndex] = mCurAnswer;
         } else {
-            mAnswer[mCurQuestionIndex] = -1;
+            mAnswer[mCurQuestionIndex] = mCurAnswer;
         }
         mDuration[mCurQuestionIndex] = mCurDuraton;
 
@@ -393,13 +411,13 @@ public class ExerciseView extends FrameLayout {
                     int correct = 0, incorrect = 0, unknown = 0;
                     for (int i = 0; i < mQuestions.length; i++) {
                         Button b = new Button(mContext);
-                        b.setText(String.valueOf(i+1));
-                        int is_answer_corrent = mQuestions[i].is_answer_corrent(mAnswer[i]);
-                        if (is_answer_corrent > 0) {
+                        b.setText(String.valueOf(i + 1));
+                        int is_answer_correct = mQuestions[i].is_answer_correct(mAnswer[i]);
+                        if (is_answer_correct > 0) {
                             b.setTextColor(mContext.getResources().getColor(R.color.white));
                             b.setBackgroundResource(R.drawable.ic_right);
                             correct++;
-                        } else if (is_answer_corrent < 0) {
+                        } else if (is_answer_correct < 0) {
                             b.setTextColor(mContext.getResources().getColor(R.color.white));
                             b.setBackgroundResource(R.drawable.ic_wrong);
                             incorrect++;
@@ -410,7 +428,13 @@ public class ExerciseView extends FrameLayout {
                         }
                         mPreTestSummaryStatLayout.addView(b);
                     }
-                    mPreTestSummaryText.setText("统计结果：正确" + String.valueOf(correct) + "道，错误" + String.valueOf(incorrect) + "道。");
+                    String msg = "";
+                    if (unknown == 0) {
+                        msg = "统计结果：正确" + String.valueOf(correct) + "道，错误" + String.valueOf(incorrect) + "道。";
+                    } else {
+                        msg = "统计结果：正确" + String.valueOf(correct) + "道，错误" + String.valueOf(incorrect) + "道，待批改" + String.valueOf(unknown) + "道。";
+                    }
+                    mPreTestSummaryText.setText(msg);
                     mTopTv.setText("课前例题完成情况");
                 }
                 if (mCurType.equals("post_test")) {
@@ -422,13 +446,13 @@ public class ExerciseView extends FrameLayout {
                     for (int i = 0; i < mQuestions.length; i++) {
                         final int q_index = i;
                         Button b = new Button(mContext);
-                        b.setText(String.valueOf(i+1));
-                        int is_answer_correnct = mQuestions[i].is_answer_corrent(mAnswer[i]);
-                        if (is_answer_correnct > 0) {
+                        b.setText(String.valueOf(i + 1));
+                        int is_answer_correct = mQuestions[i].is_answer_correct(mAnswer[i]);
+                        if (is_answer_correct > 0) {
                             b.setTextColor(mContext.getResources().getColor(R.color.white));
                             b.setBackgroundResource(R.drawable.ic_right);
                             correct++;
-                        } else if (is_answer_correnct < 0) {
+                        } else if (is_answer_correct < 0) {
                             b.setTextColor(mContext.getResources().getColor(R.color.white));
                             b.setBackgroundResource(R.drawable.ic_wrong);
                             incorrect++;
@@ -463,7 +487,7 @@ public class ExerciseView extends FrameLayout {
         mItemE.setBackgroundResource(R.drawable.ic_e_unpressed);
 
         mBlankFinish.setBackgroundResource(R.drawable.ic_ok_unpressed);
-        mBlankAbadon.setBackgroundResource(R.drawable.ic_unok_unpressed);
+        mBlankAbandon.setBackgroundResource(R.drawable.ic_unok_unpressed);
         mBlankRight.setBackgroundResource(R.drawable.ic_ok_unpressed);
         mBlankWrong.setBackgroundResource(R.drawable.ic_unok_unpressed);
     }
@@ -583,6 +607,7 @@ public class ExerciseView extends FrameLayout {
         // 2. fill the items
         if (mCurQuestion.type.equals("choice")) {
             blankAnswerLayout.setVisibility(GONE);
+            analysisAnswerLayout.setVisibility(GONE);
             itemsLayout.setVisibility(VISIBLE);
             renderElement(mCurQuestion.items[0], (LinearLayout) findViewById(R.id.itemContent_A));
             renderElement(mCurQuestion.items[1], (LinearLayout) findViewById(R.id.itemContent_B));
@@ -591,6 +616,7 @@ public class ExerciseView extends FrameLayout {
             renderElement(cry_content(), (LinearLayout) findViewById(R.id.itemContent_E));
         } else if (mCurQuestion.type.equals("blank")) {
             itemsLayout.setVisibility(GONE);
+            analysisAnswerLayout.setVisibility(GONE);
             blankAnswerLayout.setVisibility(VISIBLE);
             renderElement("正确答案：" + mCurQuestion.answer_content[0], (LinearLayout) findViewById(R.id.blank_answer_content));
             blankAnswerContentLayout.setVisibility(INVISIBLE);
@@ -599,10 +625,12 @@ public class ExerciseView extends FrameLayout {
             renderElement("错误 $$fig_cry*png*20*20$$", (LinearLayout) findViewById(R.id.blank_wrong_content));
             renderElement("做完啦 $$fig_happy*png*20*20$$", (LinearLayout) findViewById(R.id.blank_yes_content));
             renderElement(cry_content(), (LinearLayout) findViewById(R.id.blank_no_content));
-        }
-        else {
+        } else if (mCurQuestion.type.equals("analysis")) {
             itemsLayout.setVisibility(GONE);
             blankAnswerLayout.setVisibility(GONE);
+            analysisAnswerLayout.setVisibility(VISIBLE);
+            renderElement("做完啦 $$fig_happy*png*20*20$$", (LinearLayout) findViewById(R.id.analysis_yes_content));
+            renderElement(cry_content(), (LinearLayout) findViewById(R.id.analysis_no_content));
         }
 
         // render the time tip

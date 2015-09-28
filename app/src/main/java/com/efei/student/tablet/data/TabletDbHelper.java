@@ -10,10 +10,10 @@ import com.efei.student.tablet.data.TabletContract.HomeworkEntry;
 import com.efei.student.tablet.data.TabletContract.LearnLogEntry;
 import com.efei.student.tablet.data.TabletContract.LessonEntry;
 import com.efei.student.tablet.data.TabletContract.QuestionEntry;
+import com.efei.student.tablet.data.TabletContract.SnapshotEntry;
 import com.efei.student.tablet.data.TabletContract.TagEntry;
 import com.efei.student.tablet.data.TabletContract.TeacherEntry;
 import com.efei.student.tablet.data.TabletContract.VideoEntry;
-import com.efei.student.tablet.data.TabletContract.SnapshotEntry;
 
 /**
  * Created by jesse on 15-5-4.
@@ -123,7 +123,8 @@ public class TabletDbHelper extends SQLiteOpenHelper {
                 SnapshotEntry.COLUMN_SERVER_ID + " TEXT NOT NULL," +
                 SnapshotEntry.COLUMN_TIME + " FLOAT," +
                 SnapshotEntry.COLUMN_KEY_POINT + " TEXT," +
-                SnapshotEntry.COLUMN_VIDEO_ID + " TEXT" +
+                SnapshotEntry.COLUMN_VIDEO_ID + " TEXT," +
+                SnapshotEntry.COLUMN_QUESTION_ID + " TEXT" +
                 " );";
 
         final String SQL_CREATE_LEARN_LOG_TABLE = "CREATE TABLE " + LearnLogEntry.TABLE_NAME + " ( " +

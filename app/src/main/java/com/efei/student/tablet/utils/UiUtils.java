@@ -43,12 +43,6 @@ public final class UiUtils
     {
     }
 
-    /**
-     * content��items�Լ�answer_content����˫��Ԫ���ţ�$$����Ϊ��ʼ����ֹ��</br> 1.Ƕ�빫ʽ��</br> 2.ͼƬ��</br> 3.���и�ʽ������</br> ����أ� <li>und_blabla����ʾblabla�Ǵ����»��ߵ� <li>
-     * sub_blabla����ʾblabla���±� <li>sup_blabla����ʾblabla���ϱ� <li>ita_blabla����ʾblabla��б�� <li>
-     * equ_{name}*{width}*{height}����ʾһ����ʽͼƬ������nameΪ�ù�ʽͼƬ���ļ�����widthΪͼƬ��ȣ�heightΪͼƬ�߶ȡ���ͼƬ�����ص�ַΪ��#{image server}/public/download/#{name}.png�� <li>
-     * math_{name}*{width}*{height}����equ_{name}*{width}*{height}��ȫһ�� <li>fig_{name}*{width}*{height}����ʾһ��ͼƬ���������ͬ��
-     */
     public static SpannableString richTextToSpannable(final String txt)
     {
         final StringBuilder sbTmp = new StringBuilder();

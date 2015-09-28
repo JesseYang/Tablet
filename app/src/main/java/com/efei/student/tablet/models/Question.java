@@ -99,7 +99,7 @@ public class Question {
     public void download_image_from_content(String content) {
         String[] ele = content.split("\\$\\$");
         for (int j = 0; j < ele.length; j++) {
-            if (ele[j].startsWith("fig")) {
+            if (ele[j].startsWith("fig_") || ele[j].startsWith("math_") || ele[j].startsWith("equ_")) {
                 String name = TextUtils.getImageFilename(ele[j]);
                 NetUtils.download_resource(this.image_path + "/" + name, name, "image", mContext);
             }
@@ -145,15 +145,36 @@ public class Question {
         }
     }
 
-    public int is_answer_corrent(int answer) {
+    public int is_answer_correct(int answer) {
+        // return
+        //  1 means correct
+        //  -1 means incorrect
+        //  0 means unknown
         if (this.type.equals("blank")) {
+            // for blank question:
+            //  -1 means unable to finish or wrong
+            //  1 means right answer
             return answer;
         }
         if (this.type.equals("choice")) {
+            // for choice question:
+            //  -1 means unable to finish
+            //  0 to 3 means A to D
             if (answer == this.answer) {
                 return 1;
             } else {
                 return -1;
+            }
+        }
+        if (this.type.equals("analysis")) {
+            // for analysis question
+            // -1 means unable to finish or wrong
+            // 0 means unknow
+            // 1 means right
+            if (answer == -1) {
+                return -1;
+            } else {
+                return 0;
             }
         }
         return 0;

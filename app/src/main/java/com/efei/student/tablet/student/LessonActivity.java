@@ -220,7 +220,12 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
                 hideOperations();
                 titleView.show();
                 mTitleCache = titleView.getTitle();
-                titleView.setTitle("选择你在这道题上的重点或易错点");
+                Question q = snapshot.question();
+                if (q.type.equals("analysis")) {
+                    titleView.setTitle("对你的答案进行批改，并选择你在这道题上的重点或易错点");
+                } else {
+                    titleView.setTitle("选择你在这道题上的重点或易错点");
+                }
                 titleView.keepShow = true;
                 summaryControllerView.show(snapshot);
                 return true;
@@ -461,7 +466,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             player.setDisplay(videoHolder);
             player.prepare();
             player.start();
-            adjustBrightness(1F);
+            adjustBrightness(0F);
             player.seekTo((Integer.valueOf(String.valueOf(videoState.progress))));
             videoState.reset();
 

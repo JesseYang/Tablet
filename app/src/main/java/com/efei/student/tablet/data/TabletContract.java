@@ -157,6 +157,8 @@ public class TabletContract {
         public static final String COLUMN_KEY_POINT = "key_point";
 
         public static final String COLUMN_VIDEO_ID = "video_id";
+
+        public static final String COLUMN_QUESTION_ID = "question_id";
     }
 
     public final class HomeworkEntry implements BaseColumns {
