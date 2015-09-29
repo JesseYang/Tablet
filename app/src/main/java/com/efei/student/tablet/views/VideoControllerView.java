@@ -21,6 +21,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.efei.student.tablet.R;
+import com.efei.student.tablet.models.ActionLog;
 import com.efei.student.tablet.student.LessonActivity;
 
 import java.lang.ref.WeakReference;
@@ -174,11 +175,13 @@ public class VideoControllerView extends FrameLayout {
                         mPlayer.pause();
                     }
                     mHandler.sendEmptyMessage(GO_FORWARD);
+                    ActionLog.create_new(mContext, ((LessonActivity) mContext).mLesson.server_id, ActionLog.BEGIN_FORWARD, ((LessonActivity) mContext).mCurVideo.server_id, (int) (mPlayer.getCurrentPosition() / 1000L));
                 } else {
                     mForwardBtn.setBackgroundResource(R.drawable.ic_forward);
                     if (!isPauseBefore) {
                         mPlayer.start();
                     }
+                    ActionLog.create_new(mContext, ((LessonActivity) mContext).mLesson.server_id, ActionLog.STOP_FORWARD, ((LessonActivity) mContext).mCurVideo.server_id, (int) (mPlayer.getCurrentPosition() / 1000L));
                 }
             }
         });
@@ -198,12 +201,14 @@ public class VideoControllerView extends FrameLayout {
                         mPlayer.pause();
                     }
                     mHandler.sendEmptyMessage(GO_BACKWARD);
+                    ActionLog.create_new(mContext, ((LessonActivity) mContext).mLesson.server_id, ActionLog.BEGIN_BACKWARD, ((LessonActivity) mContext).mCurVideo.server_id, (int) (mPlayer.getCurrentPosition() / 1000L));
                 } else {
                     // mBackwardBtn.setText("快退");
                     mBackwardBtn.setBackgroundResource(R.drawable.ic_backward);
                     if (!isPauseBefore) {
                         mPlayer.start();
                     }
+                    ActionLog.create_new(mContext, ((LessonActivity) mContext).mLesson.server_id, ActionLog.STOP_BACKWARD, ((LessonActivity) mContext).mCurVideo.server_id, (int) (mPlayer.getCurrentPosition() / 1000L));
                 }
             }
         });
@@ -396,8 +401,10 @@ public class VideoControllerView extends FrameLayout {
         }
         if (mPlayer.isPlaying()) {
             mPlayer.pause();
+            ActionLog.create_new(mContext, ((LessonActivity) mContext).mLesson.server_id, ActionLog.PAUSE_VIDEO, ((LessonActivity) mContext).mCurVideo.server_id, (int) (mPlayer.getCurrentPosition() / 1000L));
         } else {
             mPlayer.start();
+            ActionLog.create_new(mContext, ((LessonActivity) mContext).mLesson.server_id, ActionLog.PLAY_VIDEO, ((LessonActivity) mContext).mCurVideo.server_id, (int) (mPlayer.getCurrentPosition() / 1000L));
         }
         updatePausePlay();
     }

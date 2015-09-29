@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.efei.student.tablet.R;
+import com.efei.student.tablet.models.ActionLog;
 import com.efei.student.tablet.models.Lesson;
 import com.efei.student.tablet.models.Question;
 import com.efei.student.tablet.models.Snapshot;
@@ -108,6 +109,8 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         Intent intent = getIntent();
         String server_id = intent.getStringExtra(intent.EXTRA_TEXT);
         mLesson = Lesson.get_lesson_by_id(server_id, getApplicationContext());
+
+        ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_LESSON);
 
         videoSurface = (SurfaceView) findViewById(R.id.videoSurface);
         videoHolder = videoSurface.getHolder();
@@ -228,6 +231,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
                 }
                 titleView.keepShow = true;
                 summaryControllerView.show(snapshot);
+                ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_SUMMARY, mCurVideo.server_id, player.getCurrentPosition() / 1000, snapshot.server_id);
                 return true;
             }
             if (target_tag.type == target_tag.TYPE_EXAMPLE) {
@@ -238,8 +242,9 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
                 } else {
                     // should show the exercise page
                     mCurExercise = question;
-                    if (exerciseView.show(mLesson, "exercise") == false) {
-                        player.pause();
+                    if (exerciseView.show(mLesson, "exercise")) {
+                        ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_EXERCISE, mCurVideo.server_id, player.getCurrentPosition() / 1000, question.server_id);
+                    } else {
                         exampleQuestionDialogView.show(target_tag.name, target_tag.duration);
                         return true;
                     }
@@ -249,7 +254,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         return false;
     }
 
-    public void submitSummary(Snapshot snapshot) {
+    public void submitSummary(Snapshot snapshot, int analysisAnswer) {
         int key_point_length = snapshot.key_point.length;
         JSONArray checked = new JSONArray();
         for (int i = 0; i < key_point_length; i++) {
@@ -260,6 +265,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             params.put("snapshot_id", snapshot.server_id);
             params.put("checked", checked);
             params.put("auth_key", mAuthKey);
+            params.put("analysis_answer", analysisAnswer);
             UploadSummaryTask uploadSummaryTask = new UploadSummaryTask();
             uploadSummaryTask.execute(params);
             for (int i = 0; i < checkBoxView.length; i++) {
@@ -269,6 +275,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             titleView.setTitle(mTitleCache);
             titleView.show();
             player.start();
+            ActionLog.create_new(this, mLesson.server_id, ActionLog.RETURN_FROM_SUMMARY, mCurVideo.server_id, player.getCurrentPosition() / 1000, snapshot.server_id);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -318,6 +325,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     }
 
     public void switchVideo(Video video) {
+        ActionLog.create_new(this, mLesson.server_id, ActionLog.SWITCH_VIDEO, mCurVideo.server_id, video.server_id, (int) (player.getCurrentPosition() / 1000L), 0);
         controller.mLastPosition = -1;
         player.reset();
         mCurVideo = video;
@@ -400,8 +408,11 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         if (videoState.begin) {
             videoState.begin = false;
             boolean ret = exerciseView.show(this.mLesson, "pre_test");
-            if (!ret) {
+            if (ret) {
+                ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_PRE_TEST);
+            } else {
                 startPlay("");
+                ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_VIDEO, mCurVideo.server_id, 0);
             }
         } else if (videoState.isPause == false) {
             startPlay("");
@@ -411,11 +422,13 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     public void afterPreTest() {
         exerciseView.hide();
         startPlay("");
+        ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_VIDEO, mCurVideo.server_id, 0);
     }
 
     public void afterExercise() {
         exerciseView.hide();
         player.start();
+        ActionLog.create_new(this, mLesson.server_id, ActionLog.RETURN_FROM_EXERCISE, mCurVideo.server_id, player.getCurrentPosition() / 1000, exerciseView.mCurQuestion.server_id);
     }
 
     @Override
@@ -443,14 +456,17 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         player.reset();
         titleView.setTitle("正在播放：题目讲解");
         startPlay(video_url);
+        ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_VIDEO_FROM_POST_TEST_RESULT, mCurVideo.server_id, 0);
     }
 
     public void returnToPostSummary() {
         player.pause();
         exerciseView.show(mLesson, "keep");
+        ActionLog.create_new(this, mLesson.server_id, ActionLog.RETURN_POST_TEST_RESULT, mCurVideo.server_id, player.getCurrentPosition() / 1000);
     }
 
     public void returnToCourse() {
+        ActionLog.create_new(this, mLesson.server_id, ActionLog.LEAVE_LESSON);
         Intent intent = new Intent(this, CourseActivity.class)
                 .putExtra(Intent.EXTRA_TEXT, mLesson.course_id);
         this.startActivity(intent);
@@ -557,12 +573,11 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         Video nextVideo = mLesson.find_next_video(mCurVideo);
         if (nextVideo == null) {
             if (mCurVideo.type == 3) {
-                // current video is an episode, just stop here
                 showOperations();
                 return;
             }
-            // todo: show tips to ask users to do exercise
             exerciseView.show(mLesson, "post_test");
+            ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_POST_TEST, mCurVideo.server_id, player.getCurrentPosition() / 1000);
             return;
         }
         switchVideo(nextVideo);

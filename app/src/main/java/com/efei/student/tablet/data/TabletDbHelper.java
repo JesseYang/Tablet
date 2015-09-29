@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.efei.student.tablet.data.TabletContract.ActionLogEntry;
 import com.efei.student.tablet.data.TabletContract.CourseEntry;
 import com.efei.student.tablet.data.TabletContract.HomeworkEntry;
-import com.efei.student.tablet.data.TabletContract.LearnLogEntry;
 import com.efei.student.tablet.data.TabletContract.LessonEntry;
 import com.efei.student.tablet.data.TabletContract.QuestionEntry;
 import com.efei.student.tablet.data.TabletContract.SnapshotEntry;
@@ -20,7 +19,7 @@ import com.efei.student.tablet.data.TabletContract.VideoEntry;
  */
 public class TabletDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 22;
+    private static final int DATABASE_VERSION = 23;
 
     private static final String DATABASE_NAME = "tablet.db";
 
@@ -127,29 +126,19 @@ public class TabletDbHelper extends SQLiteOpenHelper {
                 SnapshotEntry.COLUMN_QUESTION_ID + " TEXT" +
                 " );";
 
-        final String SQL_CREATE_LEARN_LOG_TABLE = "CREATE TABLE " + LearnLogEntry.TABLE_NAME + " ( " +
-                LearnLogEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                LearnLogEntry.COLUMN_BEGIN_AT + " INTEGER NOT NULL," +
-                LearnLogEntry.COLUMN_END_AT + " INTEGER NOT NULL," +
-                LearnLogEntry.COLUMN_TYPE + " TEXT NOT NULL," +
-                LearnLogEntry.COLUMN_VIDEO_TIME + " INTEGER," +
-                LearnLogEntry.COLUMN_STUDENT_ID + " TEXT NOT NULL," +
-                LearnLogEntry.COLUMN_COURSE_ID + " TEXT NOT NULL," +
-                LearnLogEntry.COLUMN_LESSON_ID + " TEXT NOT NULL," +
-                LearnLogEntry.COLUMN_VIDEO_ID + " TEXT NOT NULL," +
-                LearnLogEntry.COLUMN_ORIGINAL_VIDEO_ID + " TEXT NOT NULL" +
-                " );";
-
         final String SQL_CREATE_ACTION_LOG_TABLE = "CREATE TABLE " + ActionLogEntry.TABLE_NAME + " ( " +
                 ActionLogEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                ActionLogEntry.COLUMN_AUTH_KEY + " TEXT NOT NULL," +
                 ActionLogEntry.COLUMN_HAPPEN_AT + " INTEGER NOT NULL," +
-                ActionLogEntry.COLUMN_ACTION + " TEXT NOT NULL," +
-                ActionLogEntry.COLUMN_TYPE + " TEXT NOT NULL," +
-                ActionLogEntry.COLUMN_VIDEO_TIME + " INTEGER," +
-                ActionLogEntry.COLUMN_STUDENT_ID + " TEXT NOT NULL," +
-                ActionLogEntry.COLUMN_COURSE_ID + " TEXT NOT NULL," +
                 ActionLogEntry.COLUMN_LESSON_ID + " TEXT NOT NULL," +
-                ActionLogEntry.COLUMN_VIDEO_ID + " TEXT NOT NULL" +
+                ActionLogEntry.COLUMN_ACTION + " INTEGER NOT NULL," +
+                ActionLogEntry.COLUMN_VIDEO_ID_1 + " TEXT," +
+                ActionLogEntry.COLUMN_VIDEO_ID_2 + " TEXT," +
+                ActionLogEntry.COLUMN_VIDEO_TIME_1 + " INTEGER," +
+                ActionLogEntry.COLUMN_VIDEO_TIME_2 + " INTEGER," +
+                ActionLogEntry.COLUMN_QUESTION_ID + " TEXT," +
+                ActionLogEntry.COLUMN_SNAPSHOT_ID + " TEXT," +
+                ActionLogEntry.COLUMN_UPDATED + " TEXT NOT NULL" +
                 " );";
 
         sqLiteDatabase.execSQL(SQL_CREATE_TEACHER_TABLE);
@@ -160,7 +149,6 @@ public class TabletDbHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_HOMEWORK_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_TAG_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_SNAPSHOT_TABLE);
-        sqLiteDatabase.execSQL(SQL_CREATE_LEARN_LOG_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_ACTION_LOG_TABLE);
     }
 
@@ -174,7 +162,6 @@ public class TabletDbHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + HomeworkEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TagEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SnapshotEntry.TABLE_NAME);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + LearnLogEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + ActionLogEntry.TABLE_NAME);
 
         onCreate(sqLiteDatabase);

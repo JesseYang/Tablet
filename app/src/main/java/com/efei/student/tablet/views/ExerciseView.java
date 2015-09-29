@@ -19,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.efei.student.tablet.R;
+import com.efei.student.tablet.models.ActionLog;
 import com.efei.student.tablet.models.Homework;
 import com.efei.student.tablet.models.Lesson;
 import com.efei.student.tablet.models.Question;
@@ -45,7 +46,7 @@ public class ExerciseView extends FrameLayout {
     public Homework mExercise;
     private Question[] mQuestions;
     private int mCurQuestionIndex;
-    private Question mCurQuestion;
+    public Question mCurQuestion;
     private int mCurAnswer;
     private int mCurDuraton;
     private int[] mAnswer;
@@ -436,6 +437,7 @@ public class ExerciseView extends FrameLayout {
                     }
                     mPreTestSummaryText.setText(msg);
                     mTopTv.setText("课前例题完成情况");
+                    ActionLog.create_new(mContext, mLesson.server_id, ActionLog.ENTRY_PRE_TEST_RESULT);
                 }
                 if (mCurType.equals("post_test")) {
 
@@ -471,6 +473,7 @@ public class ExerciseView extends FrameLayout {
                     }
                     mPostTestSummaryText.setText("统计结果：正确" + String.valueOf(correct) + "道，错误" + String.valueOf(incorrect) + "道。");
                     mTopTv.setText("课后测试完成情况");
+                    ActionLog.create_new(mContext, mLesson.server_id, ActionLog.ENTRY_POST_TEST_RESULT);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

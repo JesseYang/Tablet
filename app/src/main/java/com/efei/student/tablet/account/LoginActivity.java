@@ -16,7 +16,6 @@ import com.efei.student.tablet.R;
 import com.efei.student.tablet.admin.ManagementActivity;
 import com.efei.student.tablet.student.BaseActivity;
 import com.efei.student.tablet.student.ListActivity;
-import com.efei.student.tablet.utils.EfeiApplication;
 import com.efei.student.tablet.utils.NetUtils;
 import com.efei.student.tablet.utils.TextUtils;
 import com.efei.student.tablet.utils.ToastUtils;
@@ -143,7 +142,6 @@ public class LoginActivity extends BaseActivity {
                 JSONObject jsonRes = new JSONObject(response);
                 return jsonRes;
             } catch (Exception e) {
-                ToastUtils.showToast(mActivity, "网络不给力，请检查网络设置");
                 return null;
             }
         }
@@ -151,6 +149,9 @@ public class LoginActivity extends BaseActivity {
         @Override
         protected void onPostExecute(JSONObject retval) {
             try {
+                if (retval == null) {
+                    ToastUtils.showToast(mActivity, "网络不给力，请检查网络设置");
+                }
                 // redirect to the course list page
                 if (!no_network && !(Boolean)retval.get("success")) {
                     // show the error message

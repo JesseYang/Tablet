@@ -205,51 +205,29 @@ public class TabletContract {
         public static final String COLUMN_UPDATE_AT = "update_at";
     }
 
-    public final class LearnLogEntry implements BaseColumns {
-        public static final String TABLE_NAME = "learn_log";
-
-        public static final String COLUMN_BEGIN_AT = "begin_at";
-
-        public static final String COLUMN_END_AT = "end_at";
-
-        // 1 for "video", 2 for "example", 3 for "exercise"
-        public static final String COLUMN_TYPE = "type";
-
-        public static final String COLUMN_COURSE_ID = "course_id";
-
-        public static final String COLUMN_LESSON_ID = "lesson_id";
-
-        public static final String COLUMN_VIDEO_ID = "video_id";
-
-        // only for thoes whose type is 1(video)
-        public static final String COLUMN_VIDEO_TIME = "video_time";
-
-        // only for thoes whose type is video and the video is an episode
-        public static final String COLUMN_ORIGINAL_VIDEO_ID = "original_video_id";
-
-        public static final String COLUMN_STUDENT_ID = "student_id";
-    }
-
     public final  class ActionLogEntry implements BaseColumns {
         public static final String TABLE_NAME = "action_log";
 
+        public static final String COLUMN_AUTH_KEY = "auth_key";
+
         public static final String COLUMN_HAPPEN_AT = "happen_at";
 
-        // can be one of "forward", "backward", "pause", "play", "rest", and "continue"
+        public  static final String COLUMN_LESSON_ID = "lesson_id";
+
         public static final String COLUMN_ACTION = "action";
 
-        public static final String COLUMN_COURSE_ID = "course_id";
+        public static final String COLUMN_VIDEO_ID_1 = "video_id_1";
 
-        public static final String COLUMN_LESSON_ID = "lesson_id";
+        public static final String COLUMN_VIDEO_ID_2 = "video_id_2";
 
-        public static final String COLUMN_VIDEO_ID = "video_id";
+        public static final String COLUMN_VIDEO_TIME_1 = "video_time_1";
 
-        // 1 for "video", 2 for "example", 3 for "exercise"
-        public static final String COLUMN_TYPE = "type";
+        public static final String COLUMN_VIDEO_TIME_2 = "video_time_2";
 
-        // only for those whose type is 1(video)
-        public static final String COLUMN_VIDEO_TIME = "video_time";
+        public static final String COLUMN_QUESTION_ID = "question_id";
 
-        public static final String COLUMN_STUDENT_ID = "student_id";
+        public static final String COLUMN_SNAPSHOT_ID = "snapshot_id";
+
+        public static final String COLUMN_UPDATED = "updated";
     }
 }
