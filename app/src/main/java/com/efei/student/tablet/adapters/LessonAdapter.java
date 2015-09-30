@@ -49,11 +49,11 @@ public class LessonAdapter extends ArrayAdapter<Lesson> {
         else if (lesson.is_completed()) {
             study_status.setVisibility(View.VISIBLE);
             study_status.setText(activity.getResources().getString(R.string.completed));
-            study_status.setBackground(activity.getResources().getDrawable(R.drawable.exercise_finished_background));
+            study_status.setBackgroundResource(R.drawable.exercise_finished_background);
         } else {
             study_status.setVisibility(View.VISIBLE);
             study_status.setText(activity.getResources().getString(R.string.not_completed));
-            study_status.setBackground(activity.getResources().getDrawable(R.drawable.exercise_ongoing_background));
+            study_status.setBackgroundResource(R.drawable.exercise_ongoing_background);
         }
 
         // TextView exercise_status = (TextView) converterView.findViewById(R.id.tv_course_lesson_exercise_status);

@@ -1,6 +1,8 @@
 package com.efei.student.tablet.views;
 
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -30,6 +32,7 @@ public class SummaryControllerView extends FrameLayout {
 
     private Snapshot            snapshot;
     private int analysisAnswer;
+    private Question mQuestion;
 
 
     public SummaryControllerView(Context context, AttributeSet attrs) {
@@ -87,16 +90,22 @@ public class SummaryControllerView extends FrameLayout {
         mGoonBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((LessonActivity) mContext).submitSummary(snapshot, analysisAnswer);
+                if (!mQuestion.type.equals("analysis") || analysisAnswer != 0) {
+                    mGoonBtn.setBackgroundResource(R.drawable.goon_pressed);
+                    ObjectAnimator mSlideOutAnimator = ObjectAnimator.ofFloat(mGoonBtn, "translationX", 0);
+                    mSlideOutAnimator.setDuration(200);
+                    mSlideOutAnimator.start();
+                    mSlideOutAnimator.addListener(submitSummary);
+                }
             }
         });
 
         mCorrectBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                mIncorrectBtn.setBackground(mContext.getResources().getDrawable(R.drawable.incorrect));
-                mCorrectBtn.setBackground(mContext.getResources().getDrawable(R.drawable.correct_pressed));
-                mGoonBtn.setBackground(mContext.getResources().getDrawable(R.drawable.goon));
+                mIncorrectBtn.setBackgroundResource(R.drawable.incorrect);
+                mCorrectBtn.setBackgroundResource(R.drawable.correct_pressed);
+                mGoonBtn.setBackgroundResource(R.drawable.goon);
                 analysisAnswer = 1;
             }
         });
@@ -104,27 +113,51 @@ public class SummaryControllerView extends FrameLayout {
         mIncorrectBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                mIncorrectBtn.setBackground(mContext.getResources().getDrawable(R.drawable.incorrect_pressed));
-                mCorrectBtn.setBackground(mContext.getResources().getDrawable(R.drawable.correct));
-                mGoonBtn.setBackground(mContext.getResources().getDrawable(R.drawable.goon));
+                mIncorrectBtn.setBackgroundResource(R.drawable.incorrect_pressed);
+                mCorrectBtn.setBackgroundResource(R.drawable.correct);
+                mGoonBtn.setBackgroundResource(R.drawable.goon);
                 analysisAnswer = -1;
             }
         });
 
     }
 
+    final Animator.AnimatorListener submitSummary = new Animator.AnimatorListener() {
+        @Override
+        public void onAnimationStart(Animator animator) {
+
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animator) {
+            ((LessonActivity) mContext).submitSummary(snapshot, analysisAnswer);
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animator) {
+
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animator) {
+
+        }
+    };
+
     public void show(Snapshot snapshot) {
-        Question q = snapshot.question();
-        if (q.type.equals("analysis")) {
+        analysisAnswer = 0;
+        mQuestion = snapshot.question();
+        if (mQuestion.type.equals("analysis")) {
             mCorrectBtn.setVisibility(VISIBLE);
+            mCorrectBtn.setBackgroundResource(R.drawable.correct_background);
             mIncorrectBtn.setVisibility(VISIBLE);
-            mGoonBtn.setBackground(mContext.getResources().getDrawable(R.drawable.goon_disabled));
+            mIncorrectBtn.setBackgroundResource(R.drawable.incorrect_background);
+            mGoonBtn.setBackgroundResource(R.drawable.goon_disabled);
         } else {
             mCorrectBtn.setVisibility(GONE);
             mIncorrectBtn.setVisibility(GONE);
-            mGoonBtn.setBackground(mContext.getResources().getDrawable(R.drawable.goon));
+            mGoonBtn.setBackgroundResource(R.drawable.goon);
         }
-        analysisAnswer = 0;
 
         if (!mShowing && mAnchor != null) {
 

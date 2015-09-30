@@ -50,6 +50,7 @@ public class VideoControllerView extends FrameLayout {
     private Handler             mHandler;
 
     private SeekBar             mVolumeBar;
+    private SeekBar             mBrightBar;
 
     private ImageView           mVolumeUp;
     private ImageView           mVolumeDown;
@@ -94,6 +95,10 @@ public class VideoControllerView extends FrameLayout {
         mVolumeBar.setProgress(volume_level);
     }
 
+    public void setBright(int bright_level) {
+        mBrightBar.setProgress(bright_level);
+    }
+
     public void setAnchorView(ViewGroup view) {
         mAnchor = view;
         FrameLayout.LayoutParams frameParams = new FrameLayout.LayoutParams(
@@ -125,6 +130,9 @@ public class VideoControllerView extends FrameLayout {
         mVolumeBar = (SeekBar) v.findViewById(R.id.volume_bar);
         mVolumeBar.setMax(15);
 
+        mBrightBar = (SeekBar) v.findViewById(R.id.bright_bar);
+        mBrightBar.setMax(20);
+
         mVolumeBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -142,11 +150,30 @@ public class VideoControllerView extends FrameLayout {
             }
         });
 
-        mVolumeUp = (ImageView) v.findViewById(R.id.volume_up);
-        mVolumeDown = (ImageView) v.findViewById(R.id.volume_down);
+        mBrightBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                ((LessonActivity) mContext).mBrightLevel = i;
+                ((LessonActivity) mContext).adjustBrightness();
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        // mVolumeUp = (ImageView) v.findViewById(R.id.volume_up);
+        // mVolumeDown = (ImageView) v.findViewById(R.id.volume_down);
         mForwardBtn = (ImageView) v.findViewById(R.id.btn_forward);
         mBackwardBtn = (ImageView) v.findViewById(R.id.btn_backward);
 
+        /*
         mVolumeUp.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -160,6 +187,7 @@ public class VideoControllerView extends FrameLayout {
                 ((LessonActivity)mContext).volumeDown();
             }
         });
+        */
 
         mForwardBtn.setOnClickListener(new OnClickListener() {
             @TargetApi(Build.VERSION_CODES.LOLLIPOP)

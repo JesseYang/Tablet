@@ -14,8 +14,6 @@ import com.efei.student.tablet.utils.NetUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.Arrays;
-
 public class ActionLog {
 
     public Context mContext;
@@ -56,6 +54,8 @@ public class ActionLog {
     public static int ENTRY_VIDEO_FROM_POST_TEST_RESULT = 17;
     public static int RETURN_POST_TEST_RESULT = 18;
     public static int LEAVE_LESSON = 19;
+
+    public static int UPLOAD_LOG_NUM = 1;
 
 
     public ActionLog(Context context, Cursor cursor) {
@@ -103,25 +103,30 @@ public class ActionLog {
         long retval = db.insert(TabletContract.ActionLogEntry.TABLE_NAME, null, contentValues);
         log_num++;
 
-        if ( log_num >= 100 ) {
+        if ( log_num >= UPLOAD_LOG_NUM ) {
             // upload all the logs
-            log_num = 0;
             upload_logs(context);
         }
         return retval;
     }
 
     public static long create_new(Context context, String lesson_id, int action) {
-        int[] actions = new int[] { ENTRY_PRE_TEST, ENTRY_PRE_TEST_RESULT, ENTRY_POST_TEST_RESULT, LEAVE_LESSON };
-        if (Arrays.asList(actions).indexOf(action) == -1)
-            return -1;
+        int[] actions = { ENTRY_PRE_TEST, ENTRY_PRE_TEST_RESULT, ENTRY_POST_TEST_RESULT, LEAVE_LESSON };
+        boolean hit = false;
+        for (int i = 0; i < actions.length; i++) {
+            if (action == actions[i]) hit = true;
+        }
+        if (!hit) return -1;
         return create_new(context, lesson_id, action, "", "", -1, -1, "", "");
     }
 
     public static long create_new(Context context, String lesson_id, int action, String video_id_1, int video_time_1) {
-        int[] actions = new int[] { ENTRY_VIDEO, PAUSE_VIDEO, PLAY_VIDEO, BEGIN_FORWARD, STOP_FORWARD, BEGIN_BACKWARD, STOP_BACKWARD, ENTRY_POST_TEST, ENTRY_VIDEO_FROM_POST_TEST_RESULT, RETURN_POST_TEST_RESULT };
-        if (Arrays.asList(actions).indexOf(action) == -1)
-            return -1;
+        int[] actions = { ENTRY_VIDEO, PAUSE_VIDEO, PLAY_VIDEO, BEGIN_FORWARD, STOP_FORWARD, BEGIN_BACKWARD, STOP_BACKWARD, ENTRY_POST_TEST, ENTRY_VIDEO_FROM_POST_TEST_RESULT, RETURN_POST_TEST_RESULT };
+        boolean hit = false;
+        for (int i = 0; i < actions.length; i++) {
+            if (action == actions[i]) hit = true;
+        }
+        if (!hit) return -1;
         return create_new(context, lesson_id, action, video_id_1, "", video_time_1, -1, "", "");
     }
 
@@ -132,13 +137,12 @@ public class ActionLog {
     }
 
     public static long create_new(Context context, String lesson_id, int action, String video_id_1, int video_time_1, String question_or_snapshot_id) {
-        int[] actions = new int[] { ENTRY_EXERCISE, RETURN_FROM_EXERCISE, ENTRY_SUMMARY, RETURN_FROM_SUMMARY };
-        if (Arrays.asList(actions).indexOf(action) != -1)
-            return -1;
         if (action == ENTRY_EXERCISE || action == RETURN_FROM_EXERCISE) {
             return create_new(context, lesson_id, action, video_id_1, "", video_time_1, -1, question_or_snapshot_id, "");
-        } else {
+        } else if (action == ENTRY_SUMMARY || action == RETURN_FROM_SUMMARY) {
             return create_new(context, lesson_id, action, video_id_1, "", video_time_1, -1, "", question_or_snapshot_id);
+        } else {
+            return -1;
         }
     }
 
@@ -165,6 +169,7 @@ public class ActionLog {
     }
 
     public static void upload_logs(Context context) {
+        log_num = 0;
         ActionLog[] action_logs = logs_for_update(context);
         JSONArray logs = new JSONArray();
         for (ActionLog log : action_logs) {
@@ -185,6 +190,8 @@ public class ActionLog {
                 e.printStackTrace();
             }
             logs.put(log_obj);
+            if (logs.length() >= 200)
+                break;
         }
         JSONObject params = new JSONObject();
         try {

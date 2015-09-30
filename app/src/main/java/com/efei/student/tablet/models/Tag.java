@@ -83,6 +83,7 @@ public class Tag {
                 contentValues.put(TabletContract.SnapshotEntry.COLUMN_TIME, (float)ele.getDouble(TabletContract.SnapshotEntry.COLUMN_TIME));
                 contentValues.put(TabletContract.SnapshotEntry.COLUMN_KEY_POINT, ele.getString(TabletContract.SnapshotEntry.COLUMN_KEY_POINT));
                 contentValues.put(TabletContract.SnapshotEntry.COLUMN_VIDEO_ID, ele.getString(TabletContract.SnapshotEntry.COLUMN_VIDEO_ID));
+                contentValues.put(TabletContract.SnapshotEntry.COLUMN_QUESTION_ID, ele.getString(TabletContract.SnapshotEntry.COLUMN_QUESTION_ID));
                 db.insert(TabletContract.SnapshotEntry.TABLE_NAME, null, contentValues);
             }
 

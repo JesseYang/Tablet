@@ -40,20 +40,20 @@ public class VideoAdapter extends ArrayAdapter<Video> {
         if (video_item.server_id.equals(((LessonActivity)mContext).mCurVideo.server_id)) {
             video_name.setTextColor(mContext.getResources().getColor(R.color.lesson_item_status_yellow));
             if (position == 0) {
-                video_icon.setBackground(mContext.getResources().getDrawable(R.drawable.video_cur_item_start));
+                video_icon.setBackgroundResource(R.drawable.video_cur_item_start);
             } else if (position == ((LessonActivity)mContext).mLesson.videos().length - 1) {
-                video_icon.setBackground(mContext.getResources().getDrawable(R.drawable.video_cur_item_end));
+                video_icon.setBackgroundResource(R.drawable.video_cur_item_end);
             } else {
-                video_icon.setBackground(mContext.getResources().getDrawable(R.drawable.video_cur_item));
+                video_icon.setBackgroundResource(R.drawable.video_cur_item);
             }
         } else {
             video_name.setTextColor(mContext.getResources().getColor(R.color.white));
             if (position == 0) {
-                video_icon.setBackground(mContext.getResources().getDrawable(R.drawable.video_item_start));
+                video_icon.setBackgroundResource(R.drawable.video_item_start);
             } else if (position == ((LessonActivity)mContext).mLesson.videos().length - 1) {
-                video_icon.setBackground(mContext.getResources().getDrawable(R.drawable.video_item_end));
+                video_icon.setBackgroundResource(R.drawable.video_item_end);
             } else {
-                video_icon.setBackground(mContext.getResources().getDrawable(R.drawable.video_item));
+                video_icon.setBackgroundResource(R.drawable.video_item);
             }
         }
 

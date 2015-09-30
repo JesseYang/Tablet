@@ -55,11 +55,11 @@ public class CheckBoxView extends FrameLayout {
                 if (checked == true) {
                     // switch to unchecked
                     checked = false;
-                    check_box_iv.setBackground(mContext.getResources().getDrawable(R.drawable.checkbox));
+                    check_box_iv.setBackgroundResource(R.drawable.checkbox);
                 } else {
                     // switch to checked
                     checked = true;
-                    check_box_iv.setBackground(mContext.getResources().getDrawable(R.drawable.checkbox_checked));
+                    check_box_iv.setBackgroundResource(R.drawable.checkbox_checked);
                 }
             }
         });
@@ -78,7 +78,7 @@ public class CheckBoxView extends FrameLayout {
     }
 
     public boolean show(int[] pos) {
-        check_box_iv.setBackground(mContext.getResources().getDrawable(R.drawable.checkbox));
+        check_box_iv.setBackgroundResource(R.drawable.checkbox);
         if (!mShowing && mAnchor != null) {
             LayoutParams tlp = new LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,

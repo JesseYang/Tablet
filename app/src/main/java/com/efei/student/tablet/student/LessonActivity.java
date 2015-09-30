@@ -84,6 +84,8 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     private String mAuthKey;
     public String mTitleCache;
 
+    public int mBrightLevel = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -198,7 +200,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         for (Tag tag :tags) {
             if ((tag.type != tag.TYPE_EXAMPLE && tag.type != tag.TYPE_SNAPSHOT) ||  (target_tag != null && tag.time >= target_tag.time))
                 continue;
-            if (tag.time * 1000 > last_position && tag.time * 1000 <= position)
+            if (tag.time * 1000 >= last_position && tag.time * 1000 < position)
                 target_tag = tag;
         }
 
@@ -263,6 +265,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         JSONObject params = new JSONObject();
         try {
             params.put("snapshot_id", snapshot.server_id);
+            params.put("lesson_id", mLesson.server_id);
             params.put("checked", checked);
             params.put("auth_key", mAuthKey);
             params.put("analysis_answer", analysisAnswer);
@@ -350,6 +353,15 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         controller.setVolume(volume_level);
     }
 
+    public void setBrightness(int level) {
+        mBrightLevel = level;
+        adjustBrightness();
+    }
+
+    public void adjustBrightness() {
+        adjustBrightness((float)(mBrightLevel * 1.0 / 20));
+    }
+
     public void adjustBrightness(float brightness) {
         WindowManager.LayoutParams layout = getWindow().getAttributes();
         layout.screenBrightness = brightness;
@@ -369,6 +381,14 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
                     audiomanage.adjustVolume((GestureListener.distanceY > 0 ? AudioManager.ADJUST_RAISE : AudioManager.ADJUST_LOWER), 0);
                     int volume_level = audiomanage.getStreamVolume(AudioManager.STREAM_MUSIC);
                     controller.setVolume(volume_level);
+                } else if (Math.abs(GestureListener.distanceY) * 3 < Math.abs(GestureListener.distanceX) && Math.abs(GestureListener.distanceX) > 10) {
+                    mBrightLevel = mBrightLevel + (GestureListener.distanceX > 0 ? -1 : 1);
+                    if (mBrightLevel <= 0)
+                        mBrightLevel = 0;
+                    else if (mBrightLevel >= 20)
+                        mBrightLevel = 20;
+                    adjustBrightness();
+                    controller.setBright(mBrightLevel);
                 }
             }
             return true;
@@ -467,6 +487,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
 
     public void returnToCourse() {
         ActionLog.create_new(this, mLesson.server_id, ActionLog.LEAVE_LESSON);
+        ActionLog.upload_logs(this);
         Intent intent = new Intent(this, CourseActivity.class)
                 .putExtra(Intent.EXTRA_TEXT, mLesson.course_id);
         this.startActivity(intent);
@@ -482,7 +503,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             player.setDisplay(videoHolder);
             player.prepare();
             player.start();
-            adjustBrightness(0F);
+            adjustBrightness();
             player.seekTo((Integer.valueOf(String.valueOf(videoState.progress))));
             videoState.reset();
 
@@ -491,6 +512,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             controller.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
             int volume_level = audiomanage.getStreamVolume(AudioManager.STREAM_MUSIC);
             controller.setVolume(volume_level);
+            controller.setBright(mBrightLevel);
             if (mIsEpisode == false && mParentTime != 0) {
                 seekTo((mParentTime + 1) * 1000);
                 mParentTime = 0;

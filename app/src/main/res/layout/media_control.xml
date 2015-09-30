@@ -29,6 +29,22 @@
 
 
         <ImageView
+            android:id="@+id/brght_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/ic_bright"/>
+
+        <SeekBar
+            android:id="@+id/bright_bar"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:progress="30"
+            android:max="90"
+            android:layout_marginRight="100dp"
+            android:progressDrawable="@drawable/progressbar" />
+
+        <ImageView
             android:id="@+id/btn_backward"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -47,26 +63,20 @@
             android:background="@drawable/ic_forward_background"/>
 
         <ImageView
-            android:id="@+id/volume_down"
-            android:layout_marginRight="-10dp"
-            android:layout_width="71dp"
-            android:layout_height="52dp"
-            android:layout_marginLeft="20dp"
-            android:src="@drawable/ic_volume_down"/>
+            android:id="@+id/volume_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="100dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/ic_volume"/>
 
         <SeekBar
             android:id="@+id/volume_bar"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:progress="30"
-            android:max="90" />
-
-        <ImageView
-            android:id="@+id/volume_up"
-            android:layout_marginLeft="-10dp"
-            android:layout_width="71dp"
-            android:layout_height="52dp"
-            android:src="@drawable/ic_volume_up"/>
+            android:max="90"
+            android:progressDrawable="@drawable/progressbar" />
 
     </LinearLayout>
 

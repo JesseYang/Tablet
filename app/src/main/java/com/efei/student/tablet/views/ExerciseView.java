@@ -493,6 +493,8 @@ public class ExerciseView extends FrameLayout {
         mBlankAbandon.setBackgroundResource(R.drawable.ic_unok_unpressed);
         mBlankRight.setBackgroundResource(R.drawable.ic_ok_unpressed);
         mBlankWrong.setBackgroundResource(R.drawable.ic_unok_unpressed);
+        mAnalysisFinish.setBackgroundResource(R.drawable.ic_ok_unpressed);
+        mAnalysisAbandon.setBackgroundResource(R.drawable.ic_unok_unpressed);
     }
 
     public void hide() {
@@ -505,6 +507,7 @@ public class ExerciseView extends FrameLayout {
         } catch (IllegalArgumentException ex) {
         }
         mShowing = false;
+        ((LessonActivity)mContext).adjustBrightness();
     }
 
     public boolean show(Lesson lesson, String type) {
