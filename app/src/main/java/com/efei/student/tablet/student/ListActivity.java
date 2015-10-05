@@ -21,6 +21,7 @@ import com.efei.student.tablet.account.LoginActivity;
 import com.efei.student.tablet.adapters.CourseGroupAdapter;
 import com.efei.student.tablet.models.Course;
 import com.efei.student.tablet.models.CourseGroup;
+import com.efei.student.tablet.utils.GlobalUtils;
 import com.efei.student.tablet.views.FilterView;
 import com.efei.student.tablet.views.SettingView;
 
@@ -58,10 +59,16 @@ public class ListActivity extends BaseActivity {
     public int mConditionStatus = 0;
     private String mConditionKey = "";
 
+    public boolean mAdmin;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mAdmin = GlobalUtils.isAdmin(this);
         setContentView(R.layout.activity_list);
+        if (mAdmin) {
+            mConditionMy = false;
+        }
         setupViews();
         SetupViews setupViews = new SetupViews(this);
         setupViews.execute();
@@ -131,7 +138,9 @@ public class ListActivity extends BaseActivity {
         mMyCourse.setSelected(true);
         mAllCourse.setSelected(false);
 
-
+        if (mAdmin) {
+            mMyCourse.setVisibility(View.INVISIBLE);
+        }
 
         mSearchText.setOnClickListener(new View.OnClickListener() {
             @Override

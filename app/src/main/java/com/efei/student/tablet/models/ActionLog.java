@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 
 import com.efei.student.tablet.data.TabletContract;
 import com.efei.student.tablet.data.TabletDbHelper;
+import com.efei.student.tablet.utils.GlobalUtils;
 import com.efei.student.tablet.utils.NetUtils;
 
 import org.json.JSONArray;
@@ -113,6 +114,9 @@ public class ActionLog {
     }
 
     public static long create_new(Context context, String lesson_id, int action) {
+        // if the lesson has already completed, do not create logs
+        if (GlobalUtils.isComplete(context, lesson_id))
+            return -1;
         int[] actions = { ENTRY_LESSON, ENTRY_PRE_TEST, ENTRY_PRE_TEST_RESULT, ENTRY_POST_TEST_RESULT, LEAVE_LESSON };
         boolean hit = false;
         for (int i = 0; i < actions.length; i++) {

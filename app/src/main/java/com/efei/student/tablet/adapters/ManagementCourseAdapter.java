@@ -113,7 +113,6 @@ public class ManagementCourseAdapter extends ArrayAdapter<Course> {
         }
     }
 
-
     public class AppendVideoClickListener implements View.OnClickListener {
         Course course;
         Activity activity;
@@ -181,7 +180,7 @@ public class ManagementCourseAdapter extends ArrayAdapter<Course> {
             if (course.length == 0) {
                 return null;
             }
-            course[0].download_content(this, append);
+            // course[0].download_content(this, append);
             return  null;
         }
 

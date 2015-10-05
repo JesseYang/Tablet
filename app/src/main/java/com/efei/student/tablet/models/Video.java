@@ -152,7 +152,9 @@ public class Video {
                 // the video exist, check whether file exist, if file does not exist, try to copy the file
                 String video_filename = get_filename_by_url(ele.getString(TabletContract.VideoEntry.COLUMN_VIDEO_URL));
                 if (!FileUtils.check_video_file_existence(video_filename, context)) {
-                    FileUtils.copy_video(video_filename, context);
+                    if (FileUtils.copy_video(video_filename, context) == false) {
+                        NetUtils.download_video(video_filename, context);
+                    }
                 }
                 // refresh the tags for this video
                 // first delete all tags
@@ -203,9 +205,10 @@ public class Video {
             String video_filename = get_filename_by_url(ele.getString(TabletContract.VideoEntry.COLUMN_VIDEO_URL));
 
             if (!FileUtils.check_video_file_existence(video_filename, context)) {
-                FileUtils.copy_video(video_filename, context);
+                if (FileUtils.copy_video(video_filename, context) == false) {
+                    NetUtils.download_video(video_filename, context);
+                }
             }
-
             // get the tags for this video
             String response = NetUtils.get("/tablet/tags", "video_id=" + ele.getString(TabletContract.VideoEntry.COLUMN_SERVER_ID));
             try {

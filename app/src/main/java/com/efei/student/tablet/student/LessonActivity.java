@@ -26,6 +26,7 @@ import com.efei.student.tablet.models.Tag;
 import com.efei.student.tablet.models.Video;
 import com.efei.student.tablet.models.VideoState;
 import com.efei.student.tablet.utils.GestureListener;
+import com.efei.student.tablet.utils.GlobalUtils;
 import com.efei.student.tablet.utils.NetUtils;
 import com.efei.student.tablet.views.CheckBoxView;
 import com.efei.student.tablet.views.EpisodeTipView;
@@ -86,9 +87,19 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
 
     public int mBrightLevel = 0;
 
+    public boolean mAdmin;
+    public boolean mComplete;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = getIntent();
+        String server_id = intent.getStringExtra(intent.EXTRA_TEXT);
+        mLesson = Lesson.get_lesson_by_id(server_id, getApplicationContext());
+
+        mAdmin = GlobalUtils.isAdmin(this);
+        mComplete = GlobalUtils.isComplete(this, server_id);
 
         try {
             mBrightness = android.provider.Settings.System.getInt(
@@ -108,9 +119,6 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         mParentTime = 0;
 
         setContentView(R.layout.activity_lesson);
-        Intent intent = getIntent();
-        String server_id = intent.getStringExtra(intent.EXTRA_TEXT);
-        mLesson = Lesson.get_lesson_by_id(server_id, getApplicationContext());
 
         ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_LESSON);
 
@@ -245,11 +253,13 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
                 } else {
                     // should show the exercise page
                     mCurExercise = question;
-                    if (exerciseView.show(mLesson, "exercise")) {
-                        ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_EXERCISE, mCurVideo.server_id, player.getCurrentPosition() / 1000, question.server_id);
-                    } else {
-                        exampleQuestionDialogView.show(target_tag.name, target_tag.duration);
-                        return true;
+                    if (!mAdmin && !mComplete) {
+                        if (exerciseView.show(mLesson, "exercise")) {
+                            ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_EXERCISE, mCurVideo.server_id, player.getCurrentPosition() / 1000, question.server_id);
+                        } else {
+                            exampleQuestionDialogView.show(target_tag.name, target_tag.duration);
+                            return true;
+                        }
                     }
                 }
             }
@@ -361,7 +371,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     }
 
     public void adjustBrightness() {
-        adjustBrightness((float)(mBrightLevel * 1.0 / 20));
+        adjustBrightness((float) (mBrightLevel * 1.0 / 20));
     }
 
     public void adjustBrightness(float brightness) {
@@ -429,12 +439,15 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         player = new MediaPlayer();
         if (videoState.begin) {
             videoState.begin = false;
-            boolean ret = exerciseView.show(this.mLesson, "pre_test");
-            if (ret) {
-                ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_PRE_TEST);
-            } else {
+            if (mAdmin || mComplete) {
                 startPlay("");
                 ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_VIDEO, mCurVideo.server_id, 0);
+            } else {
+                boolean ret = exerciseView.show(this.mLesson, "pre_test");
+                if (ret) {
+                    ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_PRE_TEST);
+                } else {
+                }
             }
         } else if (videoState.isPause == false) {
             startPlay("");
@@ -520,7 +533,8 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             }
             showOperations();
             controller.updatePausePlay();
-            controller.sendCheckProgressMsg();
+            if (!mAdmin && !mComplete)
+                controller.sendCheckProgressMsg();
             player.setOnCompletionListener(this);
         } catch (Exception e) {
             e.printStackTrace();

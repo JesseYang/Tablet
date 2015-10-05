@@ -2,14 +2,14 @@ package com.efei.student.tablet.models;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.efei.student.tablet.adapters.ManagementCourseAdapter;
 import com.efei.student.tablet.data.TabletContract;
 import com.efei.student.tablet.data.TabletDbHelper;
+import com.efei.student.tablet.utils.GlobalUtils;
 import com.efei.student.tablet.utils.NetUtils;
+import com.efei.student.tablet.views.SettingView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -107,9 +107,7 @@ public class Lesson {
     }
 
     public boolean is_completed() {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences("MyPref", 0);
-        String lesson_id_str = sharedPreferences.getString("lesson_id_str", "");
-        return lesson_id_str.indexOf(this.server_id) != -1;
+        return GlobalUtils.isComplete(mContext, this.server_id);
     }
 
     public Video[] non_episode_videos() {
@@ -184,7 +182,7 @@ public class Lesson {
         }
     }
 
-    public void download_videos(ManagementCourseAdapter.DownloadContentTask task, int total_lesson, int current_lesson, boolean append) {
+    public void download_videos(SettingView.DownloadContentTask task, int total_lesson, int current_lesson, boolean append) {
         String response = NetUtils.get("/tablet/videos", "lesson_id=" + this.server_id);
         try {
             JSONObject jsonRes = new JSONObject(response);

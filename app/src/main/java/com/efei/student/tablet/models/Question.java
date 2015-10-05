@@ -77,7 +77,11 @@ public class Question {
             return;
         }
         String video_filename = Video.get_filename_by_url(this.video_url);
-        FileUtils.copy_video(video_filename, context);
+        if (!FileUtils.check_video_file_existence(video_filename, context)) {
+            if (FileUtils.copy_video(video_filename, context) == false) {
+                NetUtils.download_video(video_filename, context);
+            }
+        }
     }
 
     public void download_images() {

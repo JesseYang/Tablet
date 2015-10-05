@@ -162,6 +162,37 @@ public final class NetUtils {
         }
     }
 
+
+    public static void download_video(String video_filename, Context context) {
+        try {
+            HttpURLConnection urlConnection;
+            URL url;
+            String urlRes = "/videos/" + video_filename;
+            url = new URL(BASE_URL + urlRes);
+
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.connect();
+
+            FileOutputStream fileOutputStream = FileUtils.get_output_stream(video_filename, "video", context);
+
+            InputStream inputStream = urlConnection.getInputStream();
+            int totalSize = urlConnection.getContentLength();
+            int downloadedSize = 0;
+            byte[] buffer = new byte[1024];
+            int bufferLength = 0;
+            while ((bufferLength = inputStream.read(buffer)) > 0) {
+                fileOutputStream.write(buffer, 0, bufferLength);
+                downloadedSize += bufferLength;
+            }
+            fileOutputStream.close();
+            return;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+    }
+
     public static void download_resource(String urlRes, String filename, String type, Context context) {
         try {
 
@@ -175,7 +206,6 @@ public final class NetUtils {
 
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
-            // urlConnection.setDoOutput(true);
             urlConnection.connect();
             
             FileOutputStream fileOutputStream = FileUtils.get_output_stream(filename, type, context);

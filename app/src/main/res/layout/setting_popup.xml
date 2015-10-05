@@ -17,10 +17,37 @@
         android:background="@drawable/filter_triangle"/>
 
     <Button
+        android:id="@+id/setting_update_course_info_btn"
+        android:layout_width="@dimen/filter_popup_width"
+        android:layout_height="44dp"
+        android:background="@drawable/setting_one_button_background"
+        android:text="更新课程信息"
+        android:textColor="@color/white"
+        android:layout_gravity="center" />
+
+    <Button
+        android:id="@+id/setting_toggle_course_btn"
+        android:layout_width="@dimen/filter_popup_width"
+        android:layout_height="44dp"
+        android:background="@drawable/setting_one_button_background"
+        android:text="下载课程内容"
+        android:textColor="@color/white"
+        android:layout_gravity="center" />
+
+    <Button
+        android:id="@+id/setting_update_course_list_btn"
+        android:layout_width="@dimen/filter_popup_width"
+        android:layout_height="44dp"
+        android:background="@drawable/setting_one_button_background"
+        android:text="更新课程列表"
+        android:textColor="@color/white"
+        android:layout_gravity="center" />
+
+    <Button
         android:id="@+id/setting_exit_btn"
         android:layout_width="@dimen/filter_popup_width"
         android:layout_height="44dp"
-        android:background="@drawable/setting_exit_button_background"
+        android:background="@drawable/setting_one_button_background"
         android:text="退出登录"
         android:textColor="@color/white"
         android:layout_gravity="center" />

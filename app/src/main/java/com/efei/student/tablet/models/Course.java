@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.efei.student.tablet.R;
-import com.efei.student.tablet.adapters.ManagementCourseAdapter;
 import com.efei.student.tablet.data.TabletContract;
 import com.efei.student.tablet.data.TabletContract.CourseEntry;
 import com.efei.student.tablet.data.TabletDbHelper;
@@ -15,6 +14,7 @@ import com.efei.student.tablet.student.ListActivity;
 import com.efei.student.tablet.utils.FileUtils;
 import com.efei.student.tablet.utils.NetUtils;
 import com.efei.student.tablet.views.FilterView;
+import com.efei.student.tablet.views.SettingView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -401,7 +401,7 @@ public class Course {
                 new String[]{this.server_id});
     }
 
-    public void download_content(ManagementCourseAdapter.DownloadContentTask task, boolean append) {
+    public void download_content(SettingView.DownloadContentTask task, boolean append) {
         // for each lesson, download videos and corresponding tags
         task.updateProgress("共" + this.lessons().length + "讲，正在下载第1讲");
         int i = 1;

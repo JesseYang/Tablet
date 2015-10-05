@@ -24,6 +24,7 @@ import com.efei.student.tablet.models.Homework;
 import com.efei.student.tablet.models.Lesson;
 import com.efei.student.tablet.models.Question;
 import com.efei.student.tablet.student.LessonActivity;
+import com.efei.student.tablet.utils.GlobalUtils;
 import com.efei.student.tablet.utils.NetUtils;
 import com.efei.student.tablet.utils.UiUtils;
 
@@ -91,6 +92,8 @@ public class ExerciseView extends FrameLayout {
     private TextView mPostTestSummaryText;
 
     private boolean btnFrozen;
+    public boolean mAdmin;
+    public boolean mComplete;
 
     final Animator.AnimatorListener next = new Animator.AnimatorListener() {
         @Override
@@ -123,6 +126,8 @@ public class ExerciseView extends FrameLayout {
         super(context);
         mContext = context;
         mLesson = ((LessonActivity)context).mLesson;
+        mAdmin = GlobalUtils.isAdmin(mContext);
+        mComplete = GlobalUtils.isComplete(mContext, mLesson.server_id);
         SharedPreferences sharedPreferences = mContext.getSharedPreferences("MyPref", 0);
         mAuthKey = sharedPreferences.getString("auth_key", "");
     }
@@ -285,18 +290,19 @@ public class ExerciseView extends FrameLayout {
 
     public void moveToNext() {
 
-        // first stop the timer for the current question
-        timer.cancel();
+        if (!mAdmin && !mComplete) {
+            // first stop the timer for the current question
+            timer.cancel();
+            // gather the answer and duration of the current question
+            mAnswer[mCurQuestionIndex] = mCurAnswer;
+            mDuration[mCurQuestionIndex] = mCurDuraton;
+        }
 
         if (mCurAnswer == -1) {
             abadon++;
         } else {
             abadon = 0;
         }
-
-        // gather the answer and duration of the current question
-        mAnswer[mCurQuestionIndex] = mCurAnswer;
-        mDuration[mCurQuestionIndex] = mCurDuraton;
 
         // if answer is not provided, move to next
         if (mCurQuestionIndex == mQuestions.length - 1) {
@@ -385,12 +391,16 @@ public class ExerciseView extends FrameLayout {
 
         @Override
         protected JSONObject doInBackground(JSONObject... params) {
-            String response = NetUtils.post("/tablet/tablet_answers", params[0]);
-            try {
-                JSONObject jsonRes = new JSONObject(response);
-                return jsonRes;
-            } catch (Exception e) {
+            if (mAdmin || mComplete) {
                 return null;
+            } else {
+                String response = NetUtils.post("/tablet/tablet_answers", params[0]);
+                try {
+                    JSONObject jsonRes = new JSONObject(response);
+                    return jsonRes;
+                } catch (Exception e) {
+                    return null;
+                }
             }
         }
 
@@ -443,25 +453,31 @@ public class ExerciseView extends FrameLayout {
                         final int q_index = i;
                         Button b = new Button(mContext);
                         b.setText(String.valueOf(i + 1));
-                        int is_answer_correct = mQuestions[i].is_answer_correct(mAnswer[i]);
-                        if (is_answer_correct > 0) {
-                            b.setTextColor(mContext.getResources().getColor(R.color.white));
-                            b.setBackgroundResource(R.drawable.ic_right);
-                            correct++;
-                        } else if (is_answer_correct < 0) {
-                            b.setTextColor(mContext.getResources().getColor(R.color.white));
-                            b.setBackgroundResource(R.drawable.ic_wrong);
-                            incorrect++;
-                        } else {
+                        if (mAdmin || mComplete) {
                             b.setTextColor(mContext.getResources().getColor(R.color.black));
                             b.setBackgroundResource(R.drawable.ic_unknown);
                             unknown++;
+                        } else {
+                            int is_answer_correct = mQuestions[i].is_answer_correct(mAnswer[i]);
+                            if (is_answer_correct > 0) {
+                                b.setTextColor(mContext.getResources().getColor(R.color.white));
+                                b.setBackgroundResource(R.drawable.ic_right);
+                                correct++;
+                            } else if (is_answer_correct < 0) {
+                                b.setTextColor(mContext.getResources().getColor(R.color.white));
+                                b.setBackgroundResource(R.drawable.ic_wrong);
+                                incorrect++;
+                            } else {
+                                b.setTextColor(mContext.getResources().getColor(R.color.black));
+                                b.setBackgroundResource(R.drawable.ic_unknown);
+                                unknown++;
+                            }
                         }
                         mPostTestSummaryStatLayout.addView(b);
                         b.setOnClickListener(new OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                ((LessonActivity)mContext).playQuestionVideo(mQuestions[q_index].video_url);
+                                ((LessonActivity) mContext).playQuestionVideo(mQuestions[q_index].video_url);
                             }
                         });
                     }
@@ -524,8 +540,17 @@ public class ExerciseView extends FrameLayout {
             mCurQuestion = mQuestions[mCurQuestionIndex];
             mAnswer = new int[mQuestions.length];
             mDuration = new int[mQuestions.length];
-            renderQuestion();
+
+            // for admin user or completed lessons, directly to the summary page
+            if (mAdmin || mComplete) {
+                mCurQuestionIndex = mQuestions.length - 1;
+                moveToNext();
+            } else {
+                renderQuestion();
+            }
         } else if (type.equals("pre_test")) {
+            if (mAdmin || mComplete)
+                return false;
             mTopTv.setText("课前例题：请在讲义上完成，并如实提交答案");
             mCurType = "pre_test";
             mExercise = lesson.get_exercise(this.mContext, "pre_test");
@@ -540,6 +565,8 @@ public class ExerciseView extends FrameLayout {
             mDuration = new int[mQuestions.length];
             renderQuestion();
         } else if (type.equals("exercise")) {
+            if (mAdmin || mComplete)
+                return false;
             mTopTv.setText("练习：请在讲义上完成，并如实提交答案");
             mCurType = "exercise";
             mExercise = lesson.get_exercise(this.mContext, "exercise");

@@ -19,6 +19,7 @@ import com.efei.student.tablet.models.Course;
 import com.efei.student.tablet.models.Lesson;
 import com.efei.student.tablet.models.Teacher;
 import com.efei.student.tablet.utils.FileUtils;
+import com.efei.student.tablet.utils.GlobalUtils;
 import com.efei.student.tablet.utils.Subject;
 import com.efei.student.tablet.utils.ToastUtils;
 import com.efei.student.tablet.views.SettingView;
@@ -49,6 +50,8 @@ public class CourseActivity extends BaseActivity {
 
     private boolean mIsPurchased;
 
+    public boolean mAdmin;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +61,7 @@ public class CourseActivity extends BaseActivity {
         mCourse = Course.get_course_by_id(server_id, getApplicationContext());
         mTeacher = mCourse.teacher();
         mIsPurchased = mCourse.is_purchased(this);
+        mAdmin = GlobalUtils.isAdmin(this);
         setupViews();
     }
 
@@ -161,7 +165,7 @@ public class CourseActivity extends BaseActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (mIsPurchased) {
+                if (mAdmin || mIsPurchased) {
                     String lesson_id = mLessonAdapter.getItem(position).server_id;
                     if (Lesson.get_lesson_by_id(lesson_id, activity).videos().length == 0) {
                         ToastUtils.showToast(activity, "课程视频未下载");

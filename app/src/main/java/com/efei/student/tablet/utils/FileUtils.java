@@ -121,11 +121,16 @@ public class FileUtils {
         }
     }
 
-    public static String copy_video(String video_filename, Context context) {
+    public static boolean copy_video(String video_filename, Context context) {
         try {
             File storageRoot = Environment.getExternalStorageDirectory();
             String path = FileUtils.VIDEO_FOLDER + video_filename;
             File src = new File(storageRoot, path);
+
+            if (src.exists() == false) {
+                return false;
+            }
+
 
             File dir = context.getFilesDir();
             File dst = new File(dir, video_filename);
@@ -147,7 +152,7 @@ public class FileUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return video_filename;
+        return true;
     }
 
     public static String get_video_local_uri(Video video) {
