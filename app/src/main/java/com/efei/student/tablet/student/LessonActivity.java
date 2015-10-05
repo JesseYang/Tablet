@@ -80,7 +80,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
 
     public VideoState videoState;
 
-    public Question mCurExercise;
+    public Question[] mCurExercise;
     int check_box_size;
     private String mAuthKey;
     public String mTitleCache;
@@ -246,16 +246,16 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
                 return true;
             }
             if (target_tag.type == target_tag.TYPE_EXAMPLE) {
-                Question question = Question.get_question_by_id(target_tag.question_id, this);
-                if (question == null) {
+                Question[] questions = Question.get_questino_ary_by_id_ary(target_tag.question_id, this);
+                if (questions.length == 0) {
                     exampleQuestionDialogView.show(target_tag.name, target_tag.duration);
                     return true;
                 } else {
                     // should show the exercise page
-                    mCurExercise = question;
+                    mCurExercise = questions;
                     if (!mAdmin && !mComplete) {
                         if (exerciseView.show(mLesson, "exercise")) {
-                            ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_EXERCISE, mCurVideo.server_id, player.getCurrentPosition() / 1000, question.server_id);
+                            ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_EXERCISE, mCurVideo.server_id, player.getCurrentPosition() / 1000, questions[0].server_id);
                         } else {
                             exampleQuestionDialogView.show(target_tag.name, target_tag.duration);
                             return true;

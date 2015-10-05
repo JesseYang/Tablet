@@ -46,6 +46,14 @@ public class Question {
         this.update_at = cursor.getString(cursor.getColumnIndex(TabletContract.QuestionEntry.COLUMN_UPDATE_AT));
     }
 
+    public static Question[] get_questino_ary_by_id_ary(String[] server_id_ary, Context context) {
+        Question[] question_ary = new Question[server_id_ary.length];
+        for (int i = 0; i < server_id_ary.length; i++) {
+            question_ary[i] = get_question_by_id(server_id_ary[i], context);
+        }
+        return question_ary;
+    }
+
     public static Question get_question_by_id(String server_id, Context context) {
         if (server_id == null) {
             return null;

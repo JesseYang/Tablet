@@ -24,7 +24,7 @@ public class Tag {
     public Integer duration;
     public String name;
     public String episode_id;
-    public String question_id;
+    public String[] question_id;
     public String snapshot_id;
 
     public Tag(Context context, Cursor cursor) {
@@ -34,7 +34,7 @@ public class Tag {
         this.time = cursor.getInt(cursor.getColumnIndex(TabletContract.TagEntry.COLUMN_TIME));
         this.name = cursor.getString(cursor.getColumnIndex(TabletContract.TagEntry.COLUMN_NAME));
         this.episode_id = cursor.getString(cursor.getColumnIndex(TabletContract.TagEntry.COLUMN_EPISODE_ID));
-        this.question_id = cursor.getString(cursor.getColumnIndex(TabletContract.TagEntry.COLUMN_QUESTION_ID));
+        this.question_id = cursor.getString(cursor.getColumnIndex(TabletContract.TagEntry.COLUMN_QUESTION_ID)).split(",");
         this.duration = cursor.getInt(cursor.getColumnIndex(TabletContract.TagEntry.COLUMN_DURATION));
         this.snapshot_id = cursor.getString(cursor.getColumnIndex(TabletContract.TagEntry.COLUMN_SNAPSHOT_ID));
     }

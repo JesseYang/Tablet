@@ -368,8 +368,18 @@ public class ExerciseView extends FrameLayout {
                     params.put("exercise_id", mExercise.server_id);
                     params.put("question_id", mCurQuestion.server_id);
                     params.put("auth_key", mAuthKey);
-                    params.put("answer", mAnswer[0]);
-                    params.put("duration", mDuration[0]);
+                    JSONObject tablet_answer = new JSONObject();
+                    JSONArray answer_ary = new JSONArray();
+                    for (int i = 0; i < mAnswer.length; i++) {
+                        answer_ary.put(mAnswer[i]);
+                    }
+                    JSONArray duration_ary = new JSONArray();
+                    for (int i = 0; i < mDuration.length; i++) {
+                        duration_ary.put(mDuration[i]);
+                    }
+                    tablet_answer.put("answer", answer_ary);
+                    tablet_answer.put("duration", duration_ary);
+                    params.put("tablet_answer", tablet_answer);
                     UploadAnswerTask uploadAnswerTask = new UploadAnswerTask();
                     uploadAnswerTask.execute(params);
                     ((LessonActivity)mContext).afterExercise();
@@ -573,12 +583,11 @@ public class ExerciseView extends FrameLayout {
             if (mExercise == null) {
                 return false;
             }
+            mQuestions = ((LessonActivity)mContext).mCurExercise;
             mCurQuestionIndex = 0;
-            mCurQuestion = ((LessonActivity)mContext).mCurExercise;
-            mQuestions = new Question[1];
-            mQuestions[0] = mCurQuestion;
-            mAnswer = new int[1];
-            mDuration = new int[1];
+            mCurQuestion = mQuestions[mCurQuestionIndex];
+            mAnswer = new int[mQuestions.length];
+            mDuration = new int[mQuestions.length];
             renderQuestion();
         }
 
