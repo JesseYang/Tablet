@@ -66,6 +66,13 @@ public class VideoTtitleView extends FrameLayout {
 
     }
 
+    public void setTitleRed(boolean red) {
+        if (red)
+            mTitle.setTextColor(mContext.getResources().getColor(R.color.light_red));
+        else
+            mTitle.setTextColor(mContext.getResources().getColor(R.color.white));
+    }
+
     public void hide() {
         if (mAnchor == null) {
             return;

@@ -137,7 +137,7 @@ public final class UiUtils
 
         File storageRoot = Environment.getExternalStorageDirectory();
         File imgFile = new File(storageRoot, "/efei/images/" + imageFile);
-        // Bitmap bmp = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+        System.gc();
         Bitmap bmp = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), opts);
 
         BitmapDrawable bmpDrawable = new BitmapDrawable(EfeiApplication.getContext().getResources(), bmp);

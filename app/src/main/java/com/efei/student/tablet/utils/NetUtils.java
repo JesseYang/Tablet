@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -25,6 +24,7 @@ import java.net.URL;
 public final class NetUtils {
 
     public static String BASE_URL = "http://www.efei.org/";
+    // public static String BASE_URL = "http://192.168.0.106:3000/";
 
     private NetUtils()
     {
@@ -58,11 +58,7 @@ public final class NetUtils {
             writer.close();
 
             urlConnection.connect();
-
-            Log.e("AAAAAAAAAAAAAAAAA", "");
             int res_code = urlConnection.getResponseCode();
-            Log.e("BBBBBBBBBBBBBBBBB", "");
-
             if (res_code == HttpURLConnection.HTTP_OK) {
 
                 InputStream inputStream = urlConnection.getInputStream();

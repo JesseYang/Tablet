@@ -33,6 +33,8 @@ public class ActionLog {
 
     public static int log_num = 0;
 
+    public static String device_id = android.os.Build.SERIAL;
+
     // possible actions:
     public static int ENTRY_LESSON = 0;
     public static int ENTRY_PRE_TEST = 1;
@@ -55,7 +57,7 @@ public class ActionLog {
     public static int RETURN_POST_TEST_RESULT = 18;
     public static int LEAVE_LESSON = 19;
 
-    public static int UPLOAD_LOG_NUM = 1;
+    public static int UPLOAD_LOG_NUM = 100;
 
 
     public ActionLog(Context context, Cursor cursor) {
@@ -103,7 +105,7 @@ public class ActionLog {
         long retval = db.insert(TabletContract.ActionLogEntry.TABLE_NAME, null, contentValues);
         log_num++;
 
-        if ( log_num >= UPLOAD_LOG_NUM ) {
+        if ( log_num >= UPLOAD_LOG_NUM || action == LEAVE_LESSON ) {
             // upload all the logs
             upload_logs(context);
         }
@@ -111,7 +113,7 @@ public class ActionLog {
     }
 
     public static long create_new(Context context, String lesson_id, int action) {
-        int[] actions = { ENTRY_PRE_TEST, ENTRY_PRE_TEST_RESULT, ENTRY_POST_TEST_RESULT, LEAVE_LESSON };
+        int[] actions = { ENTRY_LESSON, ENTRY_PRE_TEST, ENTRY_PRE_TEST_RESULT, ENTRY_POST_TEST_RESULT, LEAVE_LESSON };
         boolean hit = false;
         for (int i = 0; i < actions.length; i++) {
             if (action == actions[i]) hit = true;
@@ -175,7 +177,8 @@ public class ActionLog {
         for (ActionLog log : action_logs) {
             JSONObject log_obj = new JSONObject();
             try {
-                log_obj.put("id", log.id);
+                log_obj.put("device_id", device_id);
+                log_obj.put("log_id", log.id);
                 log_obj.put("auth_key", log.auth_key);
                 log_obj.put("action", log.action);
                 log_obj.put("happen_at", log.happen_at);
@@ -190,8 +193,6 @@ public class ActionLog {
                 e.printStackTrace();
             }
             logs.put(log_obj);
-            if (logs.length() >= 200)
-                break;
         }
         JSONObject params = new JSONObject();
         try {

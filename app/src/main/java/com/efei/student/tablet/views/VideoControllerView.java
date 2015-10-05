@@ -193,51 +193,15 @@ public class VideoControllerView extends FrameLayout {
             @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View view) {
-                forwardStatus = !forwardStatus;
-                if (forwardStatus == true) {
-                    backwardStatus = false;
-                    mBackwardBtn.setBackgroundResource(R.drawable.ic_backward);
-                    mForwardBtn.setBackgroundResource(R.drawable.ic_forward_pressed);
-                    isPauseBefore = !mPlayer.isPlaying();
-                    if (mPlayer.isPlaying()) {
-                        mPlayer.pause();
-                    }
-                    mHandler.sendEmptyMessage(GO_FORWARD);
-                    ActionLog.create_new(mContext, ((LessonActivity) mContext).mLesson.server_id, ActionLog.BEGIN_FORWARD, ((LessonActivity) mContext).mCurVideo.server_id, (int) (mPlayer.getCurrentPosition() / 1000L));
-                } else {
-                    mForwardBtn.setBackgroundResource(R.drawable.ic_forward);
-                    if (!isPauseBefore) {
-                        mPlayer.start();
-                    }
-                    ActionLog.create_new(mContext, ((LessonActivity) mContext).mLesson.server_id, ActionLog.STOP_FORWARD, ((LessonActivity) mContext).mCurVideo.server_id, (int) (mPlayer.getCurrentPosition() / 1000L));
-                }
+                forwardBtnClickHandler();
             }
         });
+
 
         mBackwardBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                backwardStatus = !backwardStatus;
-                if (backwardStatus == true) {
-                    forwardStatus = false;
-                    // mForwardBtn.setText("快进");
-                    mForwardBtn.setBackgroundResource(R.drawable.ic_forward);
-                    // mBackwardBtn.setText("恢复");
-                    mBackwardBtn.setBackgroundResource(R.drawable.ic_backward_pressed);
-                    isPauseBefore = !mPlayer.isPlaying();
-                    if (mPlayer.isPlaying()) {
-                        mPlayer.pause();
-                    }
-                    mHandler.sendEmptyMessage(GO_BACKWARD);
-                    ActionLog.create_new(mContext, ((LessonActivity) mContext).mLesson.server_id, ActionLog.BEGIN_BACKWARD, ((LessonActivity) mContext).mCurVideo.server_id, (int) (mPlayer.getCurrentPosition() / 1000L));
-                } else {
-                    // mBackwardBtn.setText("快退");
-                    mBackwardBtn.setBackgroundResource(R.drawable.ic_backward);
-                    if (!isPauseBefore) {
-                        mPlayer.start();
-                    }
-                    ActionLog.create_new(mContext, ((LessonActivity) mContext).mLesson.server_id, ActionLog.STOP_BACKWARD, ((LessonActivity) mContext).mCurVideo.server_id, (int) (mPlayer.getCurrentPosition() / 1000L));
-                }
+                backwardBtnClickHandler();
             }
         });
 
@@ -246,6 +210,52 @@ public class VideoControllerView extends FrameLayout {
         mFormatBuilder = new StringBuilder();
         mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
 
+    }
+
+
+    public void forwardBtnClickHandler() {
+        forwardStatus = !forwardStatus;
+        if (forwardStatus == true) {
+            backwardStatus = false;
+            mBackwardBtn.setBackgroundResource(R.drawable.ic_backward);
+            mForwardBtn.setBackgroundResource(R.drawable.ic_forward_pressed);
+            isPauseBefore = !mPlayer.isPlaying();
+            if (mPlayer.isPlaying()) {
+                mPlayer.pause();
+            }
+            mHandler.sendEmptyMessage(GO_FORWARD);
+            ActionLog.create_new(mContext, ((LessonActivity) mContext).mLesson.server_id, ActionLog.BEGIN_FORWARD, ((LessonActivity) mContext).mCurVideo.server_id, (int) (mPlayer.getCurrentPosition() / 1000L));
+        } else {
+            mForwardBtn.setBackgroundResource(R.drawable.ic_forward);
+            if (!isPauseBefore) {
+                mPlayer.start();
+            }
+            ActionLog.create_new(mContext, ((LessonActivity) mContext).mLesson.server_id, ActionLog.STOP_FORWARD, ((LessonActivity) mContext).mCurVideo.server_id, (int) (mPlayer.getCurrentPosition() / 1000L));
+        }
+    }
+
+    public void backwardBtnClickHandler() {
+        backwardStatus = !backwardStatus;
+        if (backwardStatus == true) {
+            forwardStatus = false;
+            // mForwardBtn.setText("快进");
+            mForwardBtn.setBackgroundResource(R.drawable.ic_forward);
+            // mBackwardBtn.setText("恢复");
+            mBackwardBtn.setBackgroundResource(R.drawable.ic_backward_pressed);
+            isPauseBefore = !mPlayer.isPlaying();
+            if (mPlayer.isPlaying()) {
+                mPlayer.pause();
+            }
+            mHandler.sendEmptyMessage(GO_BACKWARD);
+            ActionLog.create_new(mContext, ((LessonActivity) mContext).mLesson.server_id, ActionLog.BEGIN_BACKWARD, ((LessonActivity) mContext).mCurVideo.server_id, (int) (mPlayer.getCurrentPosition() / 1000L));
+        } else {
+            // mBackwardBtn.setText("快退");
+            mBackwardBtn.setBackgroundResource(R.drawable.ic_backward);
+            if (!isPauseBefore) {
+                mPlayer.start();
+            }
+            ActionLog.create_new(mContext, ((LessonActivity) mContext).mLesson.server_id, ActionLog.STOP_BACKWARD, ((LessonActivity) mContext).mCurVideo.server_id, (int) (mPlayer.getCurrentPosition() / 1000L));
+        }
     }
 
     public void show() {
@@ -569,8 +579,9 @@ public class VideoControllerView extends FrameLayout {
                     if (view.forwardStatus) {
                         long cur = view.mPlayer.getCurrentPosition();
                         long duration = view.mPlayer.getDuration();
-                        if (duration - cur < 3000) {
-                            view.mForwardBtn.performClick();
+                        if (duration - cur < 5000) {
+                            view.forwardBtnClickHandler();
+                            // view.mForwardBtn.performClick();
                         } else {
                             boolean findTag = view.checkProgress(true);
                             if (findTag) {
@@ -602,7 +613,7 @@ public class VideoControllerView extends FrameLayout {
                     if (view.forwardStatus == false)
                         view.checkProgress(false);
                     msg = obtainMessage(CHECK_PROGRESS);
-                    sendMessageDelayed(msg, 500);
+                    sendMessageDelayed(msg, 100);
                     break;
             }
         }

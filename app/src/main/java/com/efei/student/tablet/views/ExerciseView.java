@@ -295,13 +295,7 @@ public class ExerciseView extends FrameLayout {
         }
 
         // gather the answer and duration of the current question
-        if (mCurQuestion.type.equals("choice")) {
-            mAnswer[mCurQuestionIndex] = mCurAnswer;
-        } else if (mCurQuestion.type.equals("blank")) {
-            mAnswer[mCurQuestionIndex] = mCurAnswer;
-        } else {
-            mAnswer[mCurQuestionIndex] = mCurAnswer;
-        }
+        mAnswer[mCurQuestionIndex] = mCurAnswer;
         mDuration[mCurQuestionIndex] = mCurDuraton;
 
         // if answer is not provided, move to next
@@ -480,7 +474,6 @@ public class ExerciseView extends FrameLayout {
             }
         }
     }
-
 
     public void clearItems() {
         mItemA.setBackgroundResource(R.drawable.ic_a_unpressed);

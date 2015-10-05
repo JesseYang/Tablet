@@ -192,7 +192,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     }
 
     public boolean checkTag(long last_position, long position, boolean includePause) {
-        if (player == null || last_position < 0 || last_position > position)
+        if (player == null || last_position > position)
             return false;
 
         Tag[] tags = mCurVideo.tags();
@@ -200,7 +200,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         for (Tag tag :tags) {
             if ((tag.type != tag.TYPE_EXAMPLE && tag.type != tag.TYPE_SNAPSHOT) ||  (target_tag != null && tag.time >= target_tag.time))
                 continue;
-            if (tag.time * 1000 >= last_position && tag.time * 1000 < position)
+            if ((last_position == -1 && tag.time == 0) || (tag.time * 1000 > last_position && tag.time * 1000 <= position))
                 target_tag = tag;
         }
 
@@ -231,6 +231,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
                 } else {
                     titleView.setTitle("选择你在这道题上的重点或易错点");
                 }
+                titleView.setTitleRed(true);
                 titleView.keepShow = true;
                 summaryControllerView.show(snapshot);
                 ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_SUMMARY, mCurVideo.server_id, player.getCurrentPosition() / 1000, snapshot.server_id);
@@ -275,6 +276,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
                 checkBoxView[i].hide();
             }
             summaryControllerView.hide();
+            titleView.setTitleRed(false);
             titleView.setTitle(mTitleCache);
             titleView.show();
             player.start();
@@ -487,7 +489,6 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
 
     public void returnToCourse() {
         ActionLog.create_new(this, mLesson.server_id, ActionLog.LEAVE_LESSON);
-        ActionLog.upload_logs(this);
         Intent intent = new Intent(this, CourseActivity.class)
                 .putExtra(Intent.EXTRA_TEXT, mLesson.course_id);
         this.startActivity(intent);
