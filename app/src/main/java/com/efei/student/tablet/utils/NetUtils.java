@@ -163,7 +163,9 @@ public final class NetUtils {
     }
 
 
-    public static void download_video(String video_filename, Context context) {
+    public static boolean download_video(String video_filename, Context context) {
+        return false;
+        /*
         try {
             HttpURLConnection urlConnection;
             URL url;
@@ -191,6 +193,7 @@ public final class NetUtils {
             e.printStackTrace();
             return;
         }
+        */
     }
 
     public static void download_resource(String urlRes, String filename, String type, Context context) {

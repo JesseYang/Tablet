@@ -405,10 +405,12 @@ public class Course {
         // for each lesson, download videos and corresponding tags
         task.updateProgress("共" + this.lessons().length + "讲，正在下载第1讲");
         int i = 1;
-        for (Lesson lesson : this.lessons()) {
+        Lesson[] lessons = this.lessons();
+        for (Lesson lesson : lessons) {
             lesson.download_videos(task, this.lessons().length, i, append);
             i++;
-            task.updateProgress("共" + this.lessons().length + "讲，正在下载第" + i + "讲");
+            if (i <= lessons.length)
+                task.updateProgress("共" + this.lessons().length + "讲，正在下载第" + i + "讲");
         }
         // update the has_content column
         this.has_content = true;

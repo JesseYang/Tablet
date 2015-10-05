@@ -152,27 +152,17 @@ public class Video {
                 // the video exist, check whether file exist, if file does not exist, try to copy the file
                 String video_filename = get_filename_by_url(ele.getString(TabletContract.VideoEntry.COLUMN_VIDEO_URL));
                 if (!FileUtils.check_video_file_existence(video_filename, context)) {
-                    if (FileUtils.copy_video(video_filename, context) == false) {
-                        NetUtils.download_video(video_filename, context);
+                    boolean result = FileUtils.copy_video(video_filename, context);
+                    if (result == false) {
+                        result = NetUtils.download_video(video_filename, context);
                     }
-                }
-                // refresh the tags for this video
-                // first delete all tags
-                db.delete(TabletContract.TagEntry.TABLE_NAME,
-                        TabletContract.TagEntry.COLUMN_VIDEO_ID + "=\"" + ele.getString(TabletContract.VideoEntry.COLUMN_SERVER_ID) + "\"",
-                        null);
-                // then download the new tags
-                String response = NetUtils.get("/tablet/tags", "video_id=" + ele.getString(TabletContract.VideoEntry.COLUMN_SERVER_ID));
-                try {
-                    JSONObject jsonRes = new JSONObject(response);
-                    JSONObject tag_ele;
-                    JSONArray tag_ary = jsonRes.getJSONArray("tags");
-                    for (int i = 0; i < tag_ary.length(); i++) {
-                        tag_ele = tag_ary.getJSONObject(i);
-                        Tag.create(tag_ele, context);
+                    // the video file does not exist, remove the video record
+                    if (result == false) {
+                        cursor.moveToFirst();
+                        Video v = new Video(context, cursor);
+                        v.delete();
+                        return "";
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
                 return ele.getString(TabletContract.LessonEntry.COLUMN_SERVER_ID);
             }
@@ -184,6 +174,20 @@ public class Video {
 
     public static String create(JSONObject ele, Context context) {
         try {
+            String video_filename = get_filename_by_url(ele.getString(TabletContract.VideoEntry.COLUMN_VIDEO_URL));
+
+            boolean result = false;
+            if (!FileUtils.check_video_file_existence(video_filename, context)) {
+                result = FileUtils.copy_video(video_filename, context);
+                if (result == false) {
+                    result = NetUtils.download_video(video_filename, context);
+                }
+                // if the video file does not exist, do not create the video record
+                if (result == false) {
+                    return "";
+                }
+            }
+
             TabletDbHelper dbHelper = new TabletDbHelper(context);
             SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -202,13 +206,6 @@ public class Video {
 
             db.insert(TabletContract.VideoEntry.TABLE_NAME, null, contentValues);
 
-            String video_filename = get_filename_by_url(ele.getString(TabletContract.VideoEntry.COLUMN_VIDEO_URL));
-
-            if (!FileUtils.check_video_file_existence(video_filename, context)) {
-                if (FileUtils.copy_video(video_filename, context) == false) {
-                    NetUtils.download_video(video_filename, context);
-                }
-            }
             // get the tags for this video
             String response = NetUtils.get("/tablet/tags", "video_id=" + ele.getString(TabletContract.VideoEntry.COLUMN_SERVER_ID));
             try {

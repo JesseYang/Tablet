@@ -52,6 +52,8 @@ public class CourseActivity extends BaseActivity {
 
     public boolean mAdmin;
 
+    public TextView mStatusTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,6 +121,8 @@ public class CourseActivity extends BaseActivity {
         mTextbook.setImageURI(imgUri);
         mTextbook.setScaleType(ImageView.ScaleType.FIT_XY);
 
+        mStatusTextView = (TextView) findViewById(R.id.status_tv);
+
 
         mSetting = (ImageView) findViewById(R.id.btn_setting);
         mSettingView = new SettingView(this, "CourseActivity");
@@ -140,11 +144,40 @@ public class CourseActivity extends BaseActivity {
         refreshLessons();
     }
 
-    private void hideSettingView() {
-        if (mShowSetting) {
-            mSettingView.hide();
-            mShowSetting = false;
+    public void showStatus() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mStatusTextView.setVisibility(View.VISIBLE);
+            }
+        });
+
+    }
+
+    public void setStatus(String content) {
+        runOnUiThread(new UpdateStatus(content));
+    }
+
+    public class UpdateStatus implements Runnable {
+
+        public String mContent;
+
+        public UpdateStatus(String content) {
+            mContent = content;
         }
+        public void run() {
+            mStatusTextView.setText(mContent);
+        }
+    }
+
+    public void hideStatus() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mStatusTextView.setVisibility(View.GONE);
+            }
+        });
+
     }
 
     public void exit() {

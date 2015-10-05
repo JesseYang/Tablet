@@ -209,6 +209,7 @@ public class Lesson {
             JSONObject ele;
             JSONArray homework_ary = jsonRes.getJSONArray("homeworks");
             for (int i = 0; i < homework_ary.length(); i++) {
+                task.updateProgress("共" + total_lesson + "讲，正在下载第" + current_lesson + "讲。正在下载题目数据及讲解视频。");
                 ele = homework_ary.getJSONObject(i);
                 // create th homework record
                 Homework.create_or_update(ele, this.server_id, mContext);

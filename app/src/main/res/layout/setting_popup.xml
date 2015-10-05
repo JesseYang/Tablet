@@ -35,6 +35,15 @@
         android:layout_gravity="center" />
 
     <Button
+        android:id="@+id/setting_append_course_btn"
+        android:layout_width="@dimen/filter_popup_width"
+        android:layout_height="44dp"
+        android:background="@drawable/setting_one_button_background"
+        android:text="补充课程内容"
+        android:textColor="@color/white"
+        android:layout_gravity="center" />
+
+    <Button
         android:id="@+id/setting_update_course_list_btn"
         android:layout_width="@dimen/filter_popup_width"
         android:layout_height="44dp"
