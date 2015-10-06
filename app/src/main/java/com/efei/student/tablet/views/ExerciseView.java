@@ -26,6 +26,7 @@ import com.efei.student.tablet.models.Question;
 import com.efei.student.tablet.student.LessonActivity;
 import com.efei.student.tablet.utils.GlobalUtils;
 import com.efei.student.tablet.utils.NetUtils;
+import com.efei.student.tablet.utils.TextUtils;
 import com.efei.student.tablet.utils.UiUtils;
 
 import org.json.JSONArray;
@@ -46,6 +47,7 @@ public class ExerciseView extends FrameLayout {
     private boolean mShowing;
     public Homework mExercise;
     private Question[] mQuestions;
+    private String[] mQuestionIdAry;
     private int mCurQuestionIndex;
     public Question mCurQuestion;
     private int mCurAnswer;
@@ -296,6 +298,7 @@ public class ExerciseView extends FrameLayout {
             // gather the answer and duration of the current question
             mAnswer[mCurQuestionIndex] = mCurAnswer;
             mDuration[mCurQuestionIndex] = mCurDuraton;
+            mQuestionIdAry[mCurQuestionIndex] = mCurQuestion.server_id;
         }
 
         if (mCurAnswer == -1) {
@@ -366,7 +369,7 @@ public class ExerciseView extends FrameLayout {
                 try {
                     params.put("type", "exercise");
                     params.put("exercise_id", mExercise.server_id);
-                    params.put("question_id", mCurQuestion.server_id);
+                    params.put("question_id", TextUtils.join(mQuestionIdAry, ","));
                     params.put("auth_key", mAuthKey);
                     JSONObject tablet_answer = new JSONObject();
                     JSONArray answer_ary = new JSONArray();
@@ -550,6 +553,7 @@ public class ExerciseView extends FrameLayout {
             mCurQuestion = mQuestions[mCurQuestionIndex];
             mAnswer = new int[mQuestions.length];
             mDuration = new int[mQuestions.length];
+            mQuestionIdAry = new String[mQuestions.length];
 
             // for admin user or completed lessons, directly to the summary page
             if (mAdmin || mComplete) {
@@ -573,6 +577,7 @@ public class ExerciseView extends FrameLayout {
             mCurQuestion = mQuestions[mCurQuestionIndex];
             mAnswer = new int[mQuestions.length];
             mDuration = new int[mQuestions.length];
+            mQuestionIdAry = new String[mQuestions.length];
             renderQuestion();
         } else if (type.equals("exercise")) {
             if (mAdmin || mComplete)
@@ -588,6 +593,7 @@ public class ExerciseView extends FrameLayout {
             mCurQuestion = mQuestions[mCurQuestionIndex];
             mAnswer = new int[mQuestions.length];
             mDuration = new int[mQuestions.length];
+            mQuestionIdAry = new String[mQuestions.length];
             renderQuestion();
         }
 

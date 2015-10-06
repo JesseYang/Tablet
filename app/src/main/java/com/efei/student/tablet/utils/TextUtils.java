@@ -1,6 +1,5 @@
 package com.efei.student.tablet.utils;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,11 +46,14 @@ public final class TextUtils
             return false;
     }
 
-    public static String concat(List<String> subStrings)
+    public static String join(String[] array, String strSeparator)
     {
         StringBuilder sb = new StringBuilder();
-        for (String string : subStrings)
-            sb.append(string);
+        for (String n : array) {
+            if (sb.length() > 0)
+                sb.append(strSeparator);
+            sb.append(n);
+        }
         return sb.toString();
     }
 
