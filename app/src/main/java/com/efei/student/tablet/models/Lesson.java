@@ -192,11 +192,11 @@ public class Lesson {
             for (int i = 0; i < video_ary.length(); i++) {
                 ele = video_ary.getJSONObject(i);
                 j = i + 1;
-                task.updateProgress("共" + total_lesson + "讲，正在下载第" + current_lesson + "讲。本讲共" + video_ary.length() + "个视频，正在处理第" + j + "个");
+                task.updateProgress("共" + total_lesson + "讲，正在下载第" + current_lesson + "讲。本讲共" + video_ary.length() + "个视频，正在处理第" + j + "个。");
                 if (append) {
-                    Video.find_or_create(ele, mContext);
+                    Video.find_or_create(task, ele, mContext);
                 } else {
-                    Video.create(ele, mContext);
+                    Video.create(task, ele, mContext);
                 }
             }
         } catch (Exception e) {
@@ -212,7 +212,7 @@ public class Lesson {
                 task.updateProgress("共" + total_lesson + "讲，正在下载第" + current_lesson + "讲。正在下载题目数据及讲解视频。");
                 ele = homework_ary.getJSONObject(i);
                 // create th homework record
-                Homework.create_or_update(ele, this.server_id, mContext);
+                Homework.create_or_update(task, ele, this.server_id, mContext);
             }
         } catch (Exception e) {
             e.printStackTrace();

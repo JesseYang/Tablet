@@ -5,6 +5,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 
+import com.efei.student.tablet.views.SettingView;
+
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -163,9 +165,7 @@ public final class NetUtils {
     }
 
 
-    public static boolean download_video(String video_filename, Context context) {
-        return false;
-        /*
+    public static boolean download_video(SettingView.DownloadContentTask task, String video_filename, Context context) {
         try {
             HttpURLConnection urlConnection;
             URL url;
@@ -183,17 +183,24 @@ public final class NetUtils {
             int downloadedSize = 0;
             byte[] buffer = new byte[1024];
             int bufferLength = 0;
+            String totalSizeInMb = String.valueOf(Math.round(totalSize / 1024 / 102.4) / 10.0);
+            double prev = 0;
+            double cur = 0;
             while ((bufferLength = inputStream.read(buffer)) > 0) {
                 fileOutputStream.write(buffer, 0, bufferLength);
                 downloadedSize += bufferLength;
+                cur = Math.round(downloadedSize / 1024 / 102.4) / 10.0;
+                if (cur != prev) {
+                    task.appendProgress("共" + totalSizeInMb + "MB，已下载" + String.valueOf(cur) + "MB。");
+                    prev = cur;
+                }
             }
             fileOutputStream.close();
-            return;
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return;
+            return false;
         }
-        */
     }
 
     public static void download_resource(String urlRes, String filename, String type, Context context) {

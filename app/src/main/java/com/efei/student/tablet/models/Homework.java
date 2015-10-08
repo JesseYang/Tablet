@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.efei.student.tablet.data.TabletContract;
 import com.efei.student.tablet.data.TabletDbHelper;
 import com.efei.student.tablet.utils.TextUtils;
+import com.efei.student.tablet.views.SettingView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -55,7 +56,7 @@ public class Homework {
         return homework;
     }
 
-    public static void create_or_update(JSONObject ele, String lesson_id, Context context) {
+    public static void create_or_update(SettingView.DownloadContentTask task, JSONObject ele, String lesson_id, Context context) {
         try {
             String server_id = ele.getString(TabletContract.HomeworkEntry.COLUMN_SERVER_ID);
             TabletDbHelper dbHelper = new TabletDbHelper(context);
@@ -81,7 +82,7 @@ public class Homework {
                 db.insert(TabletContract.HomeworkEntry.TABLE_NAME, null, contentValues);
                 // create questions
                 Homework homework = Homework.get_homework_by_id(server_id, context);
-                homework.refresh_questions(ele, context);
+                homework.refresh_questions(task, ele, context);
             } else {
                 cursor.moveToFirst();
                 if (!cursor.getString(cursor.getColumnIndex(TabletContract.HomeworkEntry.COLUMN_UPDATE_AT)).equals(ele.getString(TabletContract.HomeworkEntry.COLUMN_UPDATE_AT))) {
@@ -91,7 +92,7 @@ public class Homework {
                             TabletContract.HomeworkEntry.COLUMN_SERVER_ID + "=?",
                             new String[]{server_id});
                     Homework homework = new Homework(context, cursor);
-                    homework.refresh_questions(ele, context);
+                    homework.refresh_questions(task, ele, context);
                 }
             }
             cursor.close();
@@ -101,7 +102,7 @@ public class Homework {
         }
     }
 
-    public void refresh_questions(JSONObject ele, Context context) {
+    public void refresh_questions(SettingView.DownloadContentTask task, JSONObject ele, Context context) {
         try {
             // first delete questions
             TabletDbHelper dbHelper = new TabletDbHelper(context);
@@ -133,7 +134,7 @@ public class Homework {
                 // then download the images and video if any
                 Question question = Question.get_question_by_id(q.getString(TabletContract.QuestionEntry.COLUMN_SERVER_ID), mContext);
                 question.download_images();
-                question.download_video(context);
+                question.download_video(task, context);
             }
         } catch (Exception e) {
             e.printStackTrace();

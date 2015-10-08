@@ -447,7 +447,11 @@ public class ExerciseView extends FrameLayout {
                         mPreTestSummaryStatLayout.addView(b);
                     }
                     String msg = "";
-                    if (unknown == 0) {
+                    if (mComplete) {
+                        msg = "你之前已经完成本讲学习。";
+                    } else if (mAdmin) {
+                        msg = "";
+                    } else if (unknown == 0) {
                         msg = "统计结果：正确" + String.valueOf(correct) + "道，错误" + String.valueOf(incorrect) + "道。";
                     } else {
                         msg = "统计结果：正确" + String.valueOf(correct) + "道，错误" + String.valueOf(incorrect) + "道，待批改" + String.valueOf(unknown) + "道。";

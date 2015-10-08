@@ -9,6 +9,7 @@ import com.efei.student.tablet.data.TabletContract;
 import com.efei.student.tablet.data.TabletDbHelper;
 import com.efei.student.tablet.utils.FileUtils;
 import com.efei.student.tablet.utils.NetUtils;
+import com.efei.student.tablet.views.SettingView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -130,7 +131,7 @@ public class Video {
         db.close();
     }
 
-    public static String find_or_create(JSONObject ele, Context context) {
+    public static String find_or_create(SettingView.DownloadContentTask task, JSONObject ele, Context context) {
         try {
             String video_url = ele.getString(TabletContract.VideoEntry.COLUMN_VIDEO_URL);
             TabletDbHelper dbHelper = new TabletDbHelper(context);
@@ -147,14 +148,14 @@ public class Video {
             int count = cursor.getCount();
             if (count == 0) {
                 // the video does not exist, create a new one
-                return Video.create(ele, context);
+                return Video.create(task, ele, context);
             } else {
                 // the video exist, check whether file exist, if file does not exist, try to copy the file
                 String video_filename = get_filename_by_url(ele.getString(TabletContract.VideoEntry.COLUMN_VIDEO_URL));
                 if (!FileUtils.check_video_file_existence(video_filename, context)) {
                     boolean result = FileUtils.copy_video(video_filename, context);
                     if (result == false) {
-                        result = NetUtils.download_video(video_filename, context);
+                        result = NetUtils.download_video(task, video_filename, context);
                     }
                     // the video file does not exist, remove the video record
                     if (result == false) {
@@ -172,7 +173,7 @@ public class Video {
         }
     }
 
-    public static String create(JSONObject ele, Context context) {
+    public static String create(SettingView.DownloadContentTask task, JSONObject ele, Context context) {
         try {
             String video_filename = get_filename_by_url(ele.getString(TabletContract.VideoEntry.COLUMN_VIDEO_URL));
 
@@ -180,7 +181,7 @@ public class Video {
             if (!FileUtils.check_video_file_existence(video_filename, context)) {
                 result = FileUtils.copy_video(video_filename, context);
                 if (result == false) {
-                    result = NetUtils.download_video(video_filename, context);
+                    result = NetUtils.download_video(task, video_filename, context);
                 }
                 // if the video file does not exist, do not create the video record
                 if (result == false) {

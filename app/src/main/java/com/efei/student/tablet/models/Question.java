@@ -9,6 +9,7 @@ import com.efei.student.tablet.data.TabletDbHelper;
 import com.efei.student.tablet.utils.FileUtils;
 import com.efei.student.tablet.utils.NetUtils;
 import com.efei.student.tablet.utils.TextUtils;
+import com.efei.student.tablet.views.SettingView;
 
 public class Question {
     public Context mContext;
@@ -80,14 +81,14 @@ public class Question {
         return question;
     }
 
-    public void download_video(Context context) {
+    public void download_video(SettingView.DownloadContentTask task, Context context) {
         if (this.video_id == null || this.video_id.equals("")) {
             return;
         }
         String video_filename = Video.get_filename_by_url(this.video_url);
         if (!FileUtils.check_video_file_existence(video_filename, context)) {
             if (FileUtils.copy_video(video_filename, context) == false) {
-                NetUtils.download_video(video_filename, context);
+                NetUtils.download_video(task, video_filename, context);
             }
         }
     }

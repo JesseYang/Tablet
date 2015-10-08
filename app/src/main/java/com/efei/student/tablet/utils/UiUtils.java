@@ -39,14 +39,14 @@ public final class UiUtils
 
     private static final String URL_API_IMAGE = "public/download/";
 
-    private static BitmapFactory.Options opts=new BitmapFactory.Options();
+    private static BitmapFactory.Options opts = new BitmapFactory.Options();
 
     static {
-        opts.inDither=false;                     //Disable Dithering mode
-        opts.inPurgeable=true;                   //Tell to gc that whether it needs free memory, the Bitmap can be cleared
-        opts.inInputShareable=true;              //Which kind of reference will be used to recover the Bitmap data after being clear, when it will be used in the future
-        opts.inTempStorage=new byte[32 * 1024];
+        opts.inSampleSize = 8;
     }
+
+    private static Bitmap bmp_cry = BitmapFactory.decodeFile((new File(Environment.getExternalStorageDirectory(), "/efei/images/cry.png")).getAbsolutePath());
+    private static Bitmap bmp_happy = BitmapFactory.decodeFile((new File(Environment.getExternalStorageDirectory(), "/efei/images/happy.png")).getAbsolutePath());
 
     private UiUtils()
     {
@@ -138,7 +138,14 @@ public final class UiUtils
         File storageRoot = Environment.getExternalStorageDirectory();
         File imgFile = new File(storageRoot, "/efei/images/" + imageFile);
         System.gc();
-        Bitmap bmp = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), opts);
+        Bitmap bmp;
+        if (imageFile.equals("happy.png")) {
+            bmp = bmp_happy;
+        } else if (imageFile.equals("cry.png")) {
+            bmp = bmp_cry;
+        } else {
+            bmp = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), opts);
+        }
 
         BitmapDrawable bmpDrawable = new BitmapDrawable(EfeiApplication.getContext().getResources(), bmp);
 
@@ -283,5 +290,4 @@ public final class UiUtils
             canvas.restore();
         }
     }
-
 }

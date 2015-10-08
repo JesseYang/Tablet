@@ -114,9 +114,7 @@ public class VideoControllerView extends FrameLayout {
     protected View makeControllerView() {
         LayoutInflater inflate = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mRoot = inflate.inflate(R.layout.media_control, null);
-
         initControllerView(mRoot);
-
         return mRoot;
     }
 
@@ -168,26 +166,8 @@ public class VideoControllerView extends FrameLayout {
             }
         });
 
-        // mVolumeUp = (ImageView) v.findViewById(R.id.volume_up);
-        // mVolumeDown = (ImageView) v.findViewById(R.id.volume_down);
         mForwardBtn = (ImageView) v.findViewById(R.id.btn_forward);
         mBackwardBtn = (ImageView) v.findViewById(R.id.btn_backward);
-
-        /*
-        mVolumeUp.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((LessonActivity)mContext).volumeUp();
-            }
-        });
-
-        mVolumeDown.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((LessonActivity)mContext).volumeDown();
-            }
-        });
-        */
 
         mForwardBtn.setOnClickListener(new OnClickListener() {
             @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -216,10 +196,12 @@ public class VideoControllerView extends FrameLayout {
     public void forwardBtnClickHandler() {
         forwardStatus = !forwardStatus;
         if (forwardStatus == true) {
-            backwardStatus = false;
             mBackwardBtn.setBackgroundResource(R.drawable.ic_backward);
             mForwardBtn.setBackgroundResource(R.drawable.ic_forward_pressed);
-            isPauseBefore = !mPlayer.isPlaying();
+            if (backwardStatus == false) {
+                isPauseBefore = !mPlayer.isPlaying();
+            }
+            backwardStatus = false;
             if (mPlayer.isPlaying()) {
                 mPlayer.pause();
             }
@@ -237,12 +219,12 @@ public class VideoControllerView extends FrameLayout {
     public void backwardBtnClickHandler() {
         backwardStatus = !backwardStatus;
         if (backwardStatus == true) {
-            forwardStatus = false;
-            // mForwardBtn.setText("快进");
             mForwardBtn.setBackgroundResource(R.drawable.ic_forward);
-            // mBackwardBtn.setText("恢复");
             mBackwardBtn.setBackgroundResource(R.drawable.ic_backward_pressed);
-            isPauseBefore = !mPlayer.isPlaying();
+            if (forwardStatus == false) {
+                isPauseBefore = !mPlayer.isPlaying();
+            }
+            forwardStatus = false;
             if (mPlayer.isPlaying()) {
                 mPlayer.pause();
             }

@@ -29,8 +29,8 @@ public class SettingView extends FrameLayout {
     private Button mExitButton;
     private Button mUpdateCourseListButton;
     private Button mUpdateCourseInfoButton;
-    private Button mToggleCourseButton;
-    private Button mAppendCourseButton;
+    private Button mDownloadCourseButton;
+    private Button mDeleteCourseButton;
 
     public Boolean mAdmin;
 
@@ -62,49 +62,42 @@ public class SettingView extends FrameLayout {
 
         mUpdateCourseListButton = (Button) mRoot.findViewById(R.id.setting_update_course_list_btn);
         mUpdateCourseInfoButton = (Button) mRoot.findViewById(R.id.setting_update_course_info_btn);
-        mToggleCourseButton = (Button) mRoot.findViewById(R.id.setting_toggle_course_btn);
-        mAppendCourseButton = (Button) mRoot.findViewById(R.id.setting_append_course_btn);
+        mDownloadCourseButton = (Button) mRoot.findViewById(R.id.setting_download_course_btn);
+        mDeleteCourseButton = (Button) mRoot.findViewById(R.id.setting_delete_course_btn);
         mExitButton = (Button) mRoot.findViewById(R.id.setting_exit_btn);
 
         if (mAdmin && mActivityName == "ListActivity") {
             mUpdateCourseListButton.setVisibility(VISIBLE);
             mUpdateCourseInfoButton.setVisibility(GONE);
-            mToggleCourseButton.setVisibility(GONE);
-            mAppendCourseButton.setVisibility(GONE);
+            mDownloadCourseButton.setVisibility(GONE);
+            mDeleteCourseButton.setVisibility(GONE);
             mUpdateCourseListButton.setBackgroundResource(R.drawable.setting_top_button_background);
             mExitButton.setBackgroundResource(R.drawable.setting_bottom_button_background);
         } else if (mAdmin && mActivityName == "CourseActivity") {
             mUpdateCourseListButton.setVisibility(GONE);
             mUpdateCourseInfoButton.setVisibility(VISIBLE);
-            mToggleCourseButton.setVisibility(VISIBLE);
-            mAppendCourseButton.setVisibility(VISIBLE);
-            mToggleCourseButton.setText(((CourseActivity) mContext).mCourse.has_content ? "删除课程内容" : "下载课程内容");
+            mDownloadCourseButton.setVisibility(VISIBLE);
+            mDeleteCourseButton.setVisibility(VISIBLE);
+            mDownloadCourseButton.setText("下载课程内容");
             mUpdateCourseInfoButton.setBackgroundResource(R.drawable.setting_top_button_background);
-            mToggleCourseButton.setBackgroundResource(R.drawable.setting_middle_button_background);
-            mAppendCourseButton.setBackgroundResource(R.drawable.setting_middle_button_background);
+            mDownloadCourseButton.setBackgroundResource(R.drawable.setting_middle_button_background);
+            mDeleteCourseButton.setBackgroundResource(R.drawable.setting_middle_button_background);
             mExitButton.setBackgroundResource(R.drawable.setting_bottom_button_background);
         }
         else {
             mUpdateCourseListButton.setVisibility(GONE);
             mUpdateCourseInfoButton.setVisibility(GONE);
-            mToggleCourseButton.setVisibility(GONE);
-            mAppendCourseButton.setVisibility(GONE);
+            mDownloadCourseButton.setVisibility(GONE);
+            mDeleteCourseButton.setVisibility(GONE);
             mExitButton.setBackgroundResource(R.drawable.setting_one_button_background);
         }
 
-        mToggleCourseButton.setOnClickListener(new OnClickListener() {
+        mDownloadCourseButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if (((CourseActivity)mContext).mCourse.has_content) {
-                    Toast.makeText(mContext, "开始删除课程", Toast.LENGTH_SHORT).show();
-                    ((CourseActivity)mContext).mCourse.remove_content();
-                    mToggleCourseButton.setText("下载课程内容");
-                    Toast.makeText(mContext, "删除课程完毕", Toast.LENGTH_SHORT).show();
-                } else {
-                    DownloadContentTask downloadContentTask = new DownloadContentTask(false);
-                    downloadContentTask.execute();
-                }
+                DownloadContentTask downloadContentTask = new DownloadContentTask(true);
+                downloadContentTask.execute();
             }
         });
 
@@ -116,11 +109,12 @@ public class SettingView extends FrameLayout {
             }
         });
 
-        mAppendCourseButton.setOnClickListener(new OnClickListener() {
+        mDeleteCourseButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                DownloadContentTask downloadContentTask = new DownloadContentTask(true);
-                downloadContentTask.execute();
+                Toast.makeText(mContext, "开始删除课程", Toast.LENGTH_SHORT).show();
+                ((CourseActivity) mContext).mCourse.remove_content();
+                Toast.makeText(mContext, "删除课程完毕", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -185,6 +179,7 @@ public class SettingView extends FrameLayout {
     public class DownloadContentTask extends AsyncTask<Void, String, Void> {
 
         boolean append;
+        String current_status;
 
         public DownloadContentTask(boolean append) {
             this.append = append;
@@ -199,19 +194,22 @@ public class SettingView extends FrameLayout {
         }
 
         public void updateProgress(String str) {
+            current_status = str;
             publishProgress(str);
+        }
+
+        public void appendProgress(String str) {
+            publishProgress(current_status + str);
         }
 
         @Override
         protected void onProgressUpdate(String... str) {
             ((CourseActivity)mContext).setStatus(str[0]);
-            // Toast.makeText(mContext, str[0], Toast.LENGTH_SHORT).show();
         }
 
         @Override
         protected void onPostExecute(Void retval) {
             Toast.makeText(mContext, "课程下载完毕", Toast.LENGTH_SHORT).show();
-            mToggleCourseButton.setText("删除课程内容");
             ((CourseActivity)mContext).hideStatus();
         }
     }

@@ -139,7 +139,8 @@ public class ListActivity extends BaseActivity {
         mAllCourse.setSelected(false);
 
         if (mAdmin) {
-            mMyCourse.setVisibility(View.INVISIBLE);
+            mMyCourse.setVisibility(View.GONE);
+            mAllCourse.setSelected(true);
         }
 
         mSearchText.setOnClickListener(new View.OnClickListener() {
