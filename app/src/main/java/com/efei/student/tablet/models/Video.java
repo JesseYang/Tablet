@@ -208,7 +208,7 @@ public class Video {
             db.insert(TabletContract.VideoEntry.TABLE_NAME, null, contentValues);
 
             // get the tags for this video
-            String response = NetUtils.get("/tablet/tags", "video_id=" + ele.getString(TabletContract.VideoEntry.COLUMN_SERVER_ID));
+            String response = NetUtils.get(context, "/tablet/tags", "video_id=" + ele.getString(TabletContract.VideoEntry.COLUMN_SERVER_ID));
             try {
                 JSONObject jsonRes = new JSONObject(response);
                 JSONObject tag_ele;

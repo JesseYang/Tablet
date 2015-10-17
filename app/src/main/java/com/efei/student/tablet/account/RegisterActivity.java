@@ -140,7 +140,7 @@ public class RegisterActivity extends BaseActivity {
                 return null;
             }
             // Send the login request to the servers
-            String response = NetUtils.post("/account/registrations", params[0]);
+            String response = NetUtils.post(mActivity, "/account/registrations", params[0]);
             try {
                 JSONObject jsonRes = new JSONObject(response);
                 return jsonRes;

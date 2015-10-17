@@ -62,7 +62,7 @@ public class Teacher {
 
 
     public static void update_teachers(Context context) {
-        String response = NetUtils.get("/tablet/teachers", "");
+        String response = NetUtils.get(context, "/tablet/teachers", "");
         try {
             JSONObject jsonRes = new JSONObject(response);
             JSONObject ele;

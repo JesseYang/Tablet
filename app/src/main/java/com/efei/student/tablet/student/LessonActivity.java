@@ -89,6 +89,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
 
     public boolean mAdmin;
     public boolean mComplete;
+    public boolean mVideoEnd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +101,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
 
         mAdmin = GlobalUtils.isAdmin(this);
         mComplete = GlobalUtils.isComplete(this, server_id);
+        mVideoEnd = false;
 
         try {
             mBrightness = android.provider.Settings.System.getInt(
@@ -280,7 +282,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             params.put("checked", checked);
             params.put("auth_key", mAuthKey);
             params.put("analysis_answer", analysisAnswer);
-            UploadSummaryTask uploadSummaryTask = new UploadSummaryTask();
+            UploadSummaryTask uploadSummaryTask = new UploadSummaryTask(this);
             uploadSummaryTask.execute(params);
             for (int i = 0; i < checkBoxView.length; i++) {
                 checkBoxView[i].hide();
@@ -289,17 +291,29 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             titleView.setTitleRed(false);
             titleView.setTitle(mTitleCache);
             titleView.show();
-            player.start();
             ActionLog.create_new(this, mLesson.server_id, ActionLog.RETURN_FROM_SUMMARY, mCurVideo.server_id, player.getCurrentPosition() / 1000, snapshot.server_id);
+            if (mVideoEnd == true) {
+                // video end, switch to next video
+                completionSwitchVideo();
+                mVideoEnd = false;
+            } else {
+                player.start();
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     private class UploadSummaryTask extends AsyncTask<JSONObject, Void, JSONObject> {
+
+        private Context mContext;
+        public UploadSummaryTask(Context context) {
+            this.mContext = context;
+        }
+
         @Override
         protected JSONObject doInBackground(JSONObject... params) {
-            String response = NetUtils.post("/tablet/summaries", params[0]);
+            String response = NetUtils.post(this.mContext, "/tablet/summaries", params[0]);
             try {
                 JSONObject jsonRes = new JSONObject(response);
                 return jsonRes;
@@ -595,6 +609,49 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     @Override
     public void onCompletion(MediaPlayer mp) {
 
+        // first check video end tags
+        Tag[] tags = mCurVideo.tags();
+        Tag target_tag = null;
+        for (Tag tag :tags) {
+            if (tag.type == tag.TYPE_SNAPSHOT &&  tag.time == -1) {
+                target_tag = tag;
+                continue;
+            }
+        }
+
+        if (target_tag != null) {
+            mVideoEnd = true;
+            Snapshot snapshot = target_tag.snapshot();
+            for (int i = 0; i < maxKeyPoint; i++) {
+                if (i < snapshot.key_point.length) {
+                    int x, y;
+                    x = Math.round(Float.valueOf(snapshot.key_point[i].split(",")[0]) * videoSurface.getWidth());
+                    y = Math.round(Float.valueOf(snapshot.key_point[i].split(",")[1]) * videoSurface.getHeight());
+                    checkBoxView[i].show(this.convertPosition(x, y));
+                } else {
+                    checkBoxView[i].hide();
+                }
+            }
+            hideOperations();
+            titleView.show();
+            mTitleCache = titleView.getTitle();
+            Question q = snapshot.question();
+            if (q.type.equals("analysis")) {
+                titleView.setTitle("对你的答案进行批改，并选择你在这道题上的重点或易错点");
+            } else {
+                titleView.setTitle("选择你在这道题上的重点或易错点");
+            }
+            titleView.setTitleRed(true);
+            titleView.keepShow = true;
+            summaryControllerView.show(snapshot);
+            ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_SUMMARY, mCurVideo.server_id, player.getCurrentPosition() / 1000, snapshot.server_id);
+        } else {
+            completionSwitchVideo();
+        }
+    }
+
+    public void completionSwitchVideo() {
+
         // return to the parent video
         if (mParentVideo != null) {
             goBackParentVideo();
@@ -619,6 +676,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         }
         switchVideo(nextVideo);
     }
+
     // End VideoMediaController.MediaPlayerControl
 
     public int[] convertPosition(int x, int y) {

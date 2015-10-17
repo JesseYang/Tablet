@@ -1,6 +1,7 @@
 package com.efei.student.tablet.utils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -32,10 +33,18 @@ public final class NetUtils {
     {
     }
 
-    public static String post(String urlApi, JSONObject params) {
+    public static String post(Context context, String urlApi, JSONObject params) {
 
         try {
             StringBuilder response = new StringBuilder();
+
+            String auth_key = getAuthKey(context);
+
+            try {
+                params.put("auth_key", auth_key);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             HttpURLConnection urlConnection;
             Uri builtUri = Uri.parse(BASE_URL + urlApi).buildUpon().build();
@@ -84,9 +93,17 @@ public final class NetUtils {
         }
     }
 
-    public static String put(String urlApi, JSONObject params) {
+    public static String put(Context context, String urlApi, JSONObject params) {
         try {
             StringBuilder response = new StringBuilder();
+
+            String auth_key = getAuthKey(context);
+
+            try {
+                params.put("auth_key", auth_key);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             HttpURLConnection urlConnection;
             Uri builtUri = Uri.parse(BASE_URL + urlApi).buildUpon().build();
@@ -130,9 +147,23 @@ public final class NetUtils {
         }
     }
 
-    public static String get(String urlApi, String params) {
+    public static String getAuthKey(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("MyPref", 0);
+        String auth_key = sharedPreferences.getString("auth_key", "");
+        return auth_key;
+    }
+
+    public static String get(Context context, String urlApi, String params) {
         try {
             StringBuilder response = new StringBuilder();
+
+            String auth_key = getAuthKey(context);
+
+            if (params.equals("")) {
+                params = "auth_key=" + auth_key;
+            } else {
+                params += "&auth_key=" + auth_key;
+            }
 
             HttpURLConnection urlConnection;
             Uri builtUri = Uri.parse(BASE_URL + urlApi + "?" + params).buildUpon().build();
@@ -163,7 +194,6 @@ public final class NetUtils {
             return "";
         }
     }
-
 
     public static boolean download_video(SettingView.DownloadContentTask task, String video_filename, Context context) {
         try {

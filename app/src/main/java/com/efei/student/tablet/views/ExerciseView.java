@@ -315,6 +315,7 @@ public class ExerciseView extends FrameLayout {
                 try {
                     params.put("type", "pre_test");
                     params.put("exercise_id", mExercise.server_id);
+                    params.put("question_id", TextUtils.join(mQuestionIdAry, ","));
                     params.put("auth_key", mAuthKey);
                     JSONObject tablet_answer = new JSONObject();
                     JSONArray answer_ary = new JSONArray();
@@ -328,7 +329,7 @@ public class ExerciseView extends FrameLayout {
                     tablet_answer.put("answer", answer_ary);
                     tablet_answer.put("duration", duration_ary);
                     params.put("tablet_answer", tablet_answer);
-                    UploadAnswerTask uploadAnswerTask = new UploadAnswerTask();
+                    UploadAnswerTask uploadAnswerTask = new UploadAnswerTask(this.mContext);
                     uploadAnswerTask.execute(params);
 
                     // show the loading page
@@ -342,6 +343,7 @@ public class ExerciseView extends FrameLayout {
                 try {
                     params.put("type", "post_test");
                     params.put("exercise_id", mExercise.server_id);
+                    params.put("question_id", TextUtils.join(mQuestionIdAry, ","));
                     params.put("auth_key", mAuthKey);
                     JSONObject tablet_answer = new JSONObject();
                     JSONArray answer_ary = new JSONArray();
@@ -355,7 +357,7 @@ public class ExerciseView extends FrameLayout {
                     tablet_answer.put("answer", answer_ary);
                     tablet_answer.put("duration", duration_ary);
                     params.put("tablet_answer", tablet_answer);
-                    UploadAnswerTask uploadAnswerTask = new UploadAnswerTask();
+                    UploadAnswerTask uploadAnswerTask = new UploadAnswerTask(this.mContext);
                     uploadAnswerTask.execute(params);
 
                     // show the loading page
@@ -383,7 +385,7 @@ public class ExerciseView extends FrameLayout {
                     tablet_answer.put("answer", answer_ary);
                     tablet_answer.put("duration", duration_ary);
                     params.put("tablet_answer", tablet_answer);
-                    UploadAnswerTask uploadAnswerTask = new UploadAnswerTask();
+                    UploadAnswerTask uploadAnswerTask = new UploadAnswerTask(this.mContext);
                     uploadAnswerTask.execute(params);
                     ((LessonActivity)mContext).afterExercise();
                 } catch (JSONException e) {
@@ -402,12 +404,18 @@ public class ExerciseView extends FrameLayout {
 
     private class UploadAnswerTask extends AsyncTask<JSONObject, Void, JSONObject> {
 
+        private Context mContext;
+        public UploadAnswerTask(Context context) {
+            this.mContext = context;
+        }
+
+
         @Override
         protected JSONObject doInBackground(JSONObject... params) {
             if (mAdmin || mComplete) {
                 return null;
             } else {
-                String response = NetUtils.post("/tablet/tablet_answers", params[0]);
+                String response = NetUtils.post(this.mContext, "/tablet/tablet_answers", params[0]);
                 try {
                     JSONObject jsonRes = new JSONObject(response);
                     return jsonRes;
@@ -638,14 +646,26 @@ public class ExerciseView extends FrameLayout {
         LinearLayout contentLayout = (LinearLayout)findViewById(R.id.content_layout);
         contentLayout.removeAllViews();
 
+        int index = Arrays.asList(mExercise.q_ids).indexOf(mCurQuestion.server_id);
+
+        String homework = "";
+        if (mCurType == "pre_test") {
+            homework = "例";
+        } else if (mCurType == "exercise") {
+            homework = "练";
+        } else {
+            homework = "测";
+        }
+
         String q_type = "";
         if (mCurQuestion.type.equals("choice")) {
-            q_type = "【" + String.valueOf(mCurQuestionIndex + 1) + ". 选择题】";
+            q_type = "【" + homework + String.valueOf(index + 1) + ". 选择题】";
         } else if (mCurQuestion.type.equals("blank")) {
-            q_type = "【" + String.valueOf(mCurQuestionIndex + 1) + ". 填空题】";
+            q_type = "【" + homework + String.valueOf(index + 1) + ". 填空题】";
         } else if (mCurQuestion.type.equals("analysis")) {
-            q_type = "【" + String.valueOf(mCurQuestionIndex + 1) + ". 解答题】";
+            q_type = "【" + homework + String.valueOf(index + 1) + ". 解答题】";
         }
+
         mCurQuestion.content[0] = q_type + mCurQuestion.content[0];
         renderElement(mCurQuestion.content, contentLayout);
 

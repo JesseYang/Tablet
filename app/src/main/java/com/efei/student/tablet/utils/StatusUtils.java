@@ -28,7 +28,7 @@ public class StatusUtils {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        NetUtils.put("/tablet/studies/" + auth_key, course_status);
+        NetUtils.put(context, "/tablet/studies/" + auth_key, course_status);
 
         return "";
     }

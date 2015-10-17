@@ -183,7 +183,7 @@ public class Lesson {
     }
 
     public void download_videos(SettingView.DownloadContentTask task, int total_lesson, int current_lesson, boolean append) {
-        String response = NetUtils.get("/tablet/videos", "lesson_id=" + this.server_id);
+        String response = NetUtils.get(this.mContext, "/tablet/videos", "lesson_id=" + this.server_id);
         try {
             JSONObject jsonRes = new JSONObject(response);
             JSONObject ele;
@@ -203,7 +203,7 @@ public class Lesson {
             e.printStackTrace();
         }
 
-        response = NetUtils.get("/tablet/homeworks", "lesson_id=" + this.server_id);
+        response = NetUtils.get(this.mContext, "/tablet/homeworks", "lesson_id=" + this.server_id);
         try {
             JSONObject jsonRes = new JSONObject(response);
             JSONObject ele;

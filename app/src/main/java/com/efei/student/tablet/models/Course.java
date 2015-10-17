@@ -200,7 +200,7 @@ public class Course {
     }
 
     public void update_course(Context context) {
-        String response = NetUtils.get("/tablet/courses/" + this.server_id, "");
+        String response = NetUtils.get(context, "/tablet/courses/" + this.server_id, "");
         try {
             JSONObject jsonRes = new JSONObject(response);
             JSONObject ele = jsonRes.getJSONObject("course");
@@ -211,7 +211,7 @@ public class Course {
     }
 
     public static void update_courses(Context context) {
-        String response = NetUtils.get("/tablet/courses", "");
+        String response = NetUtils.get(context, "/tablet/courses", "");
         try {
             JSONObject jsonRes = new JSONObject(response);
             JSONObject ele;
@@ -345,7 +345,7 @@ public class Course {
     }
 
     public void update_lessons() {
-        String response = NetUtils.get("/tablet/lessons", "course_id=" + this.server_id);
+        String response = NetUtils.get(this.mContext, "/tablet/lessons", "course_id=" + this.server_id);
         try {
             JSONObject jsonRes = new JSONObject(response);
             JSONObject ele;

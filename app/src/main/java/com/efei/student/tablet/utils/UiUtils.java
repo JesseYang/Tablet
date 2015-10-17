@@ -143,8 +143,10 @@ public final class UiUtils
             bmp = bmp_happy;
         } else if (imageFile.equals("cry.png")) {
             bmp = bmp_cry;
-        } else {
+        } else if (startPrompt.equals(START_PROMPT_MATH)) {
             bmp = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), opts);
+        } else {
+            bmp = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
         }
 
         BitmapDrawable bmpDrawable = new BitmapDrawable(EfeiApplication.getContext().getResources(), bmp);

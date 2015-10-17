@@ -1,5 +1,6 @@
 package com.efei.student.tablet.account;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -108,7 +109,7 @@ public class InformationActivity extends BaseActivity {
                 params.put("city", city);
                 params.put("school", school);
                 params.put("grade", grade);
-                FinishRegisterTask finishRegisterTask = new FinishRegisterTask();
+                FinishRegisterTask finishRegisterTask = new FinishRegisterTask(this);
                 finishRegisterTask.execute(params);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -119,13 +120,18 @@ public class InformationActivity extends BaseActivity {
 
     private class FinishRegisterTask extends AsyncTask<JSONObject, Void, JSONObject> {
 
+        private Context mContext;
+        public FinishRegisterTask(Context context) {
+            this.mContext = context;
+        }
+
         @Override
         protected JSONObject doInBackground(JSONObject... params) {
             if (params.length == 0) {
                 return null;
             }
             // Send the login request to the servers
-            String response = NetUtils.post("/account/registrations/finish", params[0]);
+            String response = NetUtils.post(this.mContext, "/account/registrations/finish", params[0]);
             try {
                 JSONObject jsonRes = new JSONObject(response);
                 return jsonRes;

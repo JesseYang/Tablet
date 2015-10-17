@@ -217,7 +217,7 @@ public class ActionLog {
 
         @Override
         protected JSONObject doInBackground(JSONObject... params) {
-            String response = NetUtils.post("/tablet/action_logs", params[0]);
+            String response = NetUtils.post(this.mContext, "/tablet/action_logs", params[0]);
             try {
                 JSONObject jsonRes = new JSONObject(response);
                 return jsonRes;
