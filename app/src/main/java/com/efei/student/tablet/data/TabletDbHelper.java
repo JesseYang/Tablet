@@ -13,13 +13,14 @@ import com.efei.student.tablet.data.TabletContract.SnapshotEntry;
 import com.efei.student.tablet.data.TabletContract.TagEntry;
 import com.efei.student.tablet.data.TabletContract.TeacherEntry;
 import com.efei.student.tablet.data.TabletContract.VideoEntry;
+import com.efei.student.tablet.data.TabletContract.ProgressEntry;
 
 /**
  * Created by jesse on 15-5-4.
  */
 public class TabletDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 23;
+    private static final int DATABASE_VERSION = 24;
 
     private static final String DATABASE_NAME = "tablet.db";
 
@@ -141,6 +142,17 @@ public class TabletDbHelper extends SQLiteOpenHelper {
                 ActionLogEntry.COLUMN_UPDATED + " TEXT NOT NULL" +
                 " );";
 
+        final String SQL_CREATE_PROGRESS_TABLE = "CREATE TABLE " + ProgressEntry.TABLE_NAME + " ( " +
+                ProgressEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                ProgressEntry.COLUMN_LESSON_ID + " TEXT," +
+                ProgressEntry.COLUMN_STUDENT_ID + " INTEGER," +
+                ProgressEntry.COLUMN_IS_COMPELETE + " TEXT," +
+                ProgressEntry.COLUMN_NOT_START + " TEXT," +
+                ProgressEntry.COLUMN_VIDEO_ID + " TEXT," +
+                ProgressEntry.COLUMN_VIDEO_TIME + " INTEGER" +
+                " );";
+
+
         sqLiteDatabase.execSQL(SQL_CREATE_TEACHER_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_COURSE_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_LESSON_TABLE);
@@ -150,6 +162,7 @@ public class TabletDbHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_TAG_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_SNAPSHOT_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_ACTION_LOG_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_PROGRESS_TABLE);
     }
 
     @Override
@@ -163,6 +176,7 @@ public class TabletDbHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TagEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SnapshotEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + ActionLogEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + ProgressEntry.TABLE_NAME);
 
         onCreate(sqLiteDatabase);
     }

@@ -1,7 +1,9 @@
 package com.efei.student.tablet.student;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,12 +19,17 @@ import com.efei.student.tablet.account.LoginActivity;
 import com.efei.student.tablet.adapters.LessonAdapter;
 import com.efei.student.tablet.models.Course;
 import com.efei.student.tablet.models.Lesson;
+import com.efei.student.tablet.models.Progress;
 import com.efei.student.tablet.models.Teacher;
 import com.efei.student.tablet.utils.FileUtils;
 import com.efei.student.tablet.utils.GlobalUtils;
+import com.efei.student.tablet.utils.NetUtils;
 import com.efei.student.tablet.utils.Subject;
 import com.efei.student.tablet.utils.ToastUtils;
 import com.efei.student.tablet.views.SettingView;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class CourseActivity extends BaseActivity {
 
@@ -53,18 +60,69 @@ public class CourseActivity extends BaseActivity {
     public boolean mAdmin;
 
     public TextView mStatusTextView;
+    public TextView mFetchingLessonResultView;
+
+    public ListView mListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course);
         Intent intent = getIntent();
-        String server_id = intent.getStringExtra(intent.EXTRA_TEXT);
+        String data = intent.getStringExtra(intent.EXTRA_TEXT);
+        String[] data_ary = data.split(",");
+        boolean fromLesson = data_ary.length > 1;
+        String server_id = data_ary[0];
         mCourse = Course.get_course_by_id(server_id, getApplicationContext());
         mTeacher = mCourse.teacher();
         mIsPurchased = mCourse.is_purchased(this);
         mAdmin = GlobalUtils.isAdmin(this);
         setupViews();
+        // get progress from server
+        if (mAdmin) {
+            refreshLessons();
+        } else if (fromLesson) {
+            String lesson_id = data_ary[1];
+            String video_id = data_ary[2];
+            int video_time = Integer.valueOf(data_ary[3]);
+            Progress.update_progress(this, lesson_id, video_id, video_time);
+            refreshLessons();
+        } else {
+            DownloadProgressTask downloadProgressTask = new DownloadProgressTask(this);
+            downloadProgressTask.execute();
+        }
+    }
+
+    private class DownloadProgressTask extends AsyncTask<Void, Void, JSONObject> {
+
+        private Context mContext;
+        public DownloadProgressTask(Context context) {
+            this.mContext = context;
+        }
+
+        @Override
+        protected JSONObject doInBackground(Void... params) {
+            String response = NetUtils.get(this.mContext, "/tablet/courses/" + mCourse.server_id + "/progress", "");
+            try {
+                JSONObject jsonRes = new JSONObject(response);
+                return jsonRes;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject retval) {
+            try {
+                JSONArray ele_ary = retval.getJSONArray("progress");
+                for (int i = 0; i < ele_ary.length(); i++) {
+                    Progress.create_or_update(mContext, (JSONObject)ele_ary.get(i));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            refreshLessons();
+        }
     }
 
     private void setupViews() {
@@ -122,6 +180,11 @@ public class CourseActivity extends BaseActivity {
         mTextbook.setScaleType(ImageView.ScaleType.FIT_XY);
 
         mStatusTextView = (TextView) findViewById(R.id.status_tv);
+        mFetchingLessonResultView = (TextView) findViewById(R.id.fetching_lessons_result);
+        mFetchingLessonResultView.setVisibility(View.VISIBLE);
+
+        mListView = (ListView) findViewById(R.id.course_page_lesson_list);
+        mListView.setVisibility(View.GONE);
 
 
         mSetting = (ImageView) findViewById(R.id.btn_setting);
@@ -140,8 +203,6 @@ public class CourseActivity extends BaseActivity {
                 }
             }
         });
-
-        refreshLessons();
     }
 
     public void showStatus() {
@@ -185,6 +246,9 @@ public class CourseActivity extends BaseActivity {
     }
 
     private void refreshLessons() {
+        mFetchingLessonResultView.setVisibility(View.GONE);
+        mListView.setVisibility(View.VISIBLE);
+
         mLessonAdapter =
                 new LessonAdapter(
                         CourseActivity.this,
@@ -192,10 +256,9 @@ public class CourseActivity extends BaseActivity {
                         mCourse.lessons()
                 );
 
-        ListView listView = (ListView) findViewById(R.id.course_page_lesson_list);
-        listView.setAdapter(mLessonAdapter);
+        mListView.setAdapter(mLessonAdapter);
         final BaseActivity activity = this;
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (mAdmin || mIsPurchased) {

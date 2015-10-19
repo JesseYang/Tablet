@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.efei.student.tablet.R;
 import com.efei.student.tablet.models.Course;
 import com.efei.student.tablet.models.Lesson;
+import com.efei.student.tablet.models.Progress;
 import com.efei.student.tablet.student.CourseActivity;
 
 public class LessonAdapter extends ArrayAdapter<Lesson> {
@@ -45,7 +46,20 @@ public class LessonAdapter extends ArrayAdapter<Lesson> {
 
         if (!purchase_course) {
             study_status.setVisibility(View.GONE);
+        } else if (Progress.getProgress(activity, lesson).equals("not_start")) {
+            study_status.setVisibility(View.VISIBLE);
+            study_status.setText(activity.getResources().getString(R.string.not_start));
+            study_status.setBackgroundResource(R.drawable.exercise_ongoing_background);
+        } else if (Progress.getProgress(activity, lesson).equals("is_complete")) {
+            study_status.setVisibility(View.VISIBLE);
+            study_status.setText(activity.getResources().getString(R.string.is_complete));
+            study_status.setBackgroundResource(R.drawable.exercise_finished_background);
+        } else {
+            study_status.setVisibility(View.VISIBLE);
+            study_status.setText(activity.getResources().getString(R.string.ongoing));
+            study_status.setBackgroundResource(R.drawable.exercise_ongoing_background);
         }
+/*
         else if (lesson.is_completed()) {
             study_status.setVisibility(View.VISIBLE);
             study_status.setText(activity.getResources().getString(R.string.completed));
@@ -55,7 +69,7 @@ public class LessonAdapter extends ArrayAdapter<Lesson> {
             study_status.setText(activity.getResources().getString(R.string.not_completed));
             study_status.setBackgroundResource(R.drawable.exercise_ongoing_background);
         }
-
+*/
         // TextView exercise_status = (TextView) converterView.findViewById(R.id.tv_course_lesson_exercise_status);
 
         View lesson_item_layout = converterView.findViewById(R.id.lesson_item_layout);

@@ -30,6 +30,7 @@
     <color name="account_background">#EFEEEC</color>
     <color name="lesson_item_status_yellow">#FF9900</color>
     <color name="lesson_item_status_gray">#CCCCCC</color>
+    <color name="video_item_lock_gray">#AAAAAA</color>
     <color name="lesson_item_status_blue">#83C1EB</color>
     <color name="black">#000000</color>
     <color name="video_list_item_pressed_color">#CCCCCC</color>

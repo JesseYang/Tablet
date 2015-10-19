@@ -262,7 +262,7 @@ public class ListActivity extends BaseActivity {
 
     public void refreshCourses() {
 
-        // todo: the course list should be refreshed based on the conditions:
+        // todo: the course videoListView should be refreshed based on the conditions:
         //  mConditionMy
         //  mConditionGrade
         //  mConditionSubject

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.efei.student.tablet.R;
+import com.efei.student.tablet.models.Progress;
 import com.efei.student.tablet.student.BaseActivity;
 import com.efei.student.tablet.student.ListActivity;
 import com.efei.student.tablet.utils.NetUtils;
@@ -148,6 +149,8 @@ public class LoginActivity extends BaseActivity {
         @Override
         protected void onPostExecute(JSONObject retval) {
             try {
+                // clear progress data
+                Progress.clear(mActivity);
                 if (retval == null) {
                     ToastUtils.showToast(mActivity, "网络不给力，请检查网络设置");
                 }

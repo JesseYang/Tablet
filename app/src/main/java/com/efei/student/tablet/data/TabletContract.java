@@ -230,4 +230,20 @@ public class TabletContract {
 
         public static final String COLUMN_UPDATED = "updated";
     }
+
+    public final class ProgressEntry implements BaseColumns {
+        public static final String TABLE_NAME = "progress";
+
+        public static final String COLUMN_LESSON_ID = "lesson_id";
+
+        public static final String COLUMN_STUDENT_ID = "student_id";
+
+        public static final String COLUMN_IS_COMPELETE = "is_complete";
+
+        public static final String COLUMN_NOT_START = "not_start";
+
+        public static final String COLUMN_VIDEO_ID = "video_id";
+
+        public static final String COLUMN_VIDEO_TIME = "video_time";
+    }
 }

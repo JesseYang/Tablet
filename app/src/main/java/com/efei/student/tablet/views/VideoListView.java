@@ -101,14 +101,15 @@ public class VideoListView extends FrameLayout {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // ((LessonActivity) mContext).mInterrupt = true;
-                ((LessonActivity) mContext).removeParentVideo();
-                ((LessonActivity) mContext).clearViews();
-                ((LessonActivity) mContext).clearVideoControl();
-                ((LessonActivity) mContext).switchVideo(mVideos[position]);
-                mVideoListWrapper.setVisibility(GONE);
-                mShowListButton.setVisibility(VISIBLE);
-                mShowList = false;
+                if (!((LessonActivity) mContext).isLock(mVideos[position])) {
+                    // ((LessonActivity) mContext).mInterrupt = true;
+                    ((LessonActivity) mContext).removeParentVideo();
+                    ((LessonActivity) mContext).clearVideoControl();
+                    ((LessonActivity) mContext).switchVideo(mVideos[position]);
+                    mVideoListWrapper.setVisibility(GONE);
+                    mShowListButton.setVisibility(VISIBLE);
+                    mShowList = false;
+                }
             }
         });
         listView.setOnTouchListener(new OnTouchListener() {

@@ -27,7 +27,7 @@ import java.net.URL;
 public final class NetUtils {
 
     public static String BASE_URL = "http://www.efei.org/";
-    // public static String BASE_URL = "http://192.168.0.106:3000/";
+    // public static String BASE_URL = "http://192.168.0.102:3000/";
 
     private NetUtils()
     {
@@ -170,6 +170,8 @@ public final class NetUtils {
             URL url = new URL(builtUri.toString());
 
             urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setConnectTimeout(3000);
+            urlConnection.setReadTimeout(3000);
             urlConnection.setRequestMethod("GET");
             urlConnection.setRequestProperty("Content-Type", "application/json");
             urlConnection.setRequestProperty("Accept", "application/json");
@@ -189,9 +191,12 @@ public final class NetUtils {
                 return response.toString();
             }
             return "";
-        } catch (IOException e) {
+        } catch (java.net.SocketTimeoutException e) {
             e.printStackTrace();
-            return "";
+            return "timeout";
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            return "timeout";
         }
     }
 

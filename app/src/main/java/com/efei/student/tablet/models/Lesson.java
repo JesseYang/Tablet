@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.efei.student.tablet.data.TabletContract;
 import com.efei.student.tablet.data.TabletDbHelper;
-import com.efei.student.tablet.utils.GlobalUtils;
 import com.efei.student.tablet.utils.NetUtils;
 import com.efei.student.tablet.views.SettingView;
 
@@ -104,10 +103,6 @@ public class Lesson {
             e.printStackTrace();
             return null;
         }
-    }
-
-    public boolean is_completed() {
-        return GlobalUtils.isComplete(mContext, this.server_id);
     }
 
     public Video[] non_episode_videos() {
@@ -231,6 +226,21 @@ public class Lesson {
             }
         }
         return null;
+    }
+
+    public boolean video_is_before(String vid1, String vid2) {
+        if (vid1.equals(vid2))
+            return false;
+        Video[] videos = this.videos();
+        for (int i = 0; i < videos.length; i++) {
+            if (videos[i].server_id.equals(vid1)) {
+                return true;
+            }
+            if (videos[i].server_id.equals(vid2)) {
+                return false;
+            }
+        }
+        return false;
     }
 
     public Video[] get_extended_video_items() {

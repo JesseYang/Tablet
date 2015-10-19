@@ -20,6 +20,7 @@ import android.widget.FrameLayout;
 import com.efei.student.tablet.R;
 import com.efei.student.tablet.models.ActionLog;
 import com.efei.student.tablet.models.Lesson;
+import com.efei.student.tablet.models.Progress;
 import com.efei.student.tablet.models.Question;
 import com.efei.student.tablet.models.Snapshot;
 import com.efei.student.tablet.models.Tag;
@@ -29,9 +30,6 @@ import com.efei.student.tablet.utils.GestureListener;
 import com.efei.student.tablet.utils.GlobalUtils;
 import com.efei.student.tablet.utils.NetUtils;
 import com.efei.student.tablet.views.CheckBoxView;
-import com.efei.student.tablet.views.EpisodeTipView;
-import com.efei.student.tablet.views.ExampleQuestionDialogView;
-import com.efei.student.tablet.views.ExerciseDialogView;
 import com.efei.student.tablet.views.ExerciseView;
 import com.efei.student.tablet.views.SummaryControllerView;
 import com.efei.student.tablet.views.VideoControllerView;
@@ -50,16 +48,14 @@ import java.io.FileInputStream;
 public class LessonActivity extends BaseActivity implements SurfaceHolder.Callback, MediaPlayer.OnCompletionListener, VideoControllerView.MediaPlayerControl {
 
     public Lesson mLesson;
+    public Video[] mVideos;
     public Video mCurVideo;
     SurfaceView videoSurface;
     public MediaPlayer player;
     VideoControllerView controller;
-    VideoListView list;
-    VideoTopView topView;
+    VideoListView videoListView;
+    VideoTopView videoTopView;
     VideoTtitleView titleView;
-    ExampleQuestionDialogView exampleQuestionDialogView;
-    ExerciseDialogView exerciseDialogView;
-    EpisodeTipView episodeTipView;
 
     ExerciseView exerciseView;
     SummaryControllerView summaryControllerView;
@@ -67,9 +63,6 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     int maxKeyPoint;
     public float mBrightness;
 
-    public Video mParentVideo;
-    private boolean mIsEpisode;
-    public int mParentTime;
     private SurfaceHolder videoHolder;
     public boolean questionMode;
 
@@ -91,6 +84,8 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     public boolean mComplete;
     public boolean mVideoEnd;
 
+    public String mLastVideoId = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,6 +93,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         Intent intent = getIntent();
         String server_id = intent.getStringExtra(intent.EXTRA_TEXT);
         mLesson = Lesson.get_lesson_by_id(server_id, getApplicationContext());
+        mVideos = mLesson.get_extended_video_items();
 
         mAdmin = GlobalUtils.isAdmin(this);
         mComplete = GlobalUtils.isComplete(this, server_id);
@@ -117,8 +113,6 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
 
         audiomanage = (AudioManager) getSystemService(AUDIO_SERVICE);
         videoState = new VideoState("", 0, false);
-        mParentVideo = null;
-        mParentTime = 0;
 
         setContentView(R.layout.activity_lesson);
 
@@ -130,23 +124,14 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         videoHolder.setFormat(PixelFormat.RGBA_8888);
 
         controller = new VideoControllerView(this);
-        list = new VideoListView(this);
-        list.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
+        videoListView = new VideoListView(this);
+        videoListView.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
 
-        topView = new VideoTopView(this);
-        topView.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
+        videoTopView = new VideoTopView(this);
+        videoTopView.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
 
         titleView = new VideoTtitleView(this);
         titleView.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
-
-        exampleQuestionDialogView = new ExampleQuestionDialogView(this);
-        exampleQuestionDialogView.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
-
-        exerciseDialogView = new ExerciseDialogView(this);
-        exerciseDialogView.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
-
-        episodeTipView = new EpisodeTipView(this);
-        episodeTipView.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
 
         exerciseView = new ExerciseView(this);
         exerciseView.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
@@ -162,7 +147,16 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         }
         check_box_size = checkBoxView[0].check_box_size(this);
 
-        mCurVideo = mLesson.videos()[0];
+        String progress = Progress.getProgress(this, mLesson);
+        if (progress.equals("not_start") || progress.equals("is_complete")) {
+            mCurVideo = mLesson.videos()[0];
+        } else {
+            String[] ary = progress.split(":");
+            mLastVideoId = ary[0];
+            mCurVideo = Video.get_video_by_id(mLastVideoId, this);
+        }
+
+
         titleView.setVideio(mCurVideo);
 
         // Bind the gestureDetector to GestureListener
@@ -171,6 +165,21 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         mWakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "GLGame");
         mWakeLock.acquire();
+    }
+
+    public Boolean isLock(Video video) {
+        if (mLastVideoId == "") {
+            return false;
+        }
+        for (int i = 0; i < mVideos.length; i++) {
+            if (mVideos[i].server_id.equals(video.server_id)) {
+                return false;
+            }
+            if (mVideos[i].server_id.equals(mLastVideoId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -249,20 +258,13 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             }
             if (target_tag.type == target_tag.TYPE_EXAMPLE) {
                 Question[] questions = Question.get_questino_ary_by_id_ary(target_tag.question_id, this);
-                if (questions.length == 0) {
-                    exampleQuestionDialogView.show(target_tag.name, target_tag.duration);
-                    return true;
-                } else {
-                    // should show the exercise page
-                    mCurExercise = questions;
-                    if (!mAdmin && !mComplete) {
-                        if (exerciseView.show(mLesson, "exercise")) {
-                            ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_EXERCISE, mCurVideo.server_id, player.getCurrentPosition() / 1000, questions[0].server_id);
-                        } else {
-                            exampleQuestionDialogView.show(target_tag.name, target_tag.duration);
-                            return true;
-                        }
+                // should show the exercise page
+                mCurExercise = questions;
+                if (!mAdmin && !mComplete) {
+                    if (exerciseView.show(mLesson, "exercise")) {
+                        ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_EXERCISE, mCurVideo.server_id, player.getCurrentPosition() / 1000, questions[0].server_id);
                     }
+                    return true;
                 }
             }
         }
@@ -327,32 +329,6 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         }
     }
 
-
-    public void goEpisode(Video episode, Tag tag) {
-        mParentVideo = mCurVideo;
-        mParentTime = tag.time;
-        mIsEpisode = true;
-        switchVideo(episode);
-    }
-
-    public void goBackParentVideo() {
-        mIsEpisode = false;
-        switchVideo(mParentVideo);
-        mParentVideo = null;
-    }
-
-    public void removeParentVideo() {
-        mIsEpisode = false;
-        mParentVideo = null;
-        mParentTime = 0;
-    }
-
-    public void clearViews() {
-        episodeTipView.hide();
-        exampleQuestionDialogView.hide();
-        exerciseDialogView.hide();
-    }
-
     public void switchVideo(Video video) {
         ActionLog.create_new(this, mLesson.server_id, ActionLog.SWITCH_VIDEO, mCurVideo.server_id, video.server_id, (int) (player.getCurrentPosition() / 1000L), 0);
         controller.mLastPosition = -1;
@@ -360,28 +336,31 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         mCurVideo = video;
         startPlay("");
         titleView.setVideio(video);
-        list.mVideoAdapter.notifyDataSetChanged();
+        updateLastVideoId();
+        videoListView.mVideoAdapter.notifyDataSetChanged();
+    }
+
+    public void updateLastVideoId() {
+        if (mAdmin || mComplete) {
+            mLastVideoId = "";
+            return;
+        }
+        if (mLastVideoId == "") {
+            mLastVideoId = mCurVideo.server_id;
+            return;
+        }
+        for (int i = 0; i < mVideos.length; i++) {
+            if (mVideos[i].server_id.equals(mLastVideoId)) {
+                mLastVideoId = mCurVideo.server_id;
+            }
+            if (mVideos[i].server_id.equals(mCurVideo.server_id)) {
+                return;
+            }
+        }
     }
 
     public void setVolume(int volume_level) {
         audiomanage.setStreamVolume(AudioManager.STREAM_MUSIC, volume_level, 0);
-    }
-
-    public void volumeUp() {
-        audiomanage.adjustVolume(AudioManager.ADJUST_RAISE, 0);
-        int volume_level = audiomanage.getStreamVolume(AudioManager.STREAM_MUSIC);
-        controller.setVolume(volume_level);
-    }
-
-    public void volumeDown() {
-        audiomanage.adjustVolume(AudioManager.ADJUST_LOWER, 0);
-        int volume_level = audiomanage.getStreamVolume(AudioManager.STREAM_MUSIC);
-        controller.setVolume(volume_level);
-    }
-
-    public void setBrightness(int level) {
-        mBrightLevel = level;
-        adjustBrightness();
     }
 
     public void adjustBrightness() {
@@ -426,20 +405,20 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     public void showOperations() {
         if (questionMode) {
             controller.show();
-            topView.show();
+            videoTopView.show();
             titleView.show();
         } else if (!exerciseView.isShown() && !summaryControllerView.isShown()) {
             controller.show();
-            list.show();
-            topView.show();
+            videoListView.show();
+            videoTopView.show();
             titleView.show();
         }
     }
 
     public void hideOperations() {
         controller.hide();
-        list.hide();
-        topView.hide();
+        videoListView.hide();
+        videoTopView.hide();
         titleView.hide();
     }
 
@@ -457,10 +436,13 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
                 startPlay("");
                 ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_VIDEO, mCurVideo.server_id, 0);
             } else {
-                boolean ret = exerciseView.show(this.mLesson, "pre_test");
-                if (ret) {
-                    ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_PRE_TEST);
+                if (!mCurVideo.server_id.equals(mLesson.videos()[0].server_id)) {
+                    startPlay("");
                 } else {
+                    boolean ret = exerciseView.show(this.mLesson, "pre_test");
+                    if (ret) {
+                        ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_PRE_TEST);
+                    }
                 }
             }
         } else if (videoState.isPause == false) {
@@ -514,10 +496,16 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         ActionLog.create_new(this, mLesson.server_id, ActionLog.RETURN_POST_TEST_RESULT, mCurVideo.server_id, player.getCurrentPosition() / 1000);
     }
 
-    public void returnToCourse() {
+    public void returnToCourse(Boolean from_video) {
+        String video_id = "";
+        Integer video_time = 0;
+        if (from_video) {
+            video_id = mCurVideo.server_id;
+            video_time = (int)(player.getCurrentPosition() / 1000L);
+        }
         ActionLog.create_new(this, mLesson.server_id, ActionLog.LEAVE_LESSON);
         Intent intent = new Intent(this, CourseActivity.class)
-                .putExtra(Intent.EXTRA_TEXT, mLesson.course_id);
+                .putExtra(Intent.EXTRA_TEXT, mLesson.course_id + ","  + this.mLesson.server_id + "," + mLastVideoId + "," + video_time.toString());
         this.startActivity(intent);
         this.finish();
     }
@@ -541,10 +529,6 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
             int volume_level = audiomanage.getStreamVolume(AudioManager.STREAM_MUSIC);
             controller.setVolume(volume_level);
             controller.setBright(mBrightLevel);
-            if (mIsEpisode == false && mParentTime != 0) {
-                seekTo((mParentTime + 1) * 1000);
-                mParentTime = 0;
-            }
             showOperations();
             controller.updatePausePlay();
             if (!mAdmin && !mComplete)
@@ -651,13 +635,6 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     }
 
     public void completionSwitchVideo() {
-
-        // return to the parent video
-        if (mParentVideo != null) {
-            goBackParentVideo();
-            return;
-        }
-
         if (questionMode == true) {
             returnToPostSummary();
             return;
@@ -666,17 +643,12 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         // move to the next video
         Video nextVideo = mLesson.find_next_video(mCurVideo);
         if (nextVideo == null) {
-            if (mCurVideo.type == 3) {
-                showOperations();
-                return;
-            }
             exerciseView.show(mLesson, "post_test");
             ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_POST_TEST, mCurVideo.server_id, player.getCurrentPosition() / 1000);
             return;
         }
         switchVideo(nextVideo);
     }
-
     // End VideoMediaController.MediaPlayerControl
 
     public int[] convertPosition(int x, int y) {
