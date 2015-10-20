@@ -64,9 +64,16 @@ public class Progress {
             e.printStackTrace();
             return "";
         }
+
     }
 
-    public static void update_progress(Context context, String lesson_id, String video_id, int video_time) {
+    public static String getProgress(Context context, String lesson_id) {
+        Lesson lesson = Lesson.get_lesson_by_id(lesson_id, context);
+        return Progress.getProgress(context, lesson);
+    }
+
+    // public static void update_progress(Context context, String lesson_id, String video_id, int video_time) {
+    public static void update_progress(Context context, String lesson_id, String video_id) {
         try {
             TabletDbHelper dbHelper = new TabletDbHelper(context);
             SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -84,7 +91,7 @@ public class Progress {
             contentValues.put(TabletContract.ProgressEntry.COLUMN_IS_COMPELETE, video_id.equals("") ? "true" : "false");
             contentValues.put(TabletContract.ProgressEntry.COLUMN_NOT_START, "false");
             contentValues.put(TabletContract.ProgressEntry.COLUMN_VIDEO_ID, video_id);
-            contentValues.put(TabletContract.ProgressEntry.COLUMN_VIDEO_TIME, video_time);
+            // contentValues.put(TabletContract.ProgressEntry.COLUMN_VIDEO_TIME, video_time);
             if (count == 0) {
                 // create new record
                 db.insert(TabletContract.ProgressEntry.TABLE_NAME, null, contentValues);

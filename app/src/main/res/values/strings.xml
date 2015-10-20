@@ -87,5 +87,6 @@
 
     <string name="question_time_tip_short">建议v1分钟之内完成</string>
     <string name="question_time_tip">建议v1分钟之内完成，还有v2分钟时间</string>
+    <string name="title_activity_pre_lesson">PreLesson</string>
 
 </resources>

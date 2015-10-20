@@ -29,15 +29,11 @@
                 android:layout_height="@dimen/title_bar_height"
                 android:src="@drawable/ic_return"/>
 
-            <View
-                android:layout_width="10dp"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent" />
 
             <TextView
                 android:id="@+id/my_course_tab"
                 android:layout_width="500dp"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="30dp"
                 android:gravity="center_vertical"
                 android:layout_height="@dimen/title_bar_tab_height"
                 android:layout_marginTop="@dimen/title_bar_tab_margin_top"
@@ -126,33 +122,6 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp" />
             </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:orientation="horizontal"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp">
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:text="@string/last_time_learn"/>
-            <TextView
-                android:id="@+id/course_page_last_lesson"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textStyle="bold"
-                android:text="@string/temp1"/>
-            <TextView
-                android:id="@+id/course_page_continue_study"
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="20dp"
-                android:textColor="#ff87adee"
-                android:text="@string/continue_study"/>
         </LinearLayout>
 
         <View

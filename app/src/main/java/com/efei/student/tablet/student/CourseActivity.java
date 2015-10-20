@@ -38,7 +38,6 @@ public class CourseActivity extends BaseActivity {
     private LessonAdapter mLessonAdapter;
 
     private ImageView mReturn;
-    private TextView mContinue;
 
     private View mTitleBar;
 
@@ -69,10 +68,7 @@ public class CourseActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course);
         Intent intent = getIntent();
-        String data = intent.getStringExtra(intent.EXTRA_TEXT);
-        String[] data_ary = data.split(",");
-        boolean fromLesson = data_ary.length > 1;
-        String server_id = data_ary[0];
+        String server_id = intent.getStringExtra(intent.EXTRA_TEXT);
         mCourse = Course.get_course_by_id(server_id, getApplicationContext());
         mTeacher = mCourse.teacher();
         mIsPurchased = mCourse.is_purchased(this);
@@ -80,12 +76,6 @@ public class CourseActivity extends BaseActivity {
         setupViews();
         // get progress from server
         if (mAdmin) {
-            refreshLessons();
-        } else if (fromLesson) {
-            String lesson_id = data_ary[1];
-            String video_id = data_ary[2];
-            int video_time = Integer.valueOf(data_ary[3]);
-            Progress.update_progress(this, lesson_id, video_id, video_time);
             refreshLessons();
         } else {
             DownloadProgressTask downloadProgressTask = new DownloadProgressTask(this);
@@ -114,6 +104,10 @@ public class CourseActivity extends BaseActivity {
         @Override
         protected void onPostExecute(JSONObject retval) {
             try {
+                if (retval == null) {
+                    ToastUtils.showToast((CourseActivity)mContext, "网络不给力，请检查网络设置");
+                    return;
+                }
                 JSONArray ele_ary = retval.getJSONArray("progress");
                 for (int i = 0; i < ele_ary.length(); i++) {
                     Progress.create_or_update(mContext, (JSONObject)ele_ary.get(i));
@@ -146,17 +140,6 @@ public class CourseActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(CourseActivity.this, ListActivity.class));
-            }
-        });
-
-        mContinue = (TextView) findViewById(R.id.course_page_continue_study);
-        mContinue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String lesson_id = mCourse.lessons()[0].server_id;
-                Intent intent = new Intent(CourseActivity.this, LessonActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, lesson_id);
-                startActivity(intent);
             }
         });
 
@@ -267,8 +250,9 @@ public class CourseActivity extends BaseActivity {
                         ToastUtils.showToast(activity, "课程视频未下载");
                         return;
                     }
-                    Intent intent = new Intent(CourseActivity.this, LessonActivity.class)
-                            .putExtra(Intent.EXTRA_TEXT, lesson_id);
+                    // Intent intent = new Intent(CourseActivity.this, LessonActivity.class)
+                    Intent intent = new Intent(CourseActivity.this, PreLessonActivity.class)
+                            .putExtra(Intent.EXTRA_TEXT, lesson_id + "," + String.valueOf(position));
                     startActivity(intent);
                 } else {
                     ToastUtils.showToast(activity, "未购买此课程");

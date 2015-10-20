@@ -129,7 +129,8 @@ public class ExerciseView extends FrameLayout {
         mContext = context;
         mLesson = ((LessonActivity)context).mLesson;
         mAdmin = GlobalUtils.isAdmin(mContext);
-        mComplete = GlobalUtils.isComplete(mContext, mLesson.server_id);
+        // mComplete = Progress.getProgress(context, mLesson).equals("is_complete");
+        mComplete = ((LessonActivity)context).mComplete;
         SharedPreferences sharedPreferences = mContext.getSharedPreferences("MyPref", 0);
         mAuthKey = sharedPreferences.getString("auth_key", "");
     }

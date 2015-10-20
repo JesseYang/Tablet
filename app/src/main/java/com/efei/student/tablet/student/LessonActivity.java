@@ -85,18 +85,26 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     public boolean mVideoEnd;
 
     public String mLastVideoId = "";
+    public boolean mFromBegin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        String server_id = intent.getStringExtra(intent.EXTRA_TEXT);
+        String intent_data = intent.getStringExtra(intent.EXTRA_TEXT);
+        String[] intent_data_ary = intent_data.split(",");
+        String server_id = intent_data_ary[0];
+        if (intent_data_ary.length > 1 && intent_data_ary[1].equals("from_begin")) {
+            mFromBegin = true;
+        } else {
+            mFromBegin = false;
+        }
         mLesson = Lesson.get_lesson_by_id(server_id, getApplicationContext());
         mVideos = mLesson.get_extended_video_items();
 
         mAdmin = GlobalUtils.isAdmin(this);
-        mComplete = GlobalUtils.isComplete(this, server_id);
+        mComplete = Progress.getProgress(this, server_id).equals("is_complete");
         mVideoEnd = false;
 
         try {
@@ -115,7 +123,6 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         videoState = new VideoState("", 0, false);
 
         setContentView(R.layout.activity_lesson);
-
         ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_LESSON);
 
         videoSurface = (SurfaceView) findViewById(R.id.videoSurface);
@@ -148,7 +155,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         check_box_size = checkBoxView[0].check_box_size(this);
 
         String progress = Progress.getProgress(this, mLesson);
-        if (progress.equals("not_start") || progress.equals("is_complete")) {
+        if (mFromBegin || progress.equals("not_start") || progress.equals("is_complete")) {
             mCurVideo = mLesson.videos()[0];
         } else {
             String[] ary = progress.split(":");
@@ -436,7 +443,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
                 startPlay("");
                 ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_VIDEO, mCurVideo.server_id, 0);
             } else {
-                if (!mCurVideo.server_id.equals(mLesson.videos()[0].server_id)) {
+                if (mFromBegin == false || !mCurVideo.server_id.equals(mLesson.videos()[0].server_id)) {
                     startPlay("");
                 } else {
                     boolean ret = exerciseView.show(this.mLesson, "pre_test");
@@ -497,15 +504,15 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     }
 
     public void returnToCourse(Boolean from_video) {
-        String video_id = "";
+        updateLastVideoId();
         Integer video_time = 0;
         if (from_video) {
-            video_id = mCurVideo.server_id;
             video_time = (int)(player.getCurrentPosition() / 1000L);
         }
-        ActionLog.create_new(this, mLesson.server_id, ActionLog.LEAVE_LESSON);
+        Progress.update_progress(this, mLesson.server_id, mLastVideoId);
+        ActionLog.create_new(this, mLesson.server_id, ActionLog.LEAVE_LESSON, mCurVideo.server_id, (int) (player.getCurrentPosition() / 1000L));
         Intent intent = new Intent(this, CourseActivity.class)
-                .putExtra(Intent.EXTRA_TEXT, mLesson.course_id + ","  + this.mLesson.server_id + "," + mLastVideoId + "," + video_time.toString());
+                .putExtra(Intent.EXTRA_TEXT, mLesson.course_id);
         this.startActivity(intent);
         this.finish();
     }

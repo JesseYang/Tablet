@@ -153,6 +153,7 @@ public class LoginActivity extends BaseActivity {
                 Progress.clear(mActivity);
                 if (retval == null) {
                     ToastUtils.showToast(mActivity, "网络不给力，请检查网络设置");
+                    return;
                 }
                 // redirect to the course list page
                 if (!no_network && !(Boolean)retval.get("success")) {
@@ -175,7 +176,6 @@ public class LoginActivity extends BaseActivity {
                     String student_server_id = retval.getString("student_server_id");
                     Boolean admin = retval.getBoolean("admin") || false;
                     String course_id_str = retval.getString("course_id_str");
-                    String lesson_id_str = retval.getString("completed_lesson_id_str");
                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", 0);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.clear().commit();
@@ -183,7 +183,6 @@ public class LoginActivity extends BaseActivity {
                     editor.putString("student_server_id", student_server_id);
                     editor.putBoolean("admin", admin);
                     editor.putString("course_id_str", course_id_str);
-                    editor.putString("completed_lesson_id_str", lesson_id_str);
                     JSONArray study_ary = retval.getJSONArray("status");
                     JSONObject course_status;
                     for (int i = 0; i < study_ary.length(); i++) {
@@ -198,13 +197,6 @@ public class LoginActivity extends BaseActivity {
                     Intent intent = new Intent(LoginActivity.this, ListActivity.class).
                             putExtra(Intent.EXTRA_TEXT, admin);
                     startActivity(intent);
-                    /*
-                    if (admin) {
-                        startActivity(new Intent(LoginActivity.this, ManagementActivity.class));
-                    } else {
-                        startActivity(new Intent(LoginActivity.this, ListActivity.class));
-                    }
-                    */
                 }
             } catch (Exception e) {
                 e.printStackTrace();

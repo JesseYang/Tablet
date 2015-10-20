@@ -102,8 +102,6 @@ public class VideoListView extends FrameLayout {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (!((LessonActivity) mContext).isLock(mVideos[position])) {
-                    // ((LessonActivity) mContext).mInterrupt = true;
-                    ((LessonActivity) mContext).removeParentVideo();
                     ((LessonActivity) mContext).clearVideoControl();
                     ((LessonActivity) mContext).switchVideo(mVideos[position]);
                     mVideoListWrapper.setVisibility(GONE);
