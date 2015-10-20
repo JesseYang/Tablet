@@ -267,7 +267,7 @@ public class ExerciseView extends FrameLayout {
 
         mOverBtn.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View view) { ((LessonActivity)mContext).returnToCourse(false); }
+            public void onClick(View view) { ((LessonActivity)mContext).returnToCourse(); }
         });
     }
 

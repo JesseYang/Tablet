@@ -565,16 +565,18 @@ public class VideoControllerView extends FrameLayout {
                             view.forwardBtnClickHandler();
                             // view.mForwardBtn.performClick();
                         } else {
-                            boolean findTag = view.checkProgress(true);
-                            if (findTag) {
-                                view.isPauseBefore = true;
-                                view.clearVideoControl();
-                            } else {
-                                ((LessonActivity) view.mContext).showOperations();
-                                view.goForward();
-                                msg = obtainMessage(GO_FORWARD);
-                                sendMessageDelayed(msg, 30);
+                            if (!((LessonActivity)mContext).mAdmin && !((LessonActivity)mContext).mComplete) {
+                                boolean findTag = view.checkProgress(true);
+                                if (findTag) {
+                                    view.isPauseBefore = true;
+                                    view.clearVideoControl();
+                                    break;
+                                }
                             }
+                            ((LessonActivity) view.mContext).showOperations();
+                            view.goForward();
+                            msg = obtainMessage(GO_FORWARD);
+                            sendMessageDelayed(msg, 30);
                         }
                     }
                     break;
@@ -600,5 +602,4 @@ public class VideoControllerView extends FrameLayout {
             }
         }
     }
-
 }

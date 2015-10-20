@@ -56,7 +56,7 @@ public class VideoTopView extends FrameLayout {
                 if (((LessonActivity)mContext).questionMode) {
                     ((LessonActivity)mContext).returnToPostSummary();
                 } else {
-                    ((LessonActivity)mContext).returnToCourse(true);
+                    ((LessonActivity)mContext).returnToCourse();
                 }
             }
         });

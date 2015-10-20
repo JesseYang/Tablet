@@ -19,6 +19,7 @@ import com.efei.student.tablet.student.ListActivity;
 import com.efei.student.tablet.utils.NetUtils;
 import com.efei.student.tablet.utils.TextUtils;
 import com.efei.student.tablet.utils.ToastUtils;
+import com.efei.student.tablet.utils.UiUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -151,6 +152,7 @@ public class LoginActivity extends BaseActivity {
             try {
                 // clear progress data
                 Progress.clear(mActivity);
+                UiUtils.initEmotionImage(mActivity);
                 if (retval == null) {
                     ToastUtils.showToast(mActivity, "网络不给力，请检查网络设置");
                     return;

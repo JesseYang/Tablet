@@ -503,13 +503,11 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         ActionLog.create_new(this, mLesson.server_id, ActionLog.RETURN_POST_TEST_RESULT, mCurVideo.server_id, player.getCurrentPosition() / 1000);
     }
 
-    public void returnToCourse(Boolean from_video) {
-        updateLastVideoId();
-        Integer video_time = 0;
-        if (from_video) {
-            video_time = (int)(player.getCurrentPosition() / 1000L);
+    public void returnToCourse() {
+        if (!mAdmin && !mComplete) {
+            updateLastVideoId();
+            Progress.update_progress(this, mLesson.server_id, mLastVideoId);
         }
-        Progress.update_progress(this, mLesson.server_id, mLastVideoId);
         ActionLog.create_new(this, mLesson.server_id, ActionLog.LEAVE_LESSON, mCurVideo.server_id, (int) (player.getCurrentPosition() / 1000L));
         Intent intent = new Intent(this, CourseActivity.class)
                 .putExtra(Intent.EXTRA_TEXT, mLesson.course_id);
@@ -601,12 +599,14 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     public void onCompletion(MediaPlayer mp) {
 
         // first check video end tags
-        Tag[] tags = mCurVideo.tags();
         Tag target_tag = null;
-        for (Tag tag :tags) {
-            if (tag.type == tag.TYPE_SNAPSHOT &&  tag.time == -1) {
-                target_tag = tag;
-                continue;
+        if (!mAdmin && !mComplete) {
+            Tag[] tags = mCurVideo.tags();
+            for (Tag tag : tags) {
+                if (tag.type == tag.TYPE_SNAPSHOT && tag.time == -1) {
+                    target_tag = tag;
+                    continue;
+                }
             }
         }
 
@@ -650,8 +650,12 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
         // move to the next video
         Video nextVideo = mLesson.find_next_video(mCurVideo);
         if (nextVideo == null) {
-            exerciseView.show(mLesson, "post_test");
-            ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_POST_TEST, mCurVideo.server_id, player.getCurrentPosition() / 1000);
+            if (!mAdmin && !mComplete) {
+                exerciseView.show(mLesson, "post_test");
+                ActionLog.create_new(this, mLesson.server_id, ActionLog.ENTRY_POST_TEST, mCurVideo.server_id, player.getCurrentPosition() / 1000);
+            } else {
+                returnToCourse();
+            }
             return;
         }
         switchVideo(nextVideo);

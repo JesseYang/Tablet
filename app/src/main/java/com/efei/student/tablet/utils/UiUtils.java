@@ -1,5 +1,6 @@
 package com.efei.student.tablet.utils;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -19,6 +20,8 @@ import android.text.style.SubscriptSpan;
 import android.text.style.SuperscriptSpan;
 import android.text.style.UnderlineSpan;
 import android.widget.TextView;
+
+import com.efei.student.tablet.R;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -45,11 +48,19 @@ public final class UiUtils
         opts.inSampleSize = 8;
     }
 
-    private static Bitmap bmp_cry = BitmapFactory.decodeFile((new File(Environment.getExternalStorageDirectory(), "/efei/images/cry.png")).getAbsolutePath());
-    private static Bitmap bmp_happy = BitmapFactory.decodeFile((new File(Environment.getExternalStorageDirectory(), "/efei/images/happy.png")).getAbsolutePath());
+    private static Bitmap bmp_cry;
+    private static Bitmap bmp_happy;
+
+    // private static Bitmap bmp_cry = BitmapFactory.decodeFile((new File(Environment.getExternalStorageDirectory(), "/efei/images/cry.png")).getAbsolutePath());
+    // private static Bitmap bmp_happy = BitmapFactory.decodeFile((new File(Environment.getExternalStorageDirectory(), "/efei/images/happy.png")).getAbsolutePath());
 
     private UiUtils()
     {
+    }
+
+    public static void initEmotionImage(Context context) {
+        bmp_cry = BitmapFactory.decodeResource(context.getResources(), R.drawable.cry);
+        bmp_happy = BitmapFactory.decodeResource(context.getResources(), R.drawable.happy);
     }
 
     public static SpannableString richTextToSpannable(final String txt)
