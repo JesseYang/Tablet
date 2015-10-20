@@ -33,9 +33,6 @@ public class ListActivity extends BaseActivity {
 
     private TextView mMyCourse;
     private TextView mAllCourse;
-    private boolean mStatusMyCourse = true;
-    private TextView mLastCourse;
-    private TextView mLastLesson;
 
     private EditText mSearchText;
     private ImageView mSearch;
@@ -44,6 +41,8 @@ public class ListActivity extends BaseActivity {
 
     private ListView mListView;
     private TextView mNoResult;
+
+    public TextView mHelloMsg;
 
     public FilterView mFilterView;
     public SettingView mSettingView;
@@ -123,11 +122,12 @@ public class ListActivity extends BaseActivity {
         mMyCourse = (TextView) findViewById(R.id.my_course_tab);
         mAllCourse = (TextView) findViewById(R.id.all_course_tab);
         mContinue = (Button) findViewById(R.id.status_bar_continue_btn);
-        mLastCourse = (TextView) findViewById(R.id.status_bar_last_course);
-        mLastLesson = (TextView) findViewById(R.id.status_bar_last_lesson);
 
         mListView = (ListView) findViewById(R.id.lv_course_list);
         mNoResult = (TextView) findViewById(R.id.no_course_result);
+
+        mHelloMsg = (TextView) findViewById(R.id.hello_msg);
+        mHelloMsg.setText(((String)mHelloMsg.getText()).replace("v1", GlobalUtils.studentName(this)));
 
         mSearchText = (EditText) findViewById(R.id.title_bar_search_text);
 

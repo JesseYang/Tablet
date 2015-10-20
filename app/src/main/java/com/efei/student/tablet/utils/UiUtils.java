@@ -51,9 +51,6 @@ public final class UiUtils
     private static Bitmap bmp_cry;
     private static Bitmap bmp_happy;
 
-    // private static Bitmap bmp_cry = BitmapFactory.decodeFile((new File(Environment.getExternalStorageDirectory(), "/efei/images/cry.png")).getAbsolutePath());
-    // private static Bitmap bmp_happy = BitmapFactory.decodeFile((new File(Environment.getExternalStorageDirectory(), "/efei/images/happy.png")).getAbsolutePath());
-
     private UiUtils()
     {
     }

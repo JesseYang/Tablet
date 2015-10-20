@@ -4,6 +4,9 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
@@ -55,6 +58,8 @@ public class ExerciseView extends FrameLayout {
     private int[] mAnswer;
     private int[] mDuration;
     private String mAuthKey;
+
+    private boolean mRingPlayed;
 
     private ImageView mItemA;
     private ImageView mItemB;
@@ -547,6 +552,8 @@ public class ExerciseView extends FrameLayout {
 
     public boolean show(Lesson lesson, String type) {
 
+        mRingPlayed = false;
+
         if (!type.equals("keep")) {
             mExerciseLayout.setVisibility(VISIBLE);
             mPreTestSummaryLayout.setVisibility(GONE);
@@ -739,6 +746,12 @@ public class ExerciseView extends FrameLayout {
                     mTextTimeTip.setText(mContext.getResources().getString(R.string.question_time_tip).replace("v1", String.valueOf(mCurQuestion.duration)).replace("v2", String.valueOf(mCurQuestion.duration - minute)));
             } else {
                 mTextTimeTip.setText("你已经花了" + minute + "分" + second + "秒，还是先继续，过一会听听老师的讲解吧 :-)");
+                if (mRingPlayed == false) {
+                    mRingPlayed = true;
+                    Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                    Ringtone r = RingtoneManager.getRingtone(mContext.getApplicationContext(), notification);
+                    r.play();
+                }
             }
             super.handleMessage(msg);
         }

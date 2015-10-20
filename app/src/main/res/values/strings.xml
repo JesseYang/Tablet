@@ -58,7 +58,6 @@
     <string name="video_list_knowledge">知识点讲解</string>
     <string name="video_list_example">例题讲解</string>
     <string name="video_list_episode">知识片段</string>
-    <string name="video_list_title">本讲索引列表</string>
     <string name="begin_play">开始播放：</string>
     <string name="old_example_tip">请完成讲义上第v1页的v2，建议v3分钟内完成</string>
     <string name="example_tip">请完成讲义上的v1，建议v2分钟内完成</string>

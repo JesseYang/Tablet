@@ -176,6 +176,7 @@ public class LoginActivity extends BaseActivity {
                 } else {
                     String auth_key = retval.getString("auth_key");
                     String student_server_id = retval.getString("student_server_id");
+                    String student_name = retval.getString("student_name");
                     Boolean admin = retval.getBoolean("admin") || false;
                     String course_id_str = retval.getString("course_id_str");
                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", 0);
@@ -185,6 +186,7 @@ public class LoginActivity extends BaseActivity {
                     editor.putString("student_server_id", student_server_id);
                     editor.putBoolean("admin", admin);
                     editor.putString("course_id_str", course_id_str);
+                    editor.putString("student_name", student_name);
                     JSONArray study_ary = retval.getJSONArray("status");
                     JSONObject course_status;
                     for (int i = 0; i < study_ary.length(); i++) {

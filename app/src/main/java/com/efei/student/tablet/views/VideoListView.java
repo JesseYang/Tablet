@@ -154,7 +154,6 @@ public class VideoListView extends FrameLayout {
     }
 
     public void show(int timeout) {
-        // mVideoAdapter.notifyDataSetChanged();
         if (!mShowing && mAnchor != null) {
 
             FrameLayout.LayoutParams tlp = new FrameLayout.LayoutParams(

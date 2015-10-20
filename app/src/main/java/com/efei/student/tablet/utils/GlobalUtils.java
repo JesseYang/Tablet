@@ -14,4 +14,9 @@ public final class GlobalUtils
         SharedPreferences sharedPreferences = context.getSharedPreferences("MyPref", 0);
         return sharedPreferences.getBoolean("admin", false);
     }
+
+    public static String studentName(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("MyPref", 0);
+        return sharedPreferences.getString("student_name", "");
+    }
 }

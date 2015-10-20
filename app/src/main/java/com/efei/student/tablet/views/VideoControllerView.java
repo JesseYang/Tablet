@@ -52,8 +52,6 @@ public class VideoControllerView extends FrameLayout {
     private SeekBar             mVolumeBar;
     private SeekBar             mBrightBar;
 
-    private ImageView           mVolumeUp;
-    private ImageView           mVolumeDown;
     private ImageView           mForwardBtn;
     private ImageView           mBackwardBtn;
 
@@ -396,6 +394,9 @@ public class VideoControllerView extends FrameLayout {
 
     private View.OnClickListener mPauseListener = new View.OnClickListener() {
         public void onClick(View v) {
+            if (((LessonActivity)mContext).exerciseView.isShown()) {
+                return;
+            }
             doPauseResume();
             show(sDefaultTimeout);
         }

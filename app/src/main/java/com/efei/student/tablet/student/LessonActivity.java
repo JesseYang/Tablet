@@ -57,7 +57,7 @@ public class LessonActivity extends BaseActivity implements SurfaceHolder.Callba
     VideoTopView videoTopView;
     VideoTtitleView titleView;
 
-    ExerciseView exerciseView;
+    public ExerciseView exerciseView;
     SummaryControllerView summaryControllerView;
     CheckBoxView[] checkBoxView;
     int maxKeyPoint;
